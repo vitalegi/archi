@@ -1,5 +1,7 @@
 package it.vitalegi.archi.workspace.loader;
 
+import it.vitalegi.archi.util.WorkspaceLoaderBuilder;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -11,11 +13,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(MockitoExtension.class)
-public class FileSystemWorkspaceLoaderTests {
+public class WorkspaceLoaderTests {
     @Test
     void when_load_given_validWorkspace_thenLoads() throws IOException {
         FileSystemWorkspaceLoader loader = new FileSystemWorkspaceLoader();
-        var workspace = loader.load(Path.of("src", "test", "resources", "workspace1.yaml"));
+        var workspace = new WorkspaceLoader().load(loader.load(Path.of("src", "test", "resources", "workspace1.yaml")));
+
         assertNotNull(workspace);
         assertNotNull(workspace.getElements());
         assertEquals(2, workspace.getPeople().size());
@@ -39,6 +42,18 @@ public class FileSystemWorkspaceLoaderTests {
         assertNotNull(workspace.getSoftwareSystem("C").findGroupById("group2"));
 
         assertNotNull(workspace.getSoftwareSystem("C").findGroupById("group2").findGroupById("group3"));
+    }
 
+    @Test
+    void when_load_given_containerOnRoot_thenFail() {
+        var loader = new WorkspaceLoader();
+        var e = Assertions.assertThrows(IllegalArgumentException.class, () -> loader.load( //
+                builder().container(null, "A", null).build() //
+        ));
+        assertEquals("Can't add Container (A) to top-level", e.getMessage());
+    }
+
+    protected WorkspaceLoaderBuilder builder() {
+        return new WorkspaceLoaderBuilder();
     }
 }
