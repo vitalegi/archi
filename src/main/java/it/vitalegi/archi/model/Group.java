@@ -3,6 +3,7 @@ package it.vitalegi.archi.model;
 import it.vitalegi.archi.util.WorkspaceUtil;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.List;
 
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
+@ToString(callSuper = true)
 @Data
 public class Group extends Element {
     List<SoftwareSystem> softwareSystems;
