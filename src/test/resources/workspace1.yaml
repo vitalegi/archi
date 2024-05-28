@@ -1,0 +1,34 @@
+elements:
+  - type: PERSON
+    id: A
+    name: aaa
+    description: My description
+    tags:
+      - a
+    metadata:
+      key1: value1
+      key2: value2
+  - type: PERSON
+    id: B
+    name: bbb ccc
+    description: My description 123
+    tags:
+      - a
+      - b
+      - ccc ddd eee
+    metadata:
+  - type: SOFTWARE_SYSTEM
+    id: C
+    name: Software System 1
+    description: My Software System
+    tags:
+      - aaaa
+    metadata:
+      key1: a
+  - type: CONTAINER
+    parentId: C
+    id: c1
+    name: Container 1
+    description: My Container
+    tags:
+      - bbb
