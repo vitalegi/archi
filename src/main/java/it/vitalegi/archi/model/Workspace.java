@@ -5,7 +5,7 @@ import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
 @Data
 public class Workspace {
@@ -31,12 +31,24 @@ public class Workspace {
         return WorkspaceUtil.getSoftwareSystems(elements);
     }
 
-    public Container getContainer(String id) {
-        var softwareSystems = WorkspaceUtil.getSoftwareSystems(elements);
-        return WorkspaceUtil.getContainer(softwareSystems.stream().flatMap(ss -> ss.getContainers().stream()).collect(Collectors.toList()), id);
+    public Group getGroup(String id) {
+        return WorkspaceUtil.getGroup(elements, id);
     }
 
-    public List<Container> getContainers() {
-        return WorkspaceUtil.getContainers(WorkspaceUtil.getSoftwareSystems(elements));
+    public List<Group> getGroup() {
+        return WorkspaceUtil.getGroups(elements);
+    }
+
+    public Element findChildById(String id) {
+        for (var e : elements) {
+            if (Objects.equals(e.getId(), id)) {
+                return e;
+            }
+            var child = e.findChildById(id);
+            if (child != null) {
+                return child;
+            }
+        }
+        return null;
     }
 }

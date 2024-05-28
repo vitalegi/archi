@@ -17,4 +17,8 @@ public abstract class Element {
     public static String collectIds(List<? extends  Element> elements) {
         return elements.stream().map(Element::getId).collect(Collectors.joining(", "));
     }
+
+    public abstract Element findChildById(String id);
+
+    public abstract void addChild(Element child);
 }

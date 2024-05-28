@@ -32,3 +32,14 @@ elements:
     description: My Container
     tags:
       - bbb
+  - type: GROUP
+    id: group1
+    name: Group 1
+  - type: GROUP
+    id: group2
+    name: Group 2
+    parentId: C
+  - type: GROUP
+    id: group3
+    name: Group 3
+    parentId: group2
