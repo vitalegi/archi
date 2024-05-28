@@ -2,6 +2,7 @@ package it.vitalegi.archi.util;
 
 import it.vitalegi.archi.model.Container;
 import it.vitalegi.archi.model.Element;
+import it.vitalegi.archi.model.Group;
 import it.vitalegi.archi.model.Person;
 import it.vitalegi.archi.model.SoftwareSystem;
 
@@ -12,9 +13,17 @@ import java.util.stream.Collectors;
 
 public class WorkspaceUtil {
     public static Person getPerson(List<Element> elements, String id) {
-        var element = findElementById(elements, id);
+        var element = findPerson(elements, id);
         if (element == null) {
             throw new NoSuchElementException("No element with id " + id + ". Available IDs: " + Element.collectIds(elements));
+        }
+        return element;
+    }
+
+    public static Person findPerson(List<? extends Element> elements, String id) {
+        var element = findElementById(elements, id);
+        if (element == null) {
+            return null;
         }
         if (isPerson(element)) {
             return (Person) element;
@@ -27,9 +36,17 @@ public class WorkspaceUtil {
     }
 
     public static SoftwareSystem getSoftwareSystem(List<? extends Element> elements, String id) {
-        var element = findElementById(elements, id);
+        var element = findSoftwareSystem(elements, id);
         if (element == null) {
             throw new NoSuchElementException("No element with id " + id + ". Available IDs: " + Element.collectIds(elements));
+        }
+        return element;
+    }
+
+    public static SoftwareSystem findSoftwareSystem(List<? extends Element> elements, String id) {
+        var element = findElementById(elements, id);
+        if (element == null) {
+            return null;
         }
         if (isSoftwareSystem(element)) {
             return (SoftwareSystem) element;
@@ -42,9 +59,17 @@ public class WorkspaceUtil {
     }
 
     public static Container getContainer(List<? extends Element> elements, String id) {
-        var element = findElementById(elements, id);
+        var element = findContainer(elements, id);
         if (element == null) {
             throw new NoSuchElementException("No element with id " + id + ". Available IDs: " + Element.collectIds(elements));
+        }
+        return element;
+    }
+
+    public static Container findContainer(List<? extends Element> elements, String id) {
+        var element = findElementById(elements, id);
+        if (element == null) {
+            return null;
         }
         if (isContainer(element)) {
             return (Container) element;
@@ -54,6 +79,29 @@ public class WorkspaceUtil {
 
     public static List<Container> getContainers(List<? extends Element> elements) {
         return getSoftwareSystems(elements).stream().flatMap(ss -> ss.getContainers().stream()).collect(Collectors.toList());
+    }
+
+    public static Group getGroup(List<? extends Element> elements, String id) {
+        var element = findGroup(elements, id);
+        if (element == null) {
+            throw new NoSuchElementException("No element with id " + id + ". Available IDs: " + Element.collectIds(elements));
+        }
+        return element;
+    }
+
+    public static Group findGroup(List<? extends Element> elements, String id) {
+        var element = findElementById(elements, id);
+        if (element == null) {
+            return null;
+        }
+        if (isGroup(element)) {
+            return (Group) element;
+        }
+        throw new IllegalArgumentException("Element with id " + id + " is not a Group: " + element);
+    }
+
+    public static List<Group> getGroups(List<? extends Element> elements) {
+        return elements.stream().filter(WorkspaceUtil::isGroup).map(e -> ((Group) e)).collect(Collectors.toList());
     }
 
     public static boolean isPerson(Element element) {
@@ -68,7 +116,11 @@ public class WorkspaceUtil {
         return element instanceof Container;
     }
 
-    protected static Element findElementById(List<? extends Element> elements, String id) {
+    public static boolean isGroup(Element element) {
+        return element instanceof Group;
+    }
+
+    public static Element findElementById(List<? extends Element> elements, String id) {
         return elements.stream().filter(e -> Objects.equals(id, e.getId())).findFirst().orElse(null);
     }
 }
