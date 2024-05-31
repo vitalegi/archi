@@ -3,6 +3,7 @@ package it.vitalegi.archi.workspace.loader;
 import it.vitalegi.archi.model.Container;
 import it.vitalegi.archi.model.Element;
 import it.vitalegi.archi.model.Group;
+import it.vitalegi.archi.model.Model;
 import it.vitalegi.archi.model.Person;
 import it.vitalegi.archi.model.SoftwareSystem;
 import it.vitalegi.archi.model.Workspace;
@@ -20,7 +21,7 @@ import java.util.stream.Collectors;
 public class WorkspaceLoader {
     public Workspace load(it.vitalegi.archi.workspace.loader.model.Workspace in) {
         Workspace out = new Workspace();
-        var pairs = new ArrayList<>(in.getElements().stream().map(this::toPair).collect(Collectors.toList()));
+        var pairs = new ArrayList<>(in.getElements().stream().map(e -> toPair(out.getModel(), e)).collect(Collectors.toList()));
         while (!pairs.isEmpty()) {
             log.info("New cycle");
             boolean anyProcessed = false;
@@ -41,15 +42,11 @@ public class WorkspaceLoader {
     protected boolean apply(Workspace out, ElementPair pair) {
         var parentId = pair.getSource().getParentId();
         if (StringUtil.isNullOrEmpty(parentId)) {
-            if (pair.getOut() instanceof Person || pair.getOut() instanceof SoftwareSystem || pair.getOut() instanceof Group) {
-                out.getElements().add(pair.getOut());
-                log.info("Add actor to top level: {}", pair.getOut().getId());
-                return true;
-            }
-            log.error("Can't add element to top-level {}", pair.getOut());
-            throw new IllegalArgumentException("Can't add " + pair.getOut().getClass().getSimpleName() + " (" + pair.getOut().getId() + ") to top-level");
+            out.getModel().addChild(pair.getOut());
+            log.info("Add actor to top level: {}", pair.getOut().getId());
+            return true;
         }
-        var parent = out.findChildById(parentId);
+        var parent = out.getModel().getElementById(parentId);
         if (parent == null) {
             return false;
         }
@@ -57,18 +54,18 @@ public class WorkspaceLoader {
         return true;
     }
 
-    protected ElementPair toPair(ElementYaml source) {
+    protected ElementPair toPair(Model model, ElementYaml source) {
         if (isPerson(source)) {
-            return new ElementPair(source, toPerson(source));
+            return new ElementPair(source, toPerson(model, source));
         }
         if (isSoftwareSystem(source)) {
-            return new ElementPair(source, toSoftwareSystem(source));
+            return new ElementPair(source, toSoftwareSystem(model, source));
         }
         if (isContainer(source)) {
-            return new ElementPair(source, toContainer(source));
+            return new ElementPair(source, toContainer(model, source));
         }
         if (isGroup(source)) {
-            return new ElementPair(source, toGroup(source));
+            return new ElementPair(source, toGroup(model, source));
         }
         throw new RuntimeException("Can't process " + source);
     }
@@ -101,29 +98,26 @@ public class WorkspaceLoader {
         return element.getType() == ElementType.GROUP;
     }
 
-    protected Person toPerson(ElementYaml element) {
-        var out = new Person();
+    protected Person toPerson(Model model, ElementYaml element) {
+        var out = new Person(model);
         applyCommonProperties(element, out);
         return out;
     }
 
-    protected SoftwareSystem toSoftwareSystem(ElementYaml element) {
-        var out = new SoftwareSystem();
+    protected SoftwareSystem toSoftwareSystem(Model model, ElementYaml element) {
+        var out = new SoftwareSystem(model);
         applyCommonProperties(element, out);
         return out;
     }
 
-    protected Container toContainer(ElementYaml element) {
-        var out = new Container();
+    protected Container toContainer(Model model, ElementYaml element) {
+        var out = new Container(model);
         applyCommonProperties(element, out);
-        //var targetId = element.getParentId();
-        //var parent = softwareSystems.stream().filter(s -> Objects.equals(s.getId(), targetId)).findFirst().orElseThrow(() -> new NoSuchElementException("Can't find a software system with id " + targetId));
-        //parent.getContainers().add(out);
         return out;
     }
 
-    protected Group toGroup(ElementYaml element) {
-        var out = new Group();
+    protected Group toGroup(Model model, ElementYaml element) {
+        var out = new Group(model);
         applyCommonProperties(element, out);
         return out;
     }

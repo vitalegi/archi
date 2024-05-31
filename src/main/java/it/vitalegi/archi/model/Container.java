@@ -1,19 +1,22 @@
 package it.vitalegi.archi.model;
 
-import lombok.Data;
+import it.vitalegi.archi.exception.ElementNotAllowedException;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@Data
-public class Container extends Element {
+public class Container extends Node {
+    public Container(Model model) {
+        super(model);
+    }
 
     public Element findChildById(String id) {
         return null;
     }
 
     public void addChild(Element child) {
-        throw new IllegalArgumentException("Can't add " + child + " to a container " + this);
+        throw new ElementNotAllowedException(this, child);
     }
+
 }
