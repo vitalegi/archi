@@ -3,12 +3,12 @@ package it.vitalegi.archi.util;
 import it.vitalegi.archi.model.Container;
 import it.vitalegi.archi.model.Element;
 import it.vitalegi.archi.model.Group;
+import it.vitalegi.archi.model.Model;
 import it.vitalegi.archi.model.Person;
 import it.vitalegi.archi.model.SoftwareSystem;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class WorkspaceUtil {
@@ -78,7 +78,7 @@ public class WorkspaceUtil {
     }
 
     public static List<Container> getContainers(List<? extends Element> elements) {
-        return getSoftwareSystems(elements).stream().flatMap(ss -> ss.getContainers().stream()).collect(Collectors.toList());
+        return elements.stream().filter(WorkspaceUtil::isContainer).map(e -> ((Container) e)).collect(Collectors.toList());
     }
 
     public static Group getGroup(List<? extends Element> elements, String id) {
@@ -120,7 +120,11 @@ public class WorkspaceUtil {
         return element instanceof Group;
     }
 
+    public static boolean isModel(Element element) {
+        return element instanceof Model;
+    }
+
     public static Element findElementById(List<? extends Element> elements, String id) {
-        return elements.stream().filter(e -> Objects.equals(id, e.getId())).findFirst().orElse(null);
+        return elements.stream().filter(e -> Element.sameId(id, e.getId())).findFirst().orElse(null);
     }
 }
