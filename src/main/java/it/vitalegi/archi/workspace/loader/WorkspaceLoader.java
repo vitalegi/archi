@@ -1,6 +1,10 @@
 package it.vitalegi.archi.workspace.loader;
 
+import it.vitalegi.archi.exception.CycleNotAllowedException;
 import it.vitalegi.archi.model.Container;
+import it.vitalegi.archi.model.ContainerInstance;
+import it.vitalegi.archi.model.DeploymentEnvironment;
+import it.vitalegi.archi.model.DeploymentNode;
 import it.vitalegi.archi.model.Element;
 import it.vitalegi.archi.model.Group;
 import it.vitalegi.archi.model.Model;
@@ -33,9 +37,11 @@ public class WorkspaceLoader {
                 }
             }
             if (!anyProcessed) {
-                throw new RuntimeException("Deadlock: " + pairs);
+                var unresolved = pairs.stream().map(ElementPair::getSource).map(s -> new CycleNotAllowedException.UnresolvedDependency(s.getId(), s.getParentId())).collect(Collectors.toList());
+                throw new CycleNotAllowedException(out.getModel().getAllElements().stream().map(Element::getId).collect(Collectors.toList()), unresolved);
             }
         }
+        out.validate();
         return out;
     }
 
@@ -66,6 +72,15 @@ public class WorkspaceLoader {
         }
         if (isGroup(source)) {
             return new ElementPair(source, toGroup(model, source));
+        }
+        if (isDeploymentEnvironment(source)) {
+            return new ElementPair(source, toDeploymentEnvironment(model, source));
+        }
+        if (isDeploymentNode(source)) {
+            return new ElementPair(source, toDeploymentNode(model, source));
+        }
+        if (isContainerInstance(source)) {
+            return new ElementPair(source, toContainerInstance(model, source));
         }
         throw new RuntimeException("Can't process " + source);
     }
@@ -98,6 +113,27 @@ public class WorkspaceLoader {
         return element.getType() == ElementType.GROUP;
     }
 
+    protected boolean isDeploymentEnvironment(ElementYaml element) {
+        if (element.getType() == null) {
+            throw new NullPointerException("Element type is null");
+        }
+        return element.getType() == ElementType.DEPLOYMENT_ENVIRONMENT;
+    }
+
+    protected boolean isDeploymentNode(ElementYaml element) {
+        if (element.getType() == null) {
+            throw new NullPointerException("Element type is null");
+        }
+        return element.getType() == ElementType.DEPLOYMENT_NODE;
+    }
+
+    protected boolean isContainerInstance(ElementYaml element) {
+        if (element.getType() == null) {
+            throw new NullPointerException("Element type is null");
+        }
+        return element.getType() == ElementType.CONTAINER_INSTANCE;
+    }
+
     protected Person toPerson(Model model, ElementYaml element) {
         var out = new Person(model);
         applyCommonProperties(element, out);
@@ -118,6 +154,24 @@ public class WorkspaceLoader {
 
     protected Group toGroup(Model model, ElementYaml element) {
         var out = new Group(model);
+        applyCommonProperties(element, out);
+        return out;
+    }
+
+    protected DeploymentEnvironment toDeploymentEnvironment(Model model, ElementYaml element) {
+        var out = new DeploymentEnvironment(model);
+        applyCommonProperties(element, out);
+        return out;
+    }
+
+    protected DeploymentNode toDeploymentNode(Model model, ElementYaml element) {
+        var out = new DeploymentNode(model);
+        applyCommonProperties(element, out);
+        return out;
+    }
+
+    protected ContainerInstance toContainerInstance(Model model, ElementYaml element) {
+        var out = new ContainerInstance(model, element.getContainerId());
         applyCommonProperties(element, out);
         return out;
     }

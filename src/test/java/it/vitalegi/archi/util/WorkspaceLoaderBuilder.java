@@ -69,8 +69,53 @@ public class WorkspaceLoaderBuilder {
         return this;
     }
 
+    public WorkspaceLoaderBuilder deploymentEnvironment(String id) {
+        return deploymentEnvironment(null, id);
+    }
+
+    public WorkspaceLoaderBuilder deploymentEnvironment(String parentId, String id) {
+        return deploymentEnvironment(parentId, id, UUID.randomUUID().toString());
+    }
+
+    public WorkspaceLoaderBuilder deploymentEnvironment(String parentId, String id, String name) {
+        workspace.getElements().add(element(ElementType.DEPLOYMENT_ENVIRONMENT, parentId, id, name, null, null, null));
+        return this;
+    }
+
+    public WorkspaceLoaderBuilder deploymentNode(String id) {
+        return deploymentNode(null, id);
+    }
+
+    public WorkspaceLoaderBuilder deploymentNode(String parentId, String id) {
+        return deploymentNode(parentId, id, UUID.randomUUID().toString());
+    }
+
+    public WorkspaceLoaderBuilder deploymentNode(String parentId, String id, String name) {
+        workspace.getElements().add(element(ElementType.DEPLOYMENT_NODE, parentId, id, name, null, null, null));
+        return this;
+    }
+
+    public WorkspaceLoaderBuilder containerInstance(String id, String containerId) {
+        return containerInstance(null, id, containerId);
+    }
+
+    public WorkspaceLoaderBuilder containerInstance(String parentId, String id, String containerId) {
+        return containerInstance(parentId, id, containerId, UUID.randomUUID().toString());
+    }
+
+    public WorkspaceLoaderBuilder containerInstance(String parentId, String id, String containerId, String name) {
+        workspace.getElements().add(containerInstance(ElementType.CONTAINER_INSTANCE, parentId, id, name, null, null, null, containerId));
+        return this;
+    }
+
     public Workspace build() {
         return workspace;
+    }
+
+    protected ElementYaml containerInstance(ElementType type, String parentId, String id, String name, String description, List<String> tags, Map<String, String> metadata, String containerId) {
+        var out = element(type, parentId, id, name, description, tags, metadata);
+        out.setContainerId(containerId);
+        return out;
     }
 
     protected ElementYaml element(ElementType type, String parentId, String id, String name, String description, List<String> tags, Map<String, String> metadata) {

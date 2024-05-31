@@ -5,8 +5,11 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
@@ -31,11 +34,18 @@ public class Model extends Node {
         if (addPerson(this, child)) {
             return;
         }
+        if (addDeploymentEnvironment(this, child)) {
+            return;
+        }
         throw new ElementNotAllowedException(this, child);
     }
 
     public Element getElementById(String id) {
         return elementIds.get(id);
+    }
+
+    public List<Element> getAllElements() {
+        return new ArrayList<>(elementIds.values());
     }
 
     protected boolean addSoftwareSystem(Node parent, Element child) {
@@ -70,6 +80,30 @@ public class Model extends Node {
         return false;
     }
 
+    protected boolean addDeploymentEnvironment(Node parent, Element child) {
+        if (child instanceof DeploymentEnvironment) {
+            addChild(parent, child);
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean addDeploymentNode(Node parent, Element child) {
+        if (child instanceof DeploymentNode) {
+            addChild(parent, child);
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean addContainerInstancce(Node parent, Element child) {
+        if (child instanceof ContainerInstance) {
+            addChild(parent, child);
+            return true;
+        }
+        return false;
+    }
+
     protected void addChild(Node parent, Element child) {
         log.info("Add {} ({}) to {} ({})", child.getId(), child.getClass().getSimpleName(), parent.getId(), parent.getClass().getSimpleName());
         parent.getElements().add(child);
@@ -79,5 +113,10 @@ public class Model extends Node {
 
     public String toShortString() {
         return getClass().getSimpleName();
+    }
+
+    @Override
+    public void validate() {
+        getAllElements().forEach(Element::validate);
     }
 }

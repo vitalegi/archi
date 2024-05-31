@@ -1,5 +1,6 @@
 package it.vitalegi.archi.workspace.loader;
 
+import it.vitalegi.archi.exception.CycleNotAllowedException;
 import it.vitalegi.archi.exception.ElementNotAllowedException;
 import it.vitalegi.archi.util.WorkspaceLoaderBuilder;
 import it.vitalegi.archi.util.WorkspaceUtil;
@@ -10,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.NoSuchElementException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -135,6 +137,95 @@ public class WorkspaceLoaderTests {
         assertNotNull(g2);
         var g3 = WorkspaceUtil.getGroup(g2.getGroups(), "C");
         assertNotNull(g3);
+    }
+
+    @Test
+    void when_load_given_deploymentEnvironment_thenSucceed() {
+        var loader = new WorkspaceLoader();
+        var config = builder().deploymentEnvironment("A").build();
+        var ws = loader.load(config);
+        var a = ws.getModel().findDeploymentEnvironmentById("A");
+        assertNotNull(a);
+    }
+
+
+    @Test
+    void when_load_given_deploymentNodeOnDeploymentEnvironment_thenSucceed() {
+        var loader = new WorkspaceLoader();
+        var config = builder().deploymentEnvironment("A").deploymentNode("A", "B").build();
+        var ws = loader.load(config);
+        var a = ws.getModel().findDeploymentEnvironmentById("A");
+        assertNotNull(a);
+        var b = a.findDeploymentNodeById("B");
+        assertNotNull(b);
+    }
+
+    @Test
+    void when_load_given_deploymentNodeOnRoot_thenFail() {
+        var loader = new WorkspaceLoader();
+        var config = builder().deploymentNode("A").build();
+        var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
+        assertEquals("Can't add DeploymentNode (A) to Model", e.getMessage());
+    }
+
+    @Test
+    void when_load_given_containerInstanceOnRoot_thenFail() {
+        var loader = new WorkspaceLoader();
+        var config = builder().containerInstance("A", "c").build();
+        var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
+        assertEquals("Can't add ContainerInstance (A) to Model", e.getMessage());
+    }
+
+    @Test
+    void when_load_given_containerInstanceOnDeploymentEnvironment_thenFail() {
+        var loader = new WorkspaceLoader();
+        var config = builder().deploymentEnvironment("A").containerInstance("A", "B", "c").build();
+        var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
+        assertEquals("Can't add ContainerInstance (B) to DeploymentEnvironment (A)", e.getMessage());
+    }
+
+    @Test
+    void when_load_given_containerOnContainerInstance_thenSucceed() {
+        var loader = new WorkspaceLoader();
+        var config = builder().deploymentEnvironment("A").deploymentNode("A", "B").containerInstance("B", "C", "c").softwareSystem("SS").container("SS", "c").build();
+        var ws = loader.load(config);
+        var a = ws.getModel().findDeploymentEnvironmentById("A");
+        assertNotNull(a);
+        var b = a.findDeploymentNodeById("B");
+        assertNotNull(b);
+        var c = b.findContainerInstanceById("C");
+        assertNotNull(c);
+        assertEquals("c", c.getContainerId());
+    }
+
+    @Test
+    void when_load_given_containerInstanceWithNoContainer_thenFail() {
+        var loader = new WorkspaceLoader();
+        var config = builder().deploymentEnvironment("A").deploymentNode("A", "B").containerInstance("B", "C", "").build();
+        var e = Assertions.assertThrows(IllegalArgumentException.class, () -> loader.load(config));
+        assertEquals("containerId is missing on ContainerInstance (C)", e.getMessage());
+    }
+
+    @Test
+    void when_load_given_containerInstanceWithMissingContainer_thenFail() {
+        var loader = new WorkspaceLoader();
+        var config = builder().deploymentEnvironment("A").deploymentNode("A", "B").containerInstance("B", "C", "c").build();
+        var e = Assertions.assertThrows(NoSuchElementException.class, () -> loader.load(config));
+        assertEquals("Container c doesn't exist. Dependency is unsatisfied for ContainerInstance (C)", e.getMessage());
+    }
+    @Test
+    void when_load_given_containerInstanceWithSomethingNotAContainer_thenFail() {
+        var loader = new WorkspaceLoader();
+        var config = builder().deploymentEnvironment("A").deploymentNode("A", "B").softwareSystem("ss").containerInstance("B", "C", "ss").build();
+        var e = Assertions.assertThrows(IllegalArgumentException.class, () -> loader.load(config));
+        assertEquals("Dependency is unsatisfied for ContainerInstance (C). Expected a Container; Actual: SoftwareSystem (ss)", e.getMessage());
+    }
+    @Test
+    void when_load_given_cycle_thenFail() {
+        var loader = new WorkspaceLoader();
+        var config = builder().group("A", "B").group("B", "A").group("C").group("D").group(null).group("A", "E").group("A", null).build();
+        var e = Assertions.assertThrows(CycleNotAllowedException.class, () -> loader.load(config));
+        assertEquals("Unresolved dependencies. Known: C, D, null. Unresolved: A: B; B: A; E: A; null: A", e.getMessage());
     }
 
     protected WorkspaceLoaderBuilder builder() {

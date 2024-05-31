@@ -9,4 +9,8 @@ public class Workspace {
     public Workspace() {
         model = new Model();
     }
+
+    public void validate() {
+        model.validate();
+    }
 }
