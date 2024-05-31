@@ -14,4 +14,5 @@ public class ElementYaml {
     String description;
     List<String> tags;
     Map<String, String> metadata;
+    String containerId;
 }

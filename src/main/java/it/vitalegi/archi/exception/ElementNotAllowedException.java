@@ -7,21 +7,24 @@ public class ElementNotAllowedException extends Error {
     Element child;
 
     public ElementNotAllowedException(Element parent, Element child) {
-        super("Can't add " + child.toShortString() + " to " + parent.toShortString());
+        super(format(parent, child));
         this.parent = parent;
         this.child = child;
     }
 
     public ElementNotAllowedException(String message, Element parent, Element child) {
-        super(message);
+        super(format(parent, child) + ". " + message);
         this.parent = parent;
         this.child = child;
     }
 
     public ElementNotAllowedException(String message, Throwable cause, Element parent, Element child) {
-        super(message, cause);
+        super(format(parent, child) + ". " + message, cause);
         this.parent = parent;
         this.child = child;
     }
 
+    protected static String format(Element parent, Element child) {
+        return "Can't add " + child.toShortString() + " to " + parent.toShortString();
+    }
 }

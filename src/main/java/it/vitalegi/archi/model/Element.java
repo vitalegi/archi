@@ -29,21 +29,19 @@ public abstract class Element {
     List<String> tags;
     Map<String, String> metadata;
 
-    public static boolean sameId(String id1, String id2) {
-        return Objects.equals(id1, id2);
-    }
-
     public Element(Model model) {
         tags = new ArrayList<>();
         metadata = new HashMap<>();
         this.model = model;
     }
 
+    public static boolean sameId(String id1, String id2) {
+        return Objects.equals(id1, id2);
+    }
+
     public static String collectIds(List<? extends Element> elements) {
         return elements.stream().map(Element::getId).collect(Collectors.joining(", "));
     }
-
-    public abstract Element findChildById(String id);
 
     public abstract void addChild(Element child);
 
@@ -63,5 +61,8 @@ public abstract class Element {
             curr = curr.getParent();
         }
         return elements;
+    }
+
+    public void validate() {
     }
 }

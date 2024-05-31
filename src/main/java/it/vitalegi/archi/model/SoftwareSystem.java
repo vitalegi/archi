@@ -1,7 +1,6 @@
 package it.vitalegi.archi.model;
 
 import it.vitalegi.archi.exception.ElementNotAllowedException;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;

@@ -19,10 +19,6 @@ public abstract class Node extends Element {
         elements = new ArrayList<>();
     }
 
-    public Element findChildById(String id) {
-        return elements.stream().filter(e -> e.sameId(id)).findFirst().orElse(null);
-    }
-
     public Container findContainerById(String id) {
         return WorkspaceUtil.findContainer(elements, id);
     }
@@ -54,5 +50,30 @@ public abstract class Node extends Element {
 
     public List<Person> getPeople() {
         return WorkspaceUtil.getPeople(elements);
+    }
+
+    public DeploymentEnvironment findDeploymentEnvironmentById(String id) {
+        return WorkspaceUtil.findDeploymentEnvironment(elements, id);
+    }
+
+    public List<DeploymentEnvironment> getDeploymentEnvironments() {
+        return WorkspaceUtil.getDeploymentEnvironments(elements);
+    }
+
+    public DeploymentNode findDeploymentNodeById(String id) {
+        return WorkspaceUtil.findDeploymentNode(elements, id);
+    }
+
+    public List<DeploymentNode> getDeploymentNodes() {
+        return WorkspaceUtil.getDeploymentNodes(elements);
+    }
+
+
+    public ContainerInstance findContainerInstanceById(String id) {
+        return WorkspaceUtil.findContainerInstance(elements, id);
+    }
+
+    public List<ContainerInstance> getContainerInstances() {
+        return WorkspaceUtil.getContainerInstances(elements);
     }
 }
