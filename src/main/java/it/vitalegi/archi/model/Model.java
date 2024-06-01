@@ -108,7 +108,7 @@ public class Model extends Node {
     }
 
     protected void addChild(Node parent, Element child) {
-        log.info("Add {} to {}", child.toShortString(), parent.toShortString());
+        log.debug("Add {} to {}", child.toShortString(), parent.toShortString());
         if (child.getId() != null && elementIds.containsKey(child.getId())) {
             throw new NonUniqueIdException(child.getId());
         }
