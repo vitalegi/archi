@@ -32,15 +32,21 @@ public class RelationManager {
     public void checkAllowed(Relation relation) {
         var from = relation.getFrom();
         var to = relation.getTo();
+        if (from == null) {
+            throw new NullPointerException("Can't process relation, from is null. " + relation);
+        }
+        if (to == null) {
+            throw new NullPointerException("Can't process relation, to is null. " + relation);
+        }
         if (from.getElementType() == null) {
-            throw new NullPointerException(from.toShortString() + " doesn't have ElementType, can't be connected");
+            throw new NullPointerException(from.toShortString() + " doesn't have ElementType, can't be connected. " + relation);
         }
         if (to.getElementType() == null) {
-            throw new NullPointerException(to.toShortString() + " doesn't have ElementType, can't be connected");
+            throw new NullPointerException(to.toShortString() + " doesn't have ElementType, can't be connected. " + relation);
         }
         var allowed = FROM_TO_ALLOWED.get(from.getElementType());
         if (allowed == null) {
-            throw new RuntimeException("Missing configuration for " + from.getElementType());
+            throw new RuntimeException("Missing configuration for " + from.getElementType() + ", " + relation);
         }
         if (!allowed.contains(to.getElementType())) {
             throw new RelationNotAllowedException(relation);

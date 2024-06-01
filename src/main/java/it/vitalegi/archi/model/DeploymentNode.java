@@ -27,6 +27,9 @@ public class DeploymentNode extends Node {
         if (getModel().addSoftwareSystemInstance(this, child)) {
             return;
         }
+        if (getModel().addDeploymentNode(this, child)) {
+            return;
+        }
         throw new ElementNotAllowedException(this, child);
     }
 

@@ -3,7 +3,6 @@ package it.vitalegi.archi.model;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -14,17 +13,17 @@ import java.util.Map;
 @Slf4j
 @Getter
 @Setter
-@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 public class Relation extends Entity {
-    @ToString.Exclude
     @EqualsAndHashCode.Exclude
     Element from;
-    @ToString.Exclude
     @EqualsAndHashCode.Exclude
     Element to;
+    @EqualsAndHashCode.Exclude
     String description;
+    @EqualsAndHashCode.Exclude
     List<String> tags;
+    @EqualsAndHashCode.Exclude
     Map<String, String> metadata;
 
     public Relation(Model model) {
@@ -35,5 +34,16 @@ public class Relation extends Entity {
 
     public ElementType getElementType() {
         return ElementType.RELATION;
+    }
+
+    @Override
+    public String toString() {
+        return "Relation{" +
+                "from=" + (from != null ? from.toShortString() : "null") +
+                ", to=" + (to != null ? to.toShortString() : "null") +
+                ", description='" + description + '\'' +
+                ", tags=" + tags +
+                ", metadata=" + metadata +
+                '}';
     }
 }

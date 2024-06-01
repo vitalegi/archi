@@ -6,12 +6,12 @@ public class RelationNotAllowedException extends Error {
     Relation relation;
 
     public RelationNotAllowedException(Relation relation) {
-        super(format(relation));
+        super(format(relation) + ", " + relation);
         this.relation = relation;
     }
 
     public RelationNotAllowedException(String message, Relation relation) {
-        super(format(relation) + ": " + message);
+        super(format(relation) + ": " + message + ", " + relation);
         this.relation = relation;
     }
 
