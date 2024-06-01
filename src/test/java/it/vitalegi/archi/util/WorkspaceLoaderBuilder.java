@@ -1,11 +1,10 @@
 package it.vitalegi.archi.util;
 
 import it.vitalegi.archi.workspace.loader.model.ElementRaw;
-import it.vitalegi.archi.workspace.loader.model.ElementType;
+import it.vitalegi.archi.model.ElementType;
 import it.vitalegi.archi.workspace.loader.model.RelationRaw;
 import it.vitalegi.archi.workspace.loader.model.Workspace;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -15,7 +14,6 @@ public class WorkspaceLoaderBuilder {
 
     public WorkspaceLoaderBuilder() {
         workspace = new Workspace();
-        workspace.setElements(new ArrayList<>());
     }
 
     public WorkspaceLoaderBuilder person(String id) {

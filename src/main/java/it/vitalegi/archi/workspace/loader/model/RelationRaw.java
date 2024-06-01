@@ -7,6 +7,7 @@ import java.util.Map;
 
 @Data
 public class RelationRaw {
+    String id;
     String from;
     String to;
     String description;

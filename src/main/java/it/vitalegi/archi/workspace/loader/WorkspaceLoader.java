@@ -1,5 +1,6 @@
 package it.vitalegi.archi.workspace.loader;
 
+import it.vitalegi.archi.workspace.RelationManager;
 import it.vitalegi.archi.exception.CycleNotAllowedException;
 import it.vitalegi.archi.model.Container;
 import it.vitalegi.archi.model.ContainerInstance;
@@ -10,13 +11,15 @@ import it.vitalegi.archi.model.Group;
 import it.vitalegi.archi.model.InfrastructureNode;
 import it.vitalegi.archi.model.Model;
 import it.vitalegi.archi.model.Person;
+import it.vitalegi.archi.model.Relation;
 import it.vitalegi.archi.model.SoftwareSystem;
 import it.vitalegi.archi.model.SoftwareSystemInstance;
 import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.util.StringUtil;
 import it.vitalegi.archi.util.WorkspaceUtil;
-import it.vitalegi.archi.workspace.loader.model.ElementType;
+import it.vitalegi.archi.model.ElementType;
 import it.vitalegi.archi.workspace.loader.model.ElementRaw;
+import it.vitalegi.archi.workspace.loader.model.RelationRaw;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -27,13 +30,15 @@ import java.util.stream.Collectors;
 @Slf4j
 public class WorkspaceLoader {
     public Workspace load(it.vitalegi.archi.workspace.loader.model.Workspace in) {
-        Workspace out = new Workspace();
-        var pairs = new ArrayList<>(in.getElements().stream().map(e -> toPair(out.getModel(), e)).collect(Collectors.toList()));
+        Workspace workspace = new Workspace();
+        var model = workspace.getModel();
+        log.debug("Load model");
+        var pairs = new ArrayList<>(in.getElements().stream().map(e -> toPair(model, e)).collect(Collectors.toList()));
         while (!pairs.isEmpty()) {
             log.debug("New cycle");
             boolean anyProcessed = false;
             for (var i = 0; i < pairs.size(); i++) {
-                if (apply(out, pairs.get(i))) {
+                if (apply(workspace, pairs.get(i))) {
                     pairs.remove(i);
                     i--;
                     anyProcessed = true;
@@ -41,11 +46,13 @@ public class WorkspaceLoader {
             }
             if (!anyProcessed) {
                 var unresolved = pairs.stream().map(ElementPair::getSource).map(s -> new CycleNotAllowedException.UnresolvedDependency(s.getId(), s.getParentId())).collect(Collectors.toList());
-                throw new CycleNotAllowedException(out.getModel().getAllElements().stream().map(Element::getId).collect(Collectors.toList()), unresolved);
+                throw new CycleNotAllowedException(model.getAllElements().stream().map(Element::getId).collect(Collectors.toList()), unresolved);
             }
         }
-        out.validate();
-        return out;
+        log.debug("Load relations");
+        in.getRelations().stream().map(r -> toRelation(r, model)).forEach(model::addRelation);
+        workspace.validate();
+        return workspace;
     }
 
     protected boolean apply(Workspace out, ElementPair pair) {
@@ -220,6 +227,18 @@ public class WorkspaceLoader {
             throw new NullPointerException("Element type is null");
         }
         return element.getType() == ElementType.INFRASTRUCTURE_NODE;
+    }
+
+    protected Relation toRelation(RelationRaw in, Model model) {
+        var out = new Relation(model);
+        out.setId(in.getId());
+        out.setFrom(model.getElementById(in.getFrom()));
+        out.setTo(model.getElementById(in.getTo()));
+        out.setDescription(in.getDescription());
+        out.setTags(in.getTags());
+        out.setMetadata(in.getMetadata());
+        out.setUniqueId(WorkspaceUtil.createUniqueId(out));
+        return out;
     }
 
     @AllArgsConstructor

@@ -3,7 +3,6 @@ package it.vitalegi.archi.model;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -15,7 +14,6 @@ import java.util.Objects;
 @Slf4j
 @Getter
 @Setter
-@ToString(callSuper = true)
 public abstract class Element extends Entity {
     @Setter(AccessLevel.PROTECTED)
     @Getter
@@ -45,5 +43,16 @@ public abstract class Element extends Entity {
             curr = curr.getParent();
         }
         return elements;
+    }
+
+    @Override
+    public String toString() {
+        return "Element{" +
+                "parent=" + (parent != null ? parent.toShortString() : "null") +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", tags=" + tags +
+                ", metadata=" + metadata +
+                '}';
     }
 }

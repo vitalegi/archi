@@ -3,7 +3,9 @@ package it.vitalegi.archi.model;
 import it.vitalegi.archi.exception.ElementNotAllowedException;
 import it.vitalegi.archi.exception.NonUniqueIdException;
 import it.vitalegi.archi.util.WorkspaceUtil;
+import it.vitalegi.archi.workspace.RelationManager;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
@@ -18,12 +20,16 @@ import java.util.Map;
 public class Model extends Node {
 
     Map<String, Element> elementMap;
-    Map<String, Relation> relationMap;
+    @Getter
+    List<Relation> relations;
+    RelationManager relationManager;
 
     public Model() {
         super(null);
         model = this;
         elementMap = new HashMap<>();
+        relations = new ArrayList<>();
+        relationManager = new RelationManager();
     }
 
     public void addChild(Element child) {
@@ -42,6 +48,11 @@ public class Model extends Node {
         throw new ElementNotAllowedException(this, child);
     }
 
+    public void addRelation(Relation relation) {
+        relationManager.checkAllowed(relation);
+        relations.add(relation);
+    }
+
     public Element getElementById(String id) {
         return elementMap.get(id);
     }
@@ -50,12 +61,8 @@ public class Model extends Node {
         return new ArrayList<>(elementMap.values());
     }
 
-    public Relation getRelationById(String id) {
-        return relationMap.get(id);
-    }
-
-    public List<Relation> getAllRelations() {
-        return new ArrayList<>(relationMap.values());
+    public Relation findRelationById(String id) {
+        return relations.stream().filter(r -> Entity.equals(r.getId(), id)).findFirst().orElse(null);
     }
 
     protected boolean addSoftwareSystem(Node parent, Element child) {
@@ -147,5 +154,9 @@ public class Model extends Node {
     @Override
     public void validate() {
         getAllElements().forEach(Element::validate);
+    }
+
+    public ElementType getElementType() {
+        return null;
     }
 }

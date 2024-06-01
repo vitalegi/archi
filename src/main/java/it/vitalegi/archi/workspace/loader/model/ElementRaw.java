@@ -1,5 +1,6 @@
 package it.vitalegi.archi.workspace.loader.model;
 
+import it.vitalegi.archi.model.ElementType;
 import lombok.Data;
 
 import java.util.List;

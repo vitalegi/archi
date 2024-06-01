@@ -15,4 +15,7 @@ public class Container extends Node {
         throw new ElementNotAllowedException(this, child);
     }
 
+    public ElementType getElementType() {
+        return ElementType.CONTAINER;
+    }
 }

@@ -1,5 +1,6 @@
 package it.vitalegi.archi.model;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -14,8 +15,13 @@ import java.util.Map;
 @Getter
 @Setter
 @ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 public class Relation extends Entity {
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     Element from;
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     Element to;
     String description;
     List<String> tags;
@@ -25,5 +31,9 @@ public class Relation extends Entity {
         super(model);
         tags = new ArrayList<>();
         metadata = new HashMap<>();
+    }
+
+    public ElementType getElementType() {
+        return ElementType.RELATION;
     }
 }

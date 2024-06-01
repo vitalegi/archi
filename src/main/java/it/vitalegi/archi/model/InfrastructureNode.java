@@ -17,4 +17,8 @@ public class InfrastructureNode extends Node {
     public void addChild(Element child) {
         throw new ElementNotAllowedException(this, child);
     }
+
+    public ElementType getElementType() {
+        return ElementType.INFRASTRUCTURE_NODE;
+    }
 }

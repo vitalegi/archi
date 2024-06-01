@@ -33,4 +33,8 @@ public class Group extends Node {
         }
         throw new ElementNotAllowedException(this, child);
     }
+
+    public ElementType getElementType() {
+        return ElementType.GROUP;
+    }
 }
