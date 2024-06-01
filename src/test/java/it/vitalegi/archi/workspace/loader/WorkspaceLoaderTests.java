@@ -2,12 +2,15 @@ package it.vitalegi.archi.workspace.loader;
 
 import it.vitalegi.archi.exception.CycleNotAllowedException;
 import it.vitalegi.archi.exception.ElementNotAllowedException;
+import it.vitalegi.archi.exception.ElementNotFoundException;
 import it.vitalegi.archi.exception.NonUniqueIdException;
 import it.vitalegi.archi.exception.RelationNotAllowedException;
+import it.vitalegi.archi.model.view.DeploymentView;
 import it.vitalegi.archi.util.WorkspaceLoaderBuilder;
 import it.vitalegi.archi.util.WorkspaceUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +27,7 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 public class WorkspaceLoaderTests {
@@ -654,6 +658,72 @@ public class WorkspaceLoaderTests {
                 } else {
                     Assertions.assertThrows(RelationNotAllowedException.class, () -> loader.load(builder.build()));
                 }
+            }
+        }
+    }
+
+
+    @DisplayName("When load view")
+    @Nested
+    class ViewTests {
+        @Test
+        void given_noView_thenEmptyList() {
+            var loader = new WorkspaceLoader();
+            var config = builder().build();
+            var ws = loader.load(config);
+            assertEquals(0, ws.getViews().getAll().size());
+        }
+
+        @DisplayName("On DeploymentView")
+        @Nested
+        class DeploymentViewTests {
+            @Test
+            void given_correctConfiguration_thenSucceed() {
+                var loader = new WorkspaceLoader();
+                var config = builder().deploymentEnvironment("prod").deploymentView("*", "prod", "123").build();
+                var ws = loader.load(config);
+                var view = ws.getViews().getByName("123");
+                assertNotNull(view);
+                assertEquals(view.getClass(), DeploymentView.class);
+                var deploymentView = (DeploymentView) view;
+                assertEquals("prod", deploymentView.getEnvironment());
+                assertEquals("*", deploymentView.getScope());
+            }
+
+            @Test
+            void when_scopeIsSoftwareSystem_given_SoftwareSystemIsExists_thenSucceed() {
+                var loader = new WorkspaceLoader();
+                var config = builder() //
+                        .deploymentEnvironment("prod") //
+                        .deploymentView("A", "prod", "123") //
+                        .softwareSystem("A") //
+                        .build();
+
+                var ws = loader.load(config);
+                var view = ws.getViews().getByName("123");
+                assertNotNull(view);
+                assertEquals(view.getClass(), DeploymentView.class);
+                var deploymentView = (DeploymentView) view;
+                assertEquals("prod", deploymentView.getEnvironment());
+                assertEquals("A", deploymentView.getScope());
+            }
+            @Test
+            void given_missingDeploymentEnvironment_thenFail() {
+                var loader = new WorkspaceLoader();
+                var config = builder().deploymentEnvironment("qa").deploymentView(null, "prod", "123").build();
+                var e = Assertions.assertThrows(ElementNotFoundException.class, () -> loader.load(config));
+                assertEquals("Can't find prod", e.getMessage());
+            }
+
+            @Test
+            void when_scopeIsSoftwareSystem_given_SoftwareSystemIsMissing_thenFail() {
+                var loader = new WorkspaceLoader();
+                var config = builder() //
+                        .deploymentEnvironment("qa") //
+                        .deploymentView("ss", "prod", "123") //
+                        .build();
+                var e = Assertions.assertThrows(ElementNotFoundException.class, () -> loader.load(config));
+                assertEquals("Can't find ss", e.getMessage());
             }
         }
     }

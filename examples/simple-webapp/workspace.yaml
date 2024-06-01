@@ -112,3 +112,9 @@ relations:
   - from: reader_frontend
     to: aws_s3_bucket_reader
     description: Download books
+
+views:
+  - type: DEPLOYMENT
+    scope: '*'
+    environment: live
+    name: diagram1

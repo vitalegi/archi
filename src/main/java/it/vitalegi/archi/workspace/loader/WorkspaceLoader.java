@@ -52,9 +52,13 @@ public class WorkspaceLoader {
             }
             log.debug("Load relations");
             in.getRelations().stream().map(r -> toRelation(r, model)).forEach(model::addRelation);
+
+            log.debug("Load views");
+            in.getViews().forEach(view -> workspace.getViews().add(view));
+
             workspace.validate();
             return workspace;
-        }  catch (Throwable e) {
+        } catch (Throwable e) {
             model.getAllElements().forEach(element -> log.info("> {}: {}", element.toShortString(), element));
             throw e;
         }
