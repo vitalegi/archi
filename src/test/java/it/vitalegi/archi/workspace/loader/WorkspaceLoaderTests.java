@@ -358,7 +358,88 @@ public class WorkspaceLoaderTests {
     }
 
 
+    @Test
+    void when_load_given_softwareSystemInstanceOnRoot_thenFail() {
+        var loader = new WorkspaceLoader();
+        var config = builder().softwareSystemInstance("A", "c").build();
+        var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
+        assertEquals("Can't add SoftwareSystemInstance (A) to Model", e.getMessage());
     }
+
+    @Test
+    void when_load_given_softwareSystemInstanceOnDeploymentEnvironment_thenFail() {
+        var loader = new WorkspaceLoader();
+        var config = builder() //
+                .deploymentEnvironment("A") //
+                .softwareSystemInstance("A", "B", "c") //
+                .build();
+
+        var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
+        assertEquals("Can't add SoftwareSystemInstance (B) to DeploymentEnvironment (A)", e.getMessage());
+    }
+
+    @Test
+    void when_load_given_SoftwareSystemOnSoftwareSystemInstance_thenSucceed() {
+        var loader = new WorkspaceLoader();
+        var config = builder() //
+                .deploymentEnvironment("A") //
+                .deploymentNode("A", "B") //
+                .softwareSystemInstance("B", "C", "SS") //
+                .softwareSystem("SS") //
+                .container("SS", "c") //
+                .build();
+
+        var ws = loader.load(config);
+        var a = ws.getModel().findDeploymentEnvironmentById("A");
+        assertNotNull(a);
+        var b = a.findDeploymentNodeById("B");
+        assertNotNull(b);
+        var c = b.findSoftwareSystemInstanceById("C");
+        assertNotNull(c);
+        assertEquals("SS", c.getSoftwareSystemId());
+    }
+
+    @Test
+    void when_load_given_softwareSystemInstanceWithNoSoftwareSystem_thenFail() {
+        var loader = new WorkspaceLoader();
+        var config = builder() //
+                .deploymentEnvironment("A") //
+                .deploymentNode("A", "B") //
+                .softwareSystemInstance("B", "C", null) //
+                .build();
+
+        var e = Assertions.assertThrows(IllegalArgumentException.class, () -> loader.load(config));
+        assertEquals("softwareSystemId is missing on SoftwareSystemInstance (C)", e.getMessage());
+    }
+
+    @Test
+    void when_load_given_softwareSystemInstanceWithMissingSoftwareSystem_thenFail() {
+        var loader = new WorkspaceLoader();
+        var config = builder() //
+                .deploymentEnvironment("A") //
+                .deploymentNode("A", "B") //
+                .softwareSystemInstance("B", "C", "c") //
+                .build();
+
+        var e = Assertions.assertThrows(NoSuchElementException.class, () -> loader.load(config));
+        assertEquals("SoftwareSystem c doesn't exist. Dependency is unsatisfied for SoftwareSystemInstance (C)", e.getMessage());
+    }
+
+    @Test
+    void when_load_given_softwareSystemInstanceWithSomethingNotASoftwareSystem_thenFail() {
+        var loader = new WorkspaceLoader();
+        var config = builder() //
+                .deploymentEnvironment("A") //
+                .deploymentNode("A", "B") //
+                .softwareSystem("ss") //
+                .group("ss", "g")
+                .softwareSystemInstance("B", "C", "g") //
+                .build();
+
+        var e = Assertions.assertThrows(IllegalArgumentException.class, () -> loader.load(config));
+        assertEquals("Dependency is unsatisfied for SoftwareSystemInstance (C). Expected a SoftwareSystem; Actual: Group (g)", e.getMessage());
+    }
+
 
     protected WorkspaceLoaderBuilder builder() {
         return new WorkspaceLoaderBuilder();

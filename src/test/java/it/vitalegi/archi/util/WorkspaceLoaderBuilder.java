@@ -131,6 +131,26 @@ public class WorkspaceLoaderBuilder {
         return out;
     }
 
+    public WorkspaceLoaderBuilder softwareSystemInstance(String id, String softwareSystemId) {
+        return softwareSystemInstance(null, id, softwareSystemId);
+    }
+
+    public WorkspaceLoaderBuilder softwareSystemInstance(String parentId, String id, String softwareSystemId) {
+        return softwareSystemInstance(parentId, id, softwareSystemId, UUID.randomUUID().toString());
+    }
+
+    public WorkspaceLoaderBuilder softwareSystemInstance(String parentId, String id, String softwareSystemId, String name) {
+        workspace.getElements().add(softwareSystemInstance(ElementType.SOFTWARE_SYSTEM_INSTANCE, parentId, id, name, null, null, null, softwareSystemId));
+        return this;
+    }
+
+
+    protected ElementYaml softwareSystemInstance(ElementType type, String parentId, String id, String name, String description, List<String> tags, Map<String, String> metadata, String softwareSystemId) {
+        var out = element(type, parentId, id, name, description, tags, metadata);
+        out.setSoftwareSystemId(softwareSystemId);
+        return out;
+    }
+
     protected ElementYaml element(ElementType type, String parentId, String id, String name, String description, List<String> tags, Map<String, String> metadata) {
         var out = new ElementYaml();
         out.setType(type);

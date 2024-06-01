@@ -10,6 +10,7 @@ import it.vitalegi.archi.model.InfrastructureNode;
 import it.vitalegi.archi.model.Model;
 import it.vitalegi.archi.model.Person;
 import it.vitalegi.archi.model.SoftwareSystem;
+import it.vitalegi.archi.model.SoftwareSystemInstance;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -176,6 +177,25 @@ public class WorkspaceUtil {
         throw new IllegalArgumentException("Element with id " + id + " is not a ContainerInstance: " + element);
     }
 
+    public static SoftwareSystemInstance getSoftwareSystemInstance(List<? extends Element> elements, String id) {
+        var element = findSoftwareSystemInstance(elements, id);
+        if (element == null) {
+            throw new NoSuchElementException("No element with id " + id + ". Available IDs: " + Element.collectIds(elements));
+        }
+        return element;
+    }
+
+    public static SoftwareSystemInstance findSoftwareSystemInstance(List<? extends Element> elements, String id) {
+        var element = findElementById(elements, id);
+        if (element == null) {
+            return null;
+        }
+        if (isSoftwareSystemInstance(element)) {
+            return (SoftwareSystemInstance) element;
+        }
+        throw new IllegalArgumentException("Element with id " + id + " is not a SoftwareSystemInstance: " + element);
+    }
+
     public static InfrastructureNode getInfrastructureNode(List<? extends Element> elements, String id) {
         var element = findInfrastructureNode(elements, id);
         if (element == null) {
@@ -209,6 +229,10 @@ public class WorkspaceUtil {
 
     public static List<ContainerInstance> getContainerInstances(List<? extends Element> elements) {
         return elements.stream().filter(WorkspaceUtil::isContainerInstance).map(e -> ((ContainerInstance) e)).collect(Collectors.toList());
+    }
+
+    public static List<SoftwareSystemInstance> getSoftwareSystemInstances(List<? extends Element> elements) {
+        return elements.stream().filter(WorkspaceUtil::isSoftwareSystemInstance).map(e -> ((SoftwareSystemInstance) e)).collect(Collectors.toList());
     }
 
     public static List<InfrastructureNode> getInfrastructureNodes(List<? extends Element> elements) {
@@ -245,6 +269,10 @@ public class WorkspaceUtil {
 
     public static boolean isContainerInstance(Element element) {
         return element instanceof ContainerInstance;
+    }
+
+    public static boolean isSoftwareSystemInstance(Element element) {
+        return element instanceof SoftwareSystemInstance;
     }
 
     public static boolean isInfrastructureNode(Element element) {

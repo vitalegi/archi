@@ -15,4 +15,5 @@ public class ElementYaml {
     List<String> tags;
     Map<String, String> metadata;
     String containerId;
+    String softwareSystemId;
 }

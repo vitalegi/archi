@@ -11,6 +11,7 @@ import it.vitalegi.archi.model.InfrastructureNode;
 import it.vitalegi.archi.model.Model;
 import it.vitalegi.archi.model.Person;
 import it.vitalegi.archi.model.SoftwareSystem;
+import it.vitalegi.archi.model.SoftwareSystemInstance;
 import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.util.StringUtil;
 import it.vitalegi.archi.util.WorkspaceUtil;
@@ -84,6 +85,9 @@ public class WorkspaceLoader {
         if (isContainerInstance(source)) {
             return new ElementPair(source, toContainerInstance(model, source));
         }
+        if (isSoftwareSystemInstance(source)) {
+            return new ElementPair(source, toSoftwareSystemInstance(model, source));
+        }
         if (isInfrastructureNode(source)) {
             return new ElementPair(source, toInfrastructureNode(model, source));
         }
@@ -139,6 +143,13 @@ public class WorkspaceLoader {
         return element.getType() == ElementType.CONTAINER_INSTANCE;
     }
 
+    protected boolean isSoftwareSystemInstance(ElementYaml element) {
+        if (element.getType() == null) {
+            throw new NullPointerException("Element type is null");
+        }
+        return element.getType() == ElementType.SOFTWARE_SYSTEM_INSTANCE;
+    }
+
     protected Person toPerson(Model model, ElementYaml element) {
         var out = new Person(model);
         applyCommonProperties(element, out);
@@ -180,6 +191,13 @@ public class WorkspaceLoader {
         applyCommonProperties(element, out);
         return out;
     }
+
+    protected SoftwareSystemInstance toSoftwareSystemInstance(Model model, ElementYaml element) {
+        var out = new SoftwareSystemInstance(model, element.getSoftwareSystemId());
+        applyCommonProperties(element, out);
+        return out;
+    }
+
 
     protected InfrastructureNode toInfrastructureNode(Model model, ElementYaml element) {
         var out = new InfrastructureNode(model);

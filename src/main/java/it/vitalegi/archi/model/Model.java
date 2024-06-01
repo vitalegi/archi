@@ -106,7 +106,15 @@ public class Model extends Node {
     }
 
     protected boolean addContainerInstancce(Node parent, Element child) {
-        if (child instanceof ContainerInstance) {
+        if (WorkspaceUtil.isContainerInstance(child)) {
+            addChild(parent, child);
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean addSoftwareSystemInstance(Node parent, Element child) {
+        if (WorkspaceUtil.isSoftwareSystemInstance(child)) {
             addChild(parent, child);
             return true;
         }
