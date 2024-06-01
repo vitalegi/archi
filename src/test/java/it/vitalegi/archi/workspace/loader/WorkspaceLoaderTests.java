@@ -6,13 +6,19 @@ import it.vitalegi.archi.exception.NonUniqueIdException;
 import it.vitalegi.archi.util.WorkspaceLoaderBuilder;
 import it.vitalegi.archi.util.WorkspaceUtil;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.NoSuchElementException;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -20,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(MockitoExtension.class)
 public class WorkspaceLoaderTests {
+
     @Test
     void when_load_given_validWorkspace_thenLoads() throws IOException {
         FileSystemWorkspaceLoader loader = new FileSystemWorkspaceLoader();
@@ -50,228 +57,6 @@ public class WorkspaceLoaderTests {
         assertNotNull(workspace.getModel().findSoftwareSystemById("C").findGroupById("group2").findGroupById("group3"));
     }
 
-    @Test
-    void when_load_given_personOnRoot_thenSucceed() {
-        var loader = new WorkspaceLoader();
-        var ws = loader.load(builder().person("A").build());
-        assertEquals("A", ws.getModel().findPersonById("A").getId());
-    }
-
-    @Test
-    void when_load_given_softwareSystemOnRoot_thenSucceed() {
-        var loader = new WorkspaceLoader();
-        var ws = loader.load(builder().softwareSystem("A").build());
-        assertEquals("A", ws.getModel().findSoftwareSystemById("A").getId());
-    }
-
-    @Test
-    void when_load_given_groupOnRoot_thenSucceed() {
-        var loader = new WorkspaceLoader();
-        var ws = loader.load(builder().group("A").build());
-        assertEquals("A", ws.getModel().findGroupById("A").getId());
-    }
-
-    @Test
-    void when_load_given_containerOnRoot_thenFail() {
-        var loader = new WorkspaceLoader();
-        var config = builder().container("A").build();
-        var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
-        assertEquals("Can't add Container (A) to Model", e.getMessage());
-    }
-
-    @Test
-    void when_load_given_childOnPerson_thenFail() {
-        var loader = new WorkspaceLoader();
-        var config = builder().person("A").person("A", "B").build();
-        var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
-        assertEquals("Can't add Person (B) to Person (A)", e.getMessage());
-    }
-
-    @Test
-    void when_load_given_softwareSystemChildOfGroup_thenSucceed() {
-        var loader = new WorkspaceLoader();
-        var ws = loader.load(builder() //
-                .group("A") //
-                .softwareSystem("A", "B") //
-                .build());
-
-        assertNotNull(ws.getModel().findGroupById("A"));
-        assertFalse(ws.getModel().findGroupById("A").getSoftwareSystems().isEmpty());
-        assertEquals("B", ws.getModel().findGroupById("A").getSoftwareSystems().get(0).getId());
-    }
-
-    @Test
-    void when_load_given_groupChildOfGroup_thenSucceed() {
-        var loader = new WorkspaceLoader();
-        var ws = loader.load(builder() //
-                .group("A") //
-                .group("A", "B") //
-                .build());
-
-        assertNotNull(ws.getModel().findGroupById("A"));
-        assertFalse(ws.getModel().findGroupById("A").getGroups().isEmpty());
-        assertEquals("B", ws.getModel().findGroupById("A").getGroups().get(0).getId());
-    }
-
-    @Test
-    void when_load_given_softwareSystemChildOfGroupOfSoftwareSystem_thenFail() {
-        var loader = new WorkspaceLoader();
-        var config = builder() //
-                .group("A", "B") //
-                .softwareSystem("A") //
-                .softwareSystem("B", "C") //
-                .build();
-
-        var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
-        assertEquals("Can't add SoftwareSystem (C) to Group (B)", e.getMessage());
-    }
-
-    @Test
-    void when_load_given_containerChildOfGroupChildOfSoftwareSystem_thenSucceed() {
-        var loader = new WorkspaceLoader();
-        var ws = loader.load(builder() //
-                .group("A", "B") //
-                .container("B", "C") //
-                .softwareSystem("A") //
-                .build());
-
-        var ss = ws.getModel().findSoftwareSystemById("A");
-        assertNotNull(ss);
-        var g = WorkspaceUtil.findGroup(ss.getGroups(), "B");
-        assertNotNull(g);
-        assertEquals(1, g.getElements().size());
-        var c = WorkspaceUtil.findContainer(g.getContainers(), "C");
-        assertNotNull(c);
-        assertEquals("C", c.getId());
-    }
-
-    @Test
-    void when_load_given_chainOfGroups_thenSucceed() {
-        var loader = new WorkspaceLoader();
-        var config = builder() //
-                .group("A") //
-                .group("A", "B") //
-                .group("B", "C") //
-                .build();
-
-        var ws = loader.load(config);
-        var g1 = ws.getModel().findGroupById("A");
-        assertNotNull(g1);
-        var g2 = WorkspaceUtil.getGroup(g1.getGroups(), "B");
-        assertNotNull(g2);
-        var g3 = WorkspaceUtil.getGroup(g2.getGroups(), "C");
-        assertNotNull(g3);
-    }
-
-    @Test
-    void when_load_given_deploymentEnvironment_thenSucceed() {
-        var loader = new WorkspaceLoader();
-        var config = builder().deploymentEnvironment("A").build();
-        var ws = loader.load(config);
-        var a = ws.getModel().findDeploymentEnvironmentById("A");
-        assertNotNull(a);
-    }
-
-
-    @Test
-    void when_load_given_deploymentNodeOnDeploymentEnvironment_thenSucceed() {
-        var loader = new WorkspaceLoader();
-        var config = builder().deploymentEnvironment("A").deploymentNode("A", "B").build();
-        var ws = loader.load(config);
-        var a = ws.getModel().findDeploymentEnvironmentById("A");
-        assertNotNull(a);
-        var b = a.findDeploymentNodeById("B");
-        assertNotNull(b);
-    }
-
-    @Test
-    void when_load_given_deploymentNodeOnRoot_thenFail() {
-        var loader = new WorkspaceLoader();
-        var config = builder().deploymentNode("A").build();
-        var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
-        assertEquals("Can't add DeploymentNode (A) to Model", e.getMessage());
-    }
-
-    @Test
-    void when_load_given_containerInstanceOnRoot_thenFail() {
-        var loader = new WorkspaceLoader();
-        var config = builder().containerInstance("A", "c").build();
-        var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
-        assertEquals("Can't add ContainerInstance (A) to Model", e.getMessage());
-    }
-
-    @Test
-    void when_load_given_containerInstanceOnDeploymentEnvironment_thenFail() {
-        var loader = new WorkspaceLoader();
-        var config = builder() //
-                .deploymentEnvironment("A") //
-                .containerInstance("A", "B", "c") //
-                .build();
-
-        var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
-        assertEquals("Can't add ContainerInstance (B) to DeploymentEnvironment (A)", e.getMessage());
-    }
-
-    @Test
-    void when_load_given_containerOnContainerInstance_thenSucceed() {
-        var loader = new WorkspaceLoader();
-        var config = builder() //
-                .deploymentEnvironment("A") //
-                .deploymentNode("A", "B") //
-                .containerInstance("B", "C", "c") //
-                .softwareSystem("SS") //
-                .container("SS", "c") //
-                .build();
-
-        var ws = loader.load(config);
-        var a = ws.getModel().findDeploymentEnvironmentById("A");
-        assertNotNull(a);
-        var b = a.findDeploymentNodeById("B");
-        assertNotNull(b);
-        var c = b.findContainerInstanceById("C");
-        assertNotNull(c);
-        assertEquals("c", c.getContainerId());
-    }
-
-    @Test
-    void when_load_given_containerInstanceWithNoContainer_thenFail() {
-        var loader = new WorkspaceLoader();
-        var config = builder() //
-                .deploymentEnvironment("A") //
-                .deploymentNode("A", "B") //
-                .containerInstance("B", "C", "") //
-                .build();
-
-        var e = Assertions.assertThrows(IllegalArgumentException.class, () -> loader.load(config));
-        assertEquals("containerId is missing on ContainerInstance (C)", e.getMessage());
-    }
-
-    @Test
-    void when_load_given_containerInstanceWithMissingContainer_thenFail() {
-        var loader = new WorkspaceLoader();
-        var config = builder() //
-                .deploymentEnvironment("A") //
-                .deploymentNode("A", "B") //
-                .containerInstance("B", "C", "c") //
-                .build();
-
-        var e = Assertions.assertThrows(NoSuchElementException.class, () -> loader.load(config));
-        assertEquals("Container c doesn't exist. Dependency is unsatisfied for ContainerInstance (C)", e.getMessage());
-    }
-
-    @Test
-    void when_load_given_containerInstanceWithSomethingNotAContainer_thenFail() {
-        var loader = new WorkspaceLoader();
-        var config = builder() //
-                .deploymentEnvironment("A") //
-                .deploymentNode("A", "B") //
-                .softwareSystem("ss") //
-                .containerInstance("B", "C", "ss") //
-                .build();
-
-        var e = Assertions.assertThrows(IllegalArgumentException.class, () -> loader.load(config));
-        assertEquals("Dependency is unsatisfied for ContainerInstance (C). Expected a Container; Actual: SoftwareSystem (ss)", e.getMessage());
-    }
 
     @Test
     void when_load_given_cycle_thenFail() {
@@ -311,137 +96,477 @@ public class WorkspaceLoaderTests {
         assertEquals(2, ws.getModel().getSoftwareSystems().size());
     }
 
-    @Test
-    void when_load_given_infrastructureNode_thenSucceed() {
-        var loader = new WorkspaceLoader();
-        var config = builder() //
-                .deploymentEnvironment("A") //
-                .deploymentNode("A", "B") //
-                .containerInstance("B", "C", "c") //
-                .softwareSystem("SS") //
-                .container("SS", "c") //
-                .infrastructureNode("A", "infra1") //
-                .infrastructureNode("B", "infra2") //
-                .build();
-
-        var ws = loader.load(config);
-        var a = ws.getModel().findDeploymentEnvironmentById("A");
-        assertNotNull(a);
-        var b = a.findDeploymentNodeById("B");
-        assertNotNull(b);
-        var infra1 = a.findInfrastructureNodeById("infra1");
-        assertNotNull(infra1);
-        var infra2 = b.findInfrastructureNodeById("infra2");
-        assertNotNull(infra2);
-    }
-
-    @Test
-    void when_load_given_infrastructureNodeOnWrongParent_thenFail() {
-        var loader = new WorkspaceLoader();
-        var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load( //
-                builder() //
-                        .softwareSystem("A") //
-                        .infrastructureNode("A", "B") //
-                        .build() //
-        ));
-        assertEquals("Can't add InfrastructureNode (B) to SoftwareSystem (A)", e.getMessage());
-
-        e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load( //
-                builder().softwareSystem("A").container("A", "B").infrastructureNode("B", "C").build() //
-        ));
-        assertEquals("Can't add InfrastructureNode (C) to Container (B)", e.getMessage());
-
-        e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load( //
-                builder().infrastructureNode("A").build() //
-        ));
-        assertEquals("Can't add InfrastructureNode (A) to Model", e.getMessage());
-    }
-
-
-    @Test
-    void when_load_given_softwareSystemInstanceOnRoot_thenFail() {
-        var loader = new WorkspaceLoader();
-        var config = builder().softwareSystemInstance("A", "c").build();
-        var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
-        assertEquals("Can't add SoftwareSystemInstance (A) to Model", e.getMessage());
-    }
-
-    @Test
-    void when_load_given_softwareSystemInstanceOnDeploymentEnvironment_thenFail() {
-        var loader = new WorkspaceLoader();
-        var config = builder() //
-                .deploymentEnvironment("A") //
-                .softwareSystemInstance("A", "B", "c") //
-                .build();
-
-        var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
-        assertEquals("Can't add SoftwareSystemInstance (B) to DeploymentEnvironment (A)", e.getMessage());
-    }
-
-    @Test
-    void when_load_given_SoftwareSystemOnSoftwareSystemInstance_thenSucceed() {
-        var loader = new WorkspaceLoader();
-        var config = builder() //
-                .deploymentEnvironment("A") //
-                .deploymentNode("A", "B") //
-                .softwareSystemInstance("B", "C", "SS") //
-                .softwareSystem("SS") //
-                .container("SS", "c") //
-                .build();
-
-        var ws = loader.load(config);
-        var a = ws.getModel().findDeploymentEnvironmentById("A");
-        assertNotNull(a);
-        var b = a.findDeploymentNodeById("B");
-        assertNotNull(b);
-        var c = b.findSoftwareSystemInstanceById("C");
-        assertNotNull(c);
-        assertEquals("SS", c.getSoftwareSystemId());
-    }
-
-    @Test
-    void when_load_given_softwareSystemInstanceWithNoSoftwareSystem_thenFail() {
-        var loader = new WorkspaceLoader();
-        var config = builder() //
-                .deploymentEnvironment("A") //
-                .deploymentNode("A", "B") //
-                .softwareSystemInstance("B", "C", null) //
-                .build();
-
-        var e = Assertions.assertThrows(IllegalArgumentException.class, () -> loader.load(config));
-        assertEquals("softwareSystemId is missing on SoftwareSystemInstance (C)", e.getMessage());
-    }
-
-    @Test
-    void when_load_given_softwareSystemInstanceWithMissingSoftwareSystem_thenFail() {
-        var loader = new WorkspaceLoader();
-        var config = builder() //
-                .deploymentEnvironment("A") //
-                .deploymentNode("A", "B") //
-                .softwareSystemInstance("B", "C", "c") //
-                .build();
-
-        var e = Assertions.assertThrows(NoSuchElementException.class, () -> loader.load(config));
-        assertEquals("SoftwareSystem c doesn't exist. Dependency is unsatisfied for SoftwareSystemInstance (C)", e.getMessage());
-    }
-
-    @Test
-    void when_load_given_softwareSystemInstanceWithSomethingNotASoftwareSystem_thenFail() {
-        var loader = new WorkspaceLoader();
-        var config = builder() //
-                .deploymentEnvironment("A") //
-                .deploymentNode("A", "B") //
-                .softwareSystem("ss") //
-                .group("ss", "g")
-                .softwareSystemInstance("B", "C", "g") //
-                .build();
-
-        var e = Assertions.assertThrows(IllegalArgumentException.class, () -> loader.load(config));
-        assertEquals("Dependency is unsatisfied for SoftwareSystemInstance (C). Expected a SoftwareSystem; Actual: Group (g)", e.getMessage());
-    }
-
-
     protected WorkspaceLoaderBuilder builder() {
         return new WorkspaceLoaderBuilder();
+    }
+
+    @Nested
+    class Person {
+        @Test
+        void when_load_given_personOnRoot_thenSucceed() {
+            var loader = new WorkspaceLoader();
+            var ws = loader.load(builder().person("A").build());
+            assertEquals("A", ws.getModel().findPersonById("A").getId());
+        }
+
+        @Test
+        void when_load_given_childOnPerson_thenFail() {
+            var loader = new WorkspaceLoader();
+            var config = builder().person("A").person("A", "B").build();
+            var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
+            assertEquals("Can't add Person (B) to Person (A)", e.getMessage());
+        }
+
+    }
+
+    @Nested
+    class SoftwareSystem {
+
+        @Test
+        void when_load_given_softwareSystemOnRoot_thenSucceed() {
+            var loader = new WorkspaceLoader();
+            var ws = loader.load(builder().softwareSystem("A").build());
+            assertEquals("A", ws.getModel().findSoftwareSystemById("A").getId());
+        }
+
+        @Test
+        void when_load_given_softwareSystemChildOfGroup_thenSucceed() {
+            var loader = new WorkspaceLoader();
+            var ws = loader.load(builder() //
+                    .group("A") //
+                    .softwareSystem("A", "B") //
+                    .build());
+
+            assertNotNull(ws.getModel().findGroupById("A"));
+            assertFalse(ws.getModel().findGroupById("A").getSoftwareSystems().isEmpty());
+            assertEquals("B", ws.getModel().findGroupById("A").getSoftwareSystems().get(0).getId());
+        }
+
+        @Test
+        void when_load_given_softwareSystemChildOfGroupOfSoftwareSystem_thenFail() {
+            var loader = new WorkspaceLoader();
+            var config = builder() //
+                    .group("A", "B") //
+                    .softwareSystem("A") //
+                    .softwareSystem("B", "C") //
+                    .build();
+
+            var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
+            assertEquals("Can't add SoftwareSystem (C) to Group (B)", e.getMessage());
+        }
+    }
+
+    @Nested
+    class Container {
+        @Test
+        void when_load_given_containerOnRoot_thenFail() {
+            var loader = new WorkspaceLoader();
+            var config = builder().container("A").build();
+            var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
+            assertEquals("Can't add Container (A) to Model", e.getMessage());
+        }
+
+        @Test
+        void when_load_given_containerChildOfGroupChildOfSoftwareSystem_thenSucceed() {
+            var loader = new WorkspaceLoader();
+            var ws = loader.load(builder() //
+                    .group("A", "B") //
+                    .container("B", "C") //
+                    .softwareSystem("A") //
+                    .build());
+
+            var ss = ws.getModel().findSoftwareSystemById("A");
+            assertNotNull(ss);
+            var g = WorkspaceUtil.findGroup(ss.getGroups(), "B");
+            assertNotNull(g);
+            assertEquals(1, g.getElements().size());
+            var c = WorkspaceUtil.findContainer(g.getContainers(), "C");
+            assertNotNull(c);
+            assertEquals("C", c.getId());
+        }
+    }
+
+    @Nested
+    class Group {
+        @Test
+        void when_load_given_groupOnRoot_thenSucceed() {
+            var loader = new WorkspaceLoader();
+            var ws = loader.load(builder().group("A").build());
+            assertEquals("A", ws.getModel().findGroupById("A").getId());
+        }
+
+        @Test
+        void when_load_given_groupChildOfGroup_thenSucceed() {
+            var loader = new WorkspaceLoader();
+            var ws = loader.load(builder() //
+                    .group("A") //
+                    .group("A", "B") //
+                    .build());
+
+            assertNotNull(ws.getModel().findGroupById("A"));
+            assertFalse(ws.getModel().findGroupById("A").getGroups().isEmpty());
+            assertEquals("B", ws.getModel().findGroupById("A").getGroups().get(0).getId());
+        }
+
+        @Test
+        void when_load_given_chainOfGroups_thenSucceed() {
+            var loader = new WorkspaceLoader();
+            var config = builder() //
+                    .group("A") //
+                    .group("A", "B") //
+                    .group("B", "C") //
+                    .build();
+
+            var ws = loader.load(config);
+            var g1 = ws.getModel().findGroupById("A");
+            assertNotNull(g1);
+            var g2 = WorkspaceUtil.getGroup(g1.getGroups(), "B");
+            assertNotNull(g2);
+            var g3 = WorkspaceUtil.getGroup(g2.getGroups(), "C");
+            assertNotNull(g3);
+        }
+    }
+
+    @Nested
+    class DeploymentEnvironment {
+        @Test
+        void when_load_given_deploymentEnvironment_thenSucceed() {
+            var loader = new WorkspaceLoader();
+            var config = builder().deploymentEnvironment("A").build();
+            var ws = loader.load(config);
+            var a = ws.getModel().findDeploymentEnvironmentById("A");
+            assertNotNull(a);
+        }
+
+    }
+
+    @Nested
+    class DeploymentNode {
+        @Test
+        void when_load_given_deploymentNodeOnDeploymentEnvironment_thenSucceed() {
+            var loader = new WorkspaceLoader();
+            var config = builder().deploymentEnvironment("A").deploymentNode("A", "B").build();
+            var ws = loader.load(config);
+            var a = ws.getModel().findDeploymentEnvironmentById("A");
+            assertNotNull(a);
+            var b = a.findDeploymentNodeById("B");
+            assertNotNull(b);
+        }
+
+        @Test
+        void when_load_given_deploymentNodeOnRoot_thenFail() {
+            var loader = new WorkspaceLoader();
+            var config = builder().deploymentNode("A").build();
+            var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
+            assertEquals("Can't add DeploymentNode (A) to Model", e.getMessage());
+        }
+    }
+
+    @Nested
+    class InfrastructureNode {
+        @Test
+        void when_load_given_infrastructureNode_thenSucceed() {
+            var loader = new WorkspaceLoader();
+            var config = builder() //
+                    .deploymentEnvironment("A") //
+                    .deploymentNode("A", "B") //
+                    .containerInstance("B", "C", "c") //
+                    .softwareSystem("SS") //
+                    .container("SS", "c") //
+                    .infrastructureNode("A", "infra1") //
+                    .infrastructureNode("B", "infra2") //
+                    .build();
+
+            var ws = loader.load(config);
+            var a = ws.getModel().findDeploymentEnvironmentById("A");
+            assertNotNull(a);
+            var b = a.findDeploymentNodeById("B");
+            assertNotNull(b);
+            var infra1 = a.findInfrastructureNodeById("infra1");
+            assertNotNull(infra1);
+            var infra2 = b.findInfrastructureNodeById("infra2");
+            assertNotNull(infra2);
+        }
+
+        @Test
+        void when_load_given_infrastructureNodeOnWrongParent_thenFail() {
+            var loader = new WorkspaceLoader();
+            var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load( //
+                    builder() //
+                            .softwareSystem("A") //
+                            .infrastructureNode("A", "B") //
+                            .build() //
+            ));
+            assertEquals("Can't add InfrastructureNode (B) to SoftwareSystem (A)", e.getMessage());
+
+            e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load( //
+                    builder().softwareSystem("A").container("A", "B").infrastructureNode("B", "C").build() //
+            ));
+            assertEquals("Can't add InfrastructureNode (C) to Container (B)", e.getMessage());
+
+            e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load( //
+                    builder().infrastructureNode("A").build() //
+            ));
+            assertEquals("Can't add InfrastructureNode (A) to Model", e.getMessage());
+        }
+
+    }
+
+    @Nested
+    class SoftwareSystemInstance {
+
+
+        @Test
+        void when_load_given_softwareSystemInstanceOnRoot_thenFail() {
+            var loader = new WorkspaceLoader();
+            var config = builder().softwareSystemInstance("A", "c").build();
+            var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
+            assertEquals("Can't add SoftwareSystemInstance (A) to Model", e.getMessage());
+        }
+
+        @Test
+        void when_load_given_softwareSystemInstanceOnDeploymentEnvironment_thenFail() {
+            var loader = new WorkspaceLoader();
+            var config = builder() //
+                    .deploymentEnvironment("A") //
+                    .softwareSystemInstance("A", "B", "c") //
+                    .build();
+
+            var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
+            assertEquals("Can't add SoftwareSystemInstance (B) to DeploymentEnvironment (A)", e.getMessage());
+        }
+
+        @Test
+        void when_load_given_softwareSystemOnSoftwareSystemInstance_thenSucceed() {
+            var loader = new WorkspaceLoader();
+            var config = builder() //
+                    .deploymentEnvironment("A") //
+                    .deploymentNode("A", "B") //
+                    .softwareSystemInstance("B", "C", "SS") //
+                    .softwareSystem("SS") //
+                    .container("SS", "c") //
+                    .build();
+
+            var ws = loader.load(config);
+            var a = ws.getModel().findDeploymentEnvironmentById("A");
+            assertNotNull(a);
+            var b = a.findDeploymentNodeById("B");
+            assertNotNull(b);
+            var c = b.findSoftwareSystemInstanceById("C");
+            assertNotNull(c);
+            assertEquals("SS", c.getSoftwareSystemId());
+        }
+
+        @Test
+        void when_load_given_softwareSystemInstanceWithNoSoftwareSystem_thenFail() {
+            var loader = new WorkspaceLoader();
+            var config = builder() //
+                    .deploymentEnvironment("A") //
+                    .deploymentNode("A", "B") //
+                    .softwareSystemInstance("B", "C", null) //
+                    .build();
+
+            var e = Assertions.assertThrows(IllegalArgumentException.class, () -> loader.load(config));
+            assertEquals("softwareSystemId is missing on SoftwareSystemInstance (C)", e.getMessage());
+        }
+
+        @Test
+        void when_load_given_softwareSystemInstanceWithMissingSoftwareSystem_thenFail() {
+            var loader = new WorkspaceLoader();
+            var config = builder() //
+                    .deploymentEnvironment("A") //
+                    .deploymentNode("A", "B") //
+                    .softwareSystemInstance("B", "C", "c") //
+                    .build();
+
+            var e = Assertions.assertThrows(NoSuchElementException.class, () -> loader.load(config));
+            assertEquals("SoftwareSystem c doesn't exist. Dependency is unsatisfied for SoftwareSystemInstance (C)", e.getMessage());
+        }
+
+        @Test
+        void when_load_given_softwareSystemInstanceWithSomethingNotASoftwareSystem_thenFail() {
+            var loader = new WorkspaceLoader();
+            var config = builder() //
+                    .deploymentEnvironment("A") //
+                    .deploymentNode("A", "B") //
+                    .softwareSystem("ss") //
+                    .group("ss", "g").softwareSystemInstance("B", "C", "g") //
+                    .build();
+
+            var e = Assertions.assertThrows(IllegalArgumentException.class, () -> loader.load(config));
+            assertEquals("Dependency is unsatisfied for SoftwareSystemInstance (C). Expected a SoftwareSystem; Actual: Group (g)", e.getMessage());
+        }
+
+    }
+
+    @Nested
+    class ContainerInstance {
+        @Test
+        void when_load_given_containerInstanceOnRoot_thenFail() {
+            var loader = new WorkspaceLoader();
+            var config = builder().containerInstance("A", "c").build();
+            var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
+            assertEquals("Can't add ContainerInstance (A) to Model", e.getMessage());
+        }
+
+        @Test
+        void when_load_given_containerInstanceOnDeploymentEnvironment_thenFail() {
+            var loader = new WorkspaceLoader();
+            var config = builder() //
+                    .deploymentEnvironment("A") //
+                    .containerInstance("A", "B", "c") //
+                    .build();
+
+            var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
+            assertEquals("Can't add ContainerInstance (B) to DeploymentEnvironment (A)", e.getMessage());
+        }
+
+        @Test
+        void when_load_given_containerOnContainerInstance_thenSucceed() {
+            var loader = new WorkspaceLoader();
+            var config = builder() //
+                    .deploymentEnvironment("A") //
+                    .deploymentNode("A", "B") //
+                    .containerInstance("B", "C", "c") //
+                    .softwareSystem("SS") //
+                    .container("SS", "c") //
+                    .build();
+
+            var ws = loader.load(config);
+            var a = ws.getModel().findDeploymentEnvironmentById("A");
+            assertNotNull(a);
+            var b = a.findDeploymentNodeById("B");
+            assertNotNull(b);
+            var c = b.findContainerInstanceById("C");
+            assertNotNull(c);
+            assertEquals("c", c.getContainerId());
+        }
+
+        @Test
+        void when_load_given_containerInstanceWithNoContainer_thenFail() {
+            var loader = new WorkspaceLoader();
+            var config = builder() //
+                    .deploymentEnvironment("A") //
+                    .deploymentNode("A", "B") //
+                    .containerInstance("B", "C", "") //
+                    .build();
+
+            var e = Assertions.assertThrows(IllegalArgumentException.class, () -> loader.load(config));
+            assertEquals("containerId is missing on ContainerInstance (C)", e.getMessage());
+        }
+
+        @Test
+        void when_load_given_containerInstanceWithMissingContainer_thenFail() {
+            var loader = new WorkspaceLoader();
+            var config = builder() //
+                    .deploymentEnvironment("A") //
+                    .deploymentNode("A", "B") //
+                    .containerInstance("B", "C", "c") //
+                    .build();
+
+            var e = Assertions.assertThrows(NoSuchElementException.class, () -> loader.load(config));
+            assertEquals("Container c doesn't exist. Dependency is unsatisfied for ContainerInstance (C)", e.getMessage());
+        }
+
+        @Test
+        void when_load_given_containerInstanceWithSomethingNotAContainer_thenFail() {
+            var loader = new WorkspaceLoader();
+            var config = builder() //
+                    .deploymentEnvironment("A") //
+                    .deploymentNode("A", "B") //
+                    .softwareSystem("ss") //
+                    .containerInstance("B", "C", "ss") //
+                    .build();
+
+            var e = Assertions.assertThrows(IllegalArgumentException.class, () -> loader.load(config));
+            assertEquals("Dependency is unsatisfied for ContainerInstance (C). Expected a Container; Actual: SoftwareSystem (ss)", e.getMessage());
+        }
+    }
+
+    @Nested
+    class Relation {
+
+        @Nested
+        class RelationTests {
+            WorkspaceLoader loader;
+            WorkspaceLoaderBuilder builder;
+
+            @BeforeEach
+            void init() {
+                loader = new WorkspaceLoader();
+                builder = builder() //
+                        .person("person1") //
+                        .person("person2") //
+                        //
+                        .softwareSystem("softwareSystem1") //
+                        .softwareSystem("softwareSystem2") //
+                        //
+                        .group("group1") //
+                        .group("group2") //
+                        //
+                        .container("softwareSystem1", "container11") //
+                        .container("softwareSystem1", "container12") //
+                        .container("softwareSystem2", "container21") //
+                        .container("softwareSystem2", "container22") //
+                        //
+                        .deploymentEnvironment("env1") //
+                        .deploymentEnvironment("env2") //
+                        //
+                        .deploymentNode("env1", "node11") //
+                        .deploymentNode("env1", "node12") //
+                        .deploymentNode("env2", "node21") //
+                        .deploymentNode("env2", "node22") //
+                        //
+                        .infrastructureNode("env1", "infra11") //
+                        .infrastructureNode("env1", "infra12") //
+                        .infrastructureNode("env2", "infra21") //
+                        .infrastructureNode("env2", "infra22") //
+                        //
+                        .softwareSystemInstance("node11", "softwareSystemInstance1", "softwareSystem1") //
+                        .softwareSystemInstance("node11", "softwareSystemInstance2", "softwareSystem2") //
+                        //
+                        .containerInstance("node11", "containerInstance11", "container11") //
+                        .containerInstance("node11", "containerInstance12", "container12") //
+                        .containerInstance("node11", "containerInstance21", "container21") //
+                        .containerInstance("node11", "containerInstance22", "container22") //
+                //
+                ;
+            }
+
+            static Stream<Arguments> allowedRelations() {
+                return Stream.of(
+                        arg("person1", "person1", true, "Relation from Person to self is allowed"), //
+                        arg("person1", "person2", true, "Relation from Person to Person is allowed"), //
+                        arg("person1", "softwareSystem1", true, "Relation from Person to SoftwareSystem is allowed"), //
+                        arg("person1", "container11", true, "Relation from Person to Container is allowed"), //
+                        arg("person1", "group1", false, "Relation from Person to Group is NOT allowed"), //
+                        arg("person1", "env1", false, "Relation from Person to DeploymentEnvironment is NOT allowed"), //
+                        arg("person1", "node11", false, "Relation from Person to DeploymentNode is NOT allowed"), //
+                        arg("person1", "infra11", false, "Relation from Person to InfrastructureNode is NOT allowed"), //
+                        arg("person1", "softwareSystemInstance1", false, "Relation from Person to SoftwareSystemInstance is NOT allowed"), //
+                        arg("person1", "containerInstance11", false, "Relation from Person to ContainerInstance is NOT allowed") //
+                        //
+                );
+            }
+
+            static Arguments arg(String sourceId, String destinationId, boolean shouldSucceed, String displayName) {
+                return Arguments.of(sourceId, destinationId, shouldSucceed, displayName);
+            }
+
+            @ParameterizedTest(name = "{index} - {3}")
+            @MethodSource("allowedRelations")
+            void allowedRelations(String sourceId, String destinationId, boolean shouldSucceed, String displayName) {
+                builder.relation(sourceId, destinationId);
+                if (shouldSucceed) {
+                    var ws = loader.load(builder.build());
+                    var relations = ws.getModel().getAllRelations();
+                    assertEquals(1, relations.size());
+                    assertEquals(sourceId, relations.get(0).getFrom());
+                    assertEquals(destinationId, relations.get(0).getTo());
+                } else {
+                    var e = Assertions.assertThrows(Exception.class, () -> loader.load(builder.build()));
+                }
+            }
+        }
     }
 }

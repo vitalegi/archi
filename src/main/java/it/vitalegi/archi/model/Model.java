@@ -17,12 +17,13 @@ import java.util.Map;
 @ToString(callSuper = true)
 public class Model extends Node {
 
-    Map<String, Element> elementIds;
+    Map<String, Element> elementMap;
+    Map<String, Relation> relationMap;
 
     public Model() {
         super(null);
         model = this;
-        elementIds = new HashMap<>();
+        elementMap = new HashMap<>();
     }
 
     public void addChild(Element child) {
@@ -42,11 +43,19 @@ public class Model extends Node {
     }
 
     public Element getElementById(String id) {
-        return elementIds.get(id);
+        return elementMap.get(id);
     }
 
     public List<Element> getAllElements() {
-        return new ArrayList<>(elementIds.values());
+        return new ArrayList<>(elementMap.values());
+    }
+
+    public Relation getRelationById(String id) {
+        return relationMap.get(id);
+    }
+
+    public List<Relation> getAllRelations() {
+        return new ArrayList<>(relationMap.values());
     }
 
     protected boolean addSoftwareSystem(Node parent, Element child) {
@@ -123,12 +132,12 @@ public class Model extends Node {
 
     protected void addChild(Node parent, Element child) {
         log.debug("Add {} to {}", child.toShortString(), parent.toShortString());
-        if (child.getId() != null && elementIds.containsKey(child.getId())) {
+        if (child.getId() != null && elementMap.containsKey(child.getId())) {
             throw new NonUniqueIdException(child.getId());
         }
         parent.getElements().add(child);
         child.setParent(parent);
-        elementIds.put(child.getId(), child);
+        elementMap.put(child.getId(), child);
     }
 
     public String toShortString() {

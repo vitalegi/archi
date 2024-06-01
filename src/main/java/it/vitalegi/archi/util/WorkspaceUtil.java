@@ -5,6 +5,7 @@ import it.vitalegi.archi.model.ContainerInstance;
 import it.vitalegi.archi.model.DeploymentEnvironment;
 import it.vitalegi.archi.model.DeploymentNode;
 import it.vitalegi.archi.model.Element;
+import it.vitalegi.archi.model.Entity;
 import it.vitalegi.archi.model.Group;
 import it.vitalegi.archi.model.InfrastructureNode;
 import it.vitalegi.archi.model.Model;
@@ -32,7 +33,7 @@ public class WorkspaceUtil {
     public static Person getPerson(List<Element> elements, String id) {
         var element = findPerson(elements, id);
         if (element == null) {
-            throw new NoSuchElementException("No element with id " + id + ". Available IDs: " + Element.collectIds(elements));
+            throw new NoSuchElementException("No element with id " + id + ". Available IDs: " + Entity.collectIds(elements));
         }
         return element;
     }
@@ -55,7 +56,7 @@ public class WorkspaceUtil {
     public static SoftwareSystem getSoftwareSystem(List<? extends Element> elements, String id) {
         var element = findSoftwareSystem(elements, id);
         if (element == null) {
-            throw new NoSuchElementException("No element with id " + id + ". Available IDs: " + Element.collectIds(elements));
+            throw new NoSuchElementException("No element with id " + id + ". Available IDs: " + Entity.collectIds(elements));
         }
         return element;
     }
@@ -78,7 +79,7 @@ public class WorkspaceUtil {
     public static Container getContainer(List<? extends Element> elements, String id) {
         var element = findContainer(elements, id);
         if (element == null) {
-            throw new NoSuchElementException("No element with id " + id + ". Available IDs: " + Element.collectIds(elements));
+            throw new NoSuchElementException("No element with id " + id + ". Available IDs: " + Entity.collectIds(elements));
         }
         return element;
     }
@@ -101,7 +102,7 @@ public class WorkspaceUtil {
     public static Group getGroup(List<? extends Element> elements, String id) {
         var element = findGroup(elements, id);
         if (element == null) {
-            throw new NoSuchElementException("No element with id " + id + ". Available IDs: " + Element.collectIds(elements));
+            throw new NoSuchElementException("No element with id " + id + ". Available IDs: " + Entity.collectIds(elements));
         }
         return element;
     }
@@ -121,7 +122,7 @@ public class WorkspaceUtil {
     public static DeploymentEnvironment getDeploymentEnvironment(List<? extends Element> elements, String id) {
         var element = findDeploymentEnvironment(elements, id);
         if (element == null) {
-            throw new NoSuchElementException("No element with id " + id + ". Available IDs: " + Element.collectIds(elements));
+            throw new NoSuchElementException("No element with id " + id + ". Available IDs: " + Entity.collectIds(elements));
         }
         return element;
     }
@@ -141,7 +142,7 @@ public class WorkspaceUtil {
     public static DeploymentNode getDeploymentNode(List<? extends Element> elements, String id) {
         var element = findDeploymentNode(elements, id);
         if (element == null) {
-            throw new NoSuchElementException("No element with id " + id + ". Available IDs: " + Element.collectIds(elements));
+            throw new NoSuchElementException("No element with id " + id + ". Available IDs: " + Entity.collectIds(elements));
         }
         return element;
     }
@@ -161,7 +162,7 @@ public class WorkspaceUtil {
     public static ContainerInstance getContainerInstance(List<? extends Element> elements, String id) {
         var element = findContainerInstance(elements, id);
         if (element == null) {
-            throw new NoSuchElementException("No element with id " + id + ". Available IDs: " + Element.collectIds(elements));
+            throw new NoSuchElementException("No element with id " + id + ". Available IDs: " + Entity.collectIds(elements));
         }
         return element;
     }
@@ -180,7 +181,7 @@ public class WorkspaceUtil {
     public static SoftwareSystemInstance getSoftwareSystemInstance(List<? extends Element> elements, String id) {
         var element = findSoftwareSystemInstance(elements, id);
         if (element == null) {
-            throw new NoSuchElementException("No element with id " + id + ". Available IDs: " + Element.collectIds(elements));
+            throw new NoSuchElementException("No element with id " + id + ". Available IDs: " + Entity.collectIds(elements));
         }
         return element;
     }
@@ -199,7 +200,7 @@ public class WorkspaceUtil {
     public static InfrastructureNode getInfrastructureNode(List<? extends Element> elements, String id) {
         var element = findInfrastructureNode(elements, id);
         if (element == null) {
-            throw new NoSuchElementException("No element with id " + id + ". Available IDs: " + Element.collectIds(elements));
+            throw new NoSuchElementException("No element with id " + id + ". Available IDs: " + Entity.collectIds(elements));
         }
         return element;
     }
@@ -280,7 +281,7 @@ public class WorkspaceUtil {
     }
 
     public static Element findElementById(List<? extends Element> elements, String id) {
-        return elements.stream().filter(e -> Element.sameId(id, e.getId())).findFirst().orElse(null);
+        return elements.stream().filter(e -> Entity.equals(id, e.getId())).findFirst().orElse(null);
     }
 
 

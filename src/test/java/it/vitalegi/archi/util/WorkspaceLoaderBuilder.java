@@ -1,7 +1,8 @@
 package it.vitalegi.archi.util;
 
+import it.vitalegi.archi.workspace.loader.model.ElementRaw;
 import it.vitalegi.archi.workspace.loader.model.ElementType;
-import it.vitalegi.archi.workspace.loader.model.ElementYaml;
+import it.vitalegi.archi.workspace.loader.model.RelationRaw;
 import it.vitalegi.archi.workspace.loader.model.Workspace;
 
 import java.util.ArrayList;
@@ -125,7 +126,7 @@ public class WorkspaceLoaderBuilder {
         return workspace;
     }
 
-    protected ElementYaml containerInstance(ElementType type, String parentId, String id, String name, String description, List<String> tags, Map<String, String> metadata, String containerId) {
+    protected ElementRaw containerInstance(ElementType type, String parentId, String id, String name, String description, List<String> tags, Map<String, String> metadata, String containerId) {
         var out = element(type, parentId, id, name, description, tags, metadata);
         out.setContainerId(containerId);
         return out;
@@ -144,19 +145,33 @@ public class WorkspaceLoaderBuilder {
         return this;
     }
 
+    public WorkspaceLoaderBuilder relation(String from, String to) {
+        workspace.getRelations().add(relation(from, to, null, null, null));
+        return this;
+    }
 
-    protected ElementYaml softwareSystemInstance(ElementType type, String parentId, String id, String name, String description, List<String> tags, Map<String, String> metadata, String softwareSystemId) {
+    protected ElementRaw softwareSystemInstance(ElementType type, String parentId, String id, String name, String description, List<String> tags, Map<String, String> metadata, String softwareSystemId) {
         var out = element(type, parentId, id, name, description, tags, metadata);
         out.setSoftwareSystemId(softwareSystemId);
         return out;
     }
 
-    protected ElementYaml element(ElementType type, String parentId, String id, String name, String description, List<String> tags, Map<String, String> metadata) {
-        var out = new ElementYaml();
+    protected ElementRaw element(ElementType type, String parentId, String id, String name, String description, List<String> tags, Map<String, String> metadata) {
+        var out = new ElementRaw();
         out.setType(type);
         out.setParentId(parentId);
         out.setId(id);
         out.setName(name);
+        out.setDescription(description);
+        out.setTags(tags);
+        out.setMetadata(metadata);
+        return out;
+    }
+
+    protected RelationRaw relation(String from, String to, String description, List<String> tags, Map<String, String> metadata) {
+        var out = new RelationRaw();
+        out.setFrom(from);
+        out.setTo(to);
         out.setDescription(description);
         out.setTags(tags);
         out.setMetadata(metadata);

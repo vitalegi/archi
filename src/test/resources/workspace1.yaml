@@ -43,3 +43,11 @@ elements:
     id: group3
     name: Group 3
     parentId: group2
+relations:
+  - from: group1
+    to: group2
+    description: Rel 1
+    tags:
+      - a
+      - b
+      - c

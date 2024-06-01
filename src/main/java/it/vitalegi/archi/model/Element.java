@@ -1,7 +1,6 @@
 package it.vitalegi.archi.model;
 
 import lombok.AccessLevel;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -12,43 +11,31 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Slf4j
-@Data
-@ToString(exclude = "model")
-public abstract class Element {
-    @Getter
-    protected Model model;
+@Getter
+@Setter
+@ToString(callSuper = true)
+public abstract class Element extends Entity {
     @Setter(AccessLevel.PROTECTED)
     @Getter
     Node parent;
-    String id;
-    String uniqueId;
     String name;
     String description;
     List<String> tags;
     Map<String, String> metadata;
 
     public Element(Model model) {
+        super(model);
         tags = new ArrayList<>();
         metadata = new HashMap<>();
-        this.model = model;
     }
 
     public static boolean sameId(String id1, String id2) {
         return Objects.equals(id1, id2);
     }
 
-    public static String collectIds(List<? extends Element> elements) {
-        return elements.stream().map(Element::getId).collect(Collectors.joining(", "));
-    }
-
     public abstract void addChild(Element child);
-
-    public String toShortString() {
-        return getClass().getSimpleName() + " (" + getId() + ")";
-    }
 
     public List<Element> getPathFromRoot() {
         List<Element> elements = new ArrayList<>();
@@ -58,8 +45,5 @@ public abstract class Element {
             curr = curr.getParent();
         }
         return elements;
-    }
-
-    public void validate() {
     }
 }
