@@ -1,7 +1,8 @@
 package it.vitalegi.archi.util;
 
-import it.vitalegi.archi.workspace.loader.model.ElementRaw;
 import it.vitalegi.archi.model.ElementType;
+import it.vitalegi.archi.model.view.DeploymentView;
+import it.vitalegi.archi.workspace.loader.model.ElementRaw;
 import it.vitalegi.archi.workspace.loader.model.RelationRaw;
 import it.vitalegi.archi.workspace.loader.model.Workspace;
 
@@ -152,6 +153,15 @@ public class WorkspaceLoaderBuilder {
         var out = element(type, parentId, id, name, description, tags, metadata);
         out.setSoftwareSystemId(softwareSystemId);
         return out;
+    }
+
+    public WorkspaceLoaderBuilder deploymentView(String scope, String environment, String name) {
+        var view = new DeploymentView();
+        view.setScope(scope);
+        view.setEnvironment(environment);
+        view.setName(name);
+        workspace.getViews().add(view);
+        return this;
     }
 
     protected ElementRaw element(ElementType type, String parentId, String id, String name, String description, List<String> tags, Map<String, String> metadata) {
