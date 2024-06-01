@@ -16,7 +16,7 @@ import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.util.StringUtil;
 import it.vitalegi.archi.util.WorkspaceUtil;
 import it.vitalegi.archi.workspace.loader.model.ElementType;
-import it.vitalegi.archi.workspace.loader.model.ElementYaml;
+import it.vitalegi.archi.workspace.loader.model.ElementRaw;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -63,7 +63,7 @@ public class WorkspaceLoader {
         return true;
     }
 
-    protected ElementPair toPair(Model model, ElementYaml source) {
+    protected ElementPair toPair(Model model, ElementRaw source) {
         if (isPerson(source)) {
             return new ElementPair(source, toPerson(model, source));
         }
@@ -94,119 +94,119 @@ public class WorkspaceLoader {
         throw new RuntimeException("Can't process " + source);
     }
 
-    protected boolean isPerson(ElementYaml element) {
+    protected boolean isPerson(ElementRaw element) {
         if (element.getType() == null) {
             throw new NullPointerException("Element type is null");
         }
         return element.getType() == ElementType.PERSON;
     }
 
-    protected boolean isSoftwareSystem(ElementYaml element) {
+    protected boolean isSoftwareSystem(ElementRaw element) {
         if (element.getType() == null) {
             throw new NullPointerException("Element type is null");
         }
         return element.getType() == ElementType.SOFTWARE_SYSTEM;
     }
 
-    protected boolean isContainer(ElementYaml element) {
+    protected boolean isContainer(ElementRaw element) {
         if (element.getType() == null) {
             throw new NullPointerException("Element type is null");
         }
         return element.getType() == ElementType.CONTAINER;
     }
 
-    protected boolean isGroup(ElementYaml element) {
+    protected boolean isGroup(ElementRaw element) {
         if (element.getType() == null) {
             throw new NullPointerException("Element type is null");
         }
         return element.getType() == ElementType.GROUP;
     }
 
-    protected boolean isDeploymentEnvironment(ElementYaml element) {
+    protected boolean isDeploymentEnvironment(ElementRaw element) {
         if (element.getType() == null) {
             throw new NullPointerException("Element type is null");
         }
         return element.getType() == ElementType.DEPLOYMENT_ENVIRONMENT;
     }
 
-    protected boolean isDeploymentNode(ElementYaml element) {
+    protected boolean isDeploymentNode(ElementRaw element) {
         if (element.getType() == null) {
             throw new NullPointerException("Element type is null");
         }
         return element.getType() == ElementType.DEPLOYMENT_NODE;
     }
 
-    protected boolean isContainerInstance(ElementYaml element) {
+    protected boolean isContainerInstance(ElementRaw element) {
         if (element.getType() == null) {
             throw new NullPointerException("Element type is null");
         }
         return element.getType() == ElementType.CONTAINER_INSTANCE;
     }
 
-    protected boolean isSoftwareSystemInstance(ElementYaml element) {
+    protected boolean isSoftwareSystemInstance(ElementRaw element) {
         if (element.getType() == null) {
             throw new NullPointerException("Element type is null");
         }
         return element.getType() == ElementType.SOFTWARE_SYSTEM_INSTANCE;
     }
 
-    protected Person toPerson(Model model, ElementYaml element) {
+    protected Person toPerson(Model model, ElementRaw element) {
         var out = new Person(model);
         applyCommonProperties(element, out);
         return out;
     }
 
-    protected SoftwareSystem toSoftwareSystem(Model model, ElementYaml element) {
+    protected SoftwareSystem toSoftwareSystem(Model model, ElementRaw element) {
         var out = new SoftwareSystem(model);
         applyCommonProperties(element, out);
         return out;
     }
 
-    protected Container toContainer(Model model, ElementYaml element) {
+    protected Container toContainer(Model model, ElementRaw element) {
         var out = new Container(model);
         applyCommonProperties(element, out);
         return out;
     }
 
-    protected Group toGroup(Model model, ElementYaml element) {
+    protected Group toGroup(Model model, ElementRaw element) {
         var out = new Group(model);
         applyCommonProperties(element, out);
         return out;
     }
 
-    protected DeploymentEnvironment toDeploymentEnvironment(Model model, ElementYaml element) {
+    protected DeploymentEnvironment toDeploymentEnvironment(Model model, ElementRaw element) {
         var out = new DeploymentEnvironment(model);
         applyCommonProperties(element, out);
         return out;
     }
 
-    protected DeploymentNode toDeploymentNode(Model model, ElementYaml element) {
+    protected DeploymentNode toDeploymentNode(Model model, ElementRaw element) {
         var out = new DeploymentNode(model);
         applyCommonProperties(element, out);
         return out;
     }
 
-    protected ContainerInstance toContainerInstance(Model model, ElementYaml element) {
+    protected ContainerInstance toContainerInstance(Model model, ElementRaw element) {
         var out = new ContainerInstance(model, element.getContainerId());
         applyCommonProperties(element, out);
         return out;
     }
 
-    protected SoftwareSystemInstance toSoftwareSystemInstance(Model model, ElementYaml element) {
+    protected SoftwareSystemInstance toSoftwareSystemInstance(Model model, ElementRaw element) {
         var out = new SoftwareSystemInstance(model, element.getSoftwareSystemId());
         applyCommonProperties(element, out);
         return out;
     }
 
 
-    protected InfrastructureNode toInfrastructureNode(Model model, ElementYaml element) {
+    protected InfrastructureNode toInfrastructureNode(Model model, ElementRaw element) {
         var out = new InfrastructureNode(model);
         applyCommonProperties(element, out);
         return out;
     }
 
 
-    protected void applyCommonProperties(ElementYaml in, Element out) {
+    protected void applyCommonProperties(ElementRaw in, Element out) {
         out.setId(in.getId());
         out.setName(in.getName());
         out.setDescription(in.getDescription());
@@ -215,7 +215,7 @@ public class WorkspaceLoader {
         out.setUniqueId(WorkspaceUtil.createUniqueId(out));
     }
 
-    protected boolean isInfrastructureNode(ElementYaml element) {
+    protected boolean isInfrastructureNode(ElementRaw element) {
         if (element.getType() == null) {
             throw new NullPointerException("Element type is null");
         }
@@ -225,7 +225,7 @@ public class WorkspaceLoader {
     @AllArgsConstructor
     @Data
     protected static class ElementPair {
-        ElementYaml source;
+        ElementRaw source;
         Element out;
     }
 

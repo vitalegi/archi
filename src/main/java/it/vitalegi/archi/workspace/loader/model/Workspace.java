@@ -6,5 +6,6 @@ import java.util.List;
 
 @Data
 public class Workspace {
-    List<ElementYaml> elements;
+    List<ElementRaw> elements;
+    List<RelationRaw> relations;
 }

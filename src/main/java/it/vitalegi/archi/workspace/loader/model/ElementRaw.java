@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 @Data
-public class ElementYaml {
+public class ElementRaw {
     ElementType type;
     String parentId;
     String id;
