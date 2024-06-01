@@ -58,7 +58,6 @@ public class WorkspaceLoaderTests {
         assertNotNull(workspace.getModel().findSoftwareSystemById("C").findGroupById("group2").findGroupById("group3"));
     }
 
-
     @Test
     void when_load_given_cycle_thenFail() {
         var loader = new WorkspaceLoader();

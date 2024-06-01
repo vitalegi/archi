@@ -1,12 +1,12 @@
 package it.vitalegi.archi.workspace.loader;
 
-import it.vitalegi.archi.workspace.RelationManager;
 import it.vitalegi.archi.exception.CycleNotAllowedException;
 import it.vitalegi.archi.model.Container;
 import it.vitalegi.archi.model.ContainerInstance;
 import it.vitalegi.archi.model.DeploymentEnvironment;
 import it.vitalegi.archi.model.DeploymentNode;
 import it.vitalegi.archi.model.Element;
+import it.vitalegi.archi.model.ElementType;
 import it.vitalegi.archi.model.Group;
 import it.vitalegi.archi.model.InfrastructureNode;
 import it.vitalegi.archi.model.Model;
@@ -17,7 +17,6 @@ import it.vitalegi.archi.model.SoftwareSystemInstance;
 import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.util.StringUtil;
 import it.vitalegi.archi.util.WorkspaceUtil;
-import it.vitalegi.archi.model.ElementType;
 import it.vitalegi.archi.workspace.loader.model.ElementRaw;
 import it.vitalegi.archi.workspace.loader.model.RelationRaw;
 import lombok.AllArgsConstructor;
@@ -25,6 +24,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
+import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -33,26 +33,31 @@ public class WorkspaceLoader {
         Workspace workspace = new Workspace();
         var model = workspace.getModel();
         log.debug("Load model");
-        var pairs = new ArrayList<>(in.getElements().stream().map(e -> toPair(model, e)).collect(Collectors.toList()));
-        while (!pairs.isEmpty()) {
-            log.debug("New cycle");
-            boolean anyProcessed = false;
-            for (var i = 0; i < pairs.size(); i++) {
-                if (apply(workspace, pairs.get(i))) {
-                    pairs.remove(i);
-                    i--;
-                    anyProcessed = true;
+        try {
+            var pairs = new ArrayList<>(in.getElements().stream().map(e -> toPair(model, e)).collect(Collectors.toList()));
+            while (!pairs.isEmpty()) {
+                log.debug("New cycle");
+                boolean anyProcessed = false;
+                for (var i = 0; i < pairs.size(); i++) {
+                    if (apply(workspace, pairs.get(i))) {
+                        pairs.remove(i);
+                        i--;
+                        anyProcessed = true;
+                    }
+                }
+                if (!anyProcessed) {
+                    var unresolved = pairs.stream().map(ElementPair::getSource).map(s -> new CycleNotAllowedException.UnresolvedDependency(s.getId(), s.getParentId())).collect(Collectors.toList());
+                    throw new CycleNotAllowedException(model.getAllElements().stream().map(Element::getId).collect(Collectors.toList()), unresolved);
                 }
             }
-            if (!anyProcessed) {
-                var unresolved = pairs.stream().map(ElementPair::getSource).map(s -> new CycleNotAllowedException.UnresolvedDependency(s.getId(), s.getParentId())).collect(Collectors.toList());
-                throw new CycleNotAllowedException(model.getAllElements().stream().map(Element::getId).collect(Collectors.toList()), unresolved);
-            }
+            log.debug("Load relations");
+            in.getRelations().stream().map(r -> toRelation(r, model)).forEach(model::addRelation);
+            workspace.validate();
+            return workspace;
+        }  catch (Throwable e) {
+            model.getAllElements().forEach(element -> log.info("> {}: {}", element.toShortString(), element));
+            throw e;
         }
-        log.debug("Load relations");
-        in.getRelations().stream().map(r -> toRelation(r, model)).forEach(model::addRelation);
-        workspace.validate();
-        return workspace;
     }
 
     protected boolean apply(Workspace out, ElementPair pair) {
@@ -232,8 +237,16 @@ public class WorkspaceLoader {
     protected Relation toRelation(RelationRaw in, Model model) {
         var out = new Relation(model);
         out.setId(in.getId());
-        out.setFrom(model.getElementById(in.getFrom()));
-        out.setTo(model.getElementById(in.getTo()));
+        var from = model.getElementById(in.getFrom());
+        if (from == null) {
+            throw new NoSuchElementException("Element " + in.getFrom() + " doesn't exist. " + in);
+        }
+        out.setFrom(from);
+        var to = model.getElementById(in.getTo());
+        if (to == null) {
+            throw new NoSuchElementException("Element " + in.getTo() + " doesn't exist. " + in);
+        }
+        out.setTo(to);
         out.setDescription(in.getDescription());
         out.setTags(in.getTags());
         out.setMetadata(in.getMetadata());

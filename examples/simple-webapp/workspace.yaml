@@ -1,0 +1,114 @@
+elements:
+  - type: PERSON
+    id: user
+    name: User
+  - type: PERSON
+    id: sysadmin
+    name: Sysadmin
+
+  - type: SOFTWARE_SYSTEM
+    id: reader_ss
+    name: Reader
+    description: Allows users to access the reader
+
+  - type: CONTAINER
+    id: reader_frontend
+    parentId: reader_ss
+    name: Single Page Application
+    description: Allows users to use reader functionalities
+    metadata:
+      technology: "Vue 3"
+
+  - type: CONTAINER
+    id: reader_backend
+    parentId: reader_ss
+    name: Backend
+    description: Business Logic of the reader
+    metadata:
+      technology: "Spring Boot 3, Java 21"
+
+  - type: CONTAINER
+    id: reader_database
+    parentId: reader_ss
+    name: RDBMS
+    description: Stores books info
+    metadata:
+      technology: "Postgres"
+
+  - type: SOFTWARE_SYSTEM
+    id: aws_ss
+    name: Amazon Web Services
+    description: Stores books
+
+  - type: CONTAINER
+    id: aws_s3_bucket_reader
+    parentId: aws_ss
+    name: AWS S3 Bucket
+    description: Stores books
+
+  - type: DEPLOYMENT_ENVIRONMENT
+    id: live
+    name: Live
+
+  - type: DEPLOYMENT_NODE
+    id: netlify
+    parentId: live
+    name: Netlify
+  - type: DEPLOYMENT_NODE
+    id: app.netlify.app
+    parentId: netlify
+    name: app.netlify.app
+    metadata:
+      port: 443
+  - type: INFRASTRUCTURE_NODE
+    parentId: app.netlify.app
+    name: Reverse Proxy
+  - type: CONTAINER_INSTANCE
+    parentId: app.netlify.app
+    containerId: reader_frontend
+
+
+  - type: DEPLOYMENT_NODE
+    id: fly.io
+    parentId: live
+    name: fly.io
+  - type: DEPLOYMENT_NODE
+    id: app.fly.io
+    parentId: fly.io
+    name: app.fly.io
+    metadata:
+      port: 443
+      scale: 0..1
+  - type: DEPLOYMENT_NODE
+    id: Application Server
+    parentId: app.fly.io
+    name: Application Server
+    metadata:
+      machine: shared-1x-cpu
+      memory: 512MB
+      java version: 21
+  - type: CONTAINER_INSTANCE
+    parentId: Application Server
+    containerId: reader_backend
+
+relations:
+  - from: user
+    to: reader_frontend
+    description: Uses
+  - from: sysadmin
+    to: reader_database
+    description: Access
+  - from: reader_frontend
+    to: reader_backend
+    description: Uses
+  - from: reader_backend
+    to: reader_database
+    description: Reads from and writes to
+    metadata:
+      technology: Postgres Protocol/SSL
+  - from: reader_backend
+    to: aws_s3_bucket_reader
+    description: Upload books
+  - from: reader_frontend
+    to: aws_s3_bucket_reader
+    description: Download books
