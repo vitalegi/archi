@@ -27,7 +27,7 @@ public class WorkspaceLoader {
         Workspace out = new Workspace();
         var pairs = new ArrayList<>(in.getElements().stream().map(e -> toPair(out.getModel(), e)).collect(Collectors.toList()));
         while (!pairs.isEmpty()) {
-            log.info("New cycle");
+            log.debug("New cycle");
             boolean anyProcessed = false;
             for (var i = 0; i < pairs.size(); i++) {
                 if (apply(out, pairs.get(i))) {
@@ -49,7 +49,7 @@ public class WorkspaceLoader {
         var parentId = pair.getSource().getParentId();
         if (StringUtil.isNullOrEmpty(parentId)) {
             out.getModel().addChild(pair.getOut());
-            log.info("Add actor to top level: {}", pair.getOut().getId());
+            log.debug("Add actor to top level: {}", pair.getOut().getId());
             return true;
         }
         var parent = out.getModel().getElementById(parentId);
