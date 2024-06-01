@@ -1,7 +1,7 @@
 package it.vitalegi.archi;
 
 import it.vitalegi.archi.workspace.loader.FileSystemWorkspaceLoader;
-import it.vitalegi.archi.workspace.loader.WorkspaceLoader;
+import it.vitalegi.archi.workspace.loader.WorkspaceLoaderFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -14,7 +14,7 @@ public class ExampleTests {
     @Test
     void simpleWebapp() {
         FileSystemWorkspaceLoader loader = new FileSystemWorkspaceLoader();
-        new WorkspaceLoader().load(loader.load(Path.of("examples", "simple-webapp", "workspace.yaml")));
+        new WorkspaceLoaderFactory().build().load(loader.load(Path.of("examples", "simple-webapp", "workspace.yaml")));
     }
 
 }

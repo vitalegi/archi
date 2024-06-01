@@ -1,4 +1,4 @@
-package it.vitalegi.archi.model.view;
+package it.vitalegi.archi.view.dto;
 
 import lombok.ToString;
 
@@ -8,21 +8,21 @@ import java.util.Objects;
 
 @ToString
 public class Views {
-    List<BaseView> views;
+    List<View> views;
 
     public Views() {
         views = new ArrayList<>();
     }
 
-    public List<BaseView> getAll() {
+    public List<View> getAll() {
         return views;
     }
 
-    public void add(BaseView view) {
+    public void add(View view) {
         views.add(view);
     }
 
-    public BaseView getByName(String name) {
+    public View getByName(String name) {
         return views.stream().filter(v -> Objects.equals(v.getName(), name)).findFirst().orElse(null);
     }
 }

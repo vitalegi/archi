@@ -5,9 +5,9 @@ import it.vitalegi.archi.exception.ElementNotAllowedException;
 import it.vitalegi.archi.exception.ElementNotFoundException;
 import it.vitalegi.archi.exception.NonUniqueIdException;
 import it.vitalegi.archi.exception.RelationNotAllowedException;
-import it.vitalegi.archi.model.view.DeploymentView;
 import it.vitalegi.archi.util.WorkspaceLoaderBuilder;
 import it.vitalegi.archi.util.WorkspaceUtil;
+import it.vitalegi.archi.view.dto.DeploymentView;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +27,6 @@ import java.util.stream.Stream;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 public class WorkspaceLoaderTests {
@@ -35,7 +34,7 @@ public class WorkspaceLoaderTests {
     @Test
     void when_load_given_validWorkspace_thenLoads() throws IOException {
         FileSystemWorkspaceLoader loader = new FileSystemWorkspaceLoader();
-        var workspace = new WorkspaceLoader().load(loader.load(Path.of("src", "test", "resources", "workspace1.yaml")));
+        var workspace = loader().load(loader.load(Path.of("src", "test", "resources", "workspace1.yaml")));
 
         assertNotNull(workspace);
         assertNotNull(workspace.getModel().getElements());
@@ -64,7 +63,7 @@ public class WorkspaceLoaderTests {
 
     @Test
     void when_load_given_cycle_thenFail() {
-        var loader = new WorkspaceLoader();
+        var loader = loader();
         var config = builder() //
                 .group("A", "B") //
                 .group("B", "A") //
@@ -81,7 +80,7 @@ public class WorkspaceLoaderTests {
 
     @Test
     void when_load_given_duplicateIds_thenFail() {
-        var loader = new WorkspaceLoader();
+        var loader = loader();
         var config = builder() //
                 .softwareSystem("a") //
                 .softwareSystem("b") //
@@ -94,7 +93,7 @@ public class WorkspaceLoaderTests {
 
     @Test
     void when_load_given_nullIds_thenSucceed() {
-        var loader = new WorkspaceLoader();
+        var loader = loader();
         var config = builder().softwareSystem(null).softwareSystem(null).build();
         var ws = loader.load(config);
         assertEquals(2, ws.getModel().getSoftwareSystems().size());
@@ -108,14 +107,14 @@ public class WorkspaceLoaderTests {
     class Person {
         @Test
         void when_load_given_personOnRoot_thenSucceed() {
-            var loader = new WorkspaceLoader();
+            var loader = loader();
             var ws = loader.load(builder().person("A").build());
             assertEquals("A", ws.getModel().findPersonById("A").getId());
         }
 
         @Test
         void when_load_given_childOnPerson_thenFail() {
-            var loader = new WorkspaceLoader();
+            var loader = loader();
             var config = builder().person("A").person("A", "B").build();
             var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
             assertEquals("Can't add Person (B) to Person (A)", e.getMessage());
@@ -128,14 +127,14 @@ public class WorkspaceLoaderTests {
 
         @Test
         void when_load_given_softwareSystemOnRoot_thenSucceed() {
-            var loader = new WorkspaceLoader();
+            var loader = loader();
             var ws = loader.load(builder().softwareSystem("A").build());
             assertEquals("A", ws.getModel().findSoftwareSystemById("A").getId());
         }
 
         @Test
         void when_load_given_softwareSystemChildOfGroup_thenSucceed() {
-            var loader = new WorkspaceLoader();
+            var loader = loader();
             var ws = loader.load(builder() //
                     .group("A") //
                     .softwareSystem("A", "B") //
@@ -148,7 +147,7 @@ public class WorkspaceLoaderTests {
 
         @Test
         void when_load_given_softwareSystemChildOfGroupOfSoftwareSystem_thenFail() {
-            var loader = new WorkspaceLoader();
+            var loader = loader();
             var config = builder() //
                     .group("A", "B") //
                     .softwareSystem("A") //
@@ -164,7 +163,7 @@ public class WorkspaceLoaderTests {
     class Container {
         @Test
         void when_load_given_containerOnRoot_thenFail() {
-            var loader = new WorkspaceLoader();
+            var loader = loader();
             var config = builder().container("A").build();
             var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
             assertEquals("Can't add Container (A) to Model", e.getMessage());
@@ -172,7 +171,7 @@ public class WorkspaceLoaderTests {
 
         @Test
         void when_load_given_containerChildOfGroupChildOfSoftwareSystem_thenSucceed() {
-            var loader = new WorkspaceLoader();
+            var loader = loader();
             var ws = loader.load(builder() //
                     .group("A", "B") //
                     .container("B", "C") //
@@ -194,14 +193,14 @@ public class WorkspaceLoaderTests {
     class Group {
         @Test
         void when_load_given_groupOnRoot_thenSucceed() {
-            var loader = new WorkspaceLoader();
+            var loader = loader();
             var ws = loader.load(builder().group("A").build());
             assertEquals("A", ws.getModel().findGroupById("A").getId());
         }
 
         @Test
         void when_load_given_groupChildOfGroup_thenSucceed() {
-            var loader = new WorkspaceLoader();
+            var loader = loader();
             var ws = loader.load(builder() //
                     .group("A") //
                     .group("A", "B") //
@@ -214,7 +213,7 @@ public class WorkspaceLoaderTests {
 
         @Test
         void when_load_given_chainOfGroups_thenSucceed() {
-            var loader = new WorkspaceLoader();
+            var loader = loader();
             var config = builder() //
                     .group("A") //
                     .group("A", "B") //
@@ -235,7 +234,7 @@ public class WorkspaceLoaderTests {
     class DeploymentEnvironment {
         @Test
         void when_load_given_deploymentEnvironment_thenSucceed() {
-            var loader = new WorkspaceLoader();
+            var loader = loader();
             var config = builder().deploymentEnvironment("A").build();
             var ws = loader.load(config);
             var a = ws.getModel().findDeploymentEnvironmentById("A");
@@ -248,7 +247,7 @@ public class WorkspaceLoaderTests {
     class DeploymentNode {
         @Test
         void when_load_given_deploymentNodeOnDeploymentEnvironment_thenSucceed() {
-            var loader = new WorkspaceLoader();
+            var loader = loader();
             var config = builder().deploymentEnvironment("A").deploymentNode("A", "B").build();
             var ws = loader.load(config);
             var a = ws.getModel().findDeploymentEnvironmentById("A");
@@ -259,7 +258,7 @@ public class WorkspaceLoaderTests {
 
         @Test
         void when_load_given_deploymentNodeOnRoot_thenFail() {
-            var loader = new WorkspaceLoader();
+            var loader = loader();
             var config = builder().deploymentNode("A").build();
             var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
             assertEquals("Can't add DeploymentNode (A) to Model", e.getMessage());
@@ -270,7 +269,7 @@ public class WorkspaceLoaderTests {
     class InfrastructureNode {
         @Test
         void when_load_given_infrastructureNode_thenSucceed() {
-            var loader = new WorkspaceLoader();
+            var loader = loader();
             var config = builder() //
                     .deploymentEnvironment("A") //
                     .deploymentNode("A", "B") //
@@ -294,7 +293,7 @@ public class WorkspaceLoaderTests {
 
         @Test
         void when_load_given_infrastructureNodeOnWrongParent_thenFail() {
-            var loader = new WorkspaceLoader();
+            var loader = loader();
             var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load( //
                     builder() //
                             .softwareSystem("A") //
@@ -322,7 +321,7 @@ public class WorkspaceLoaderTests {
 
         @Test
         void when_load_given_softwareSystemInstanceOnRoot_thenFail() {
-            var loader = new WorkspaceLoader();
+            var loader = loader();
             var config = builder().softwareSystemInstance("A", "c").build();
             var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
             assertEquals("Can't add SoftwareSystemInstance (A) to Model", e.getMessage());
@@ -330,7 +329,7 @@ public class WorkspaceLoaderTests {
 
         @Test
         void when_load_given_softwareSystemInstanceOnDeploymentEnvironment_thenFail() {
-            var loader = new WorkspaceLoader();
+            var loader = loader();
             var config = builder() //
                     .deploymentEnvironment("A") //
                     .softwareSystemInstance("A", "B", "c") //
@@ -342,7 +341,7 @@ public class WorkspaceLoaderTests {
 
         @Test
         void when_load_given_softwareSystemOnSoftwareSystemInstance_thenSucceed() {
-            var loader = new WorkspaceLoader();
+            var loader = loader();
             var config = builder() //
                     .deploymentEnvironment("A") //
                     .deploymentNode("A", "B") //
@@ -363,7 +362,7 @@ public class WorkspaceLoaderTests {
 
         @Test
         void when_load_given_softwareSystemInstanceWithNoSoftwareSystem_thenFail() {
-            var loader = new WorkspaceLoader();
+            var loader = loader();
             var config = builder() //
                     .deploymentEnvironment("A") //
                     .deploymentNode("A", "B") //
@@ -376,7 +375,7 @@ public class WorkspaceLoaderTests {
 
         @Test
         void when_load_given_softwareSystemInstanceWithMissingSoftwareSystem_thenFail() {
-            var loader = new WorkspaceLoader();
+            var loader = loader();
             var config = builder() //
                     .deploymentEnvironment("A") //
                     .deploymentNode("A", "B") //
@@ -389,7 +388,7 @@ public class WorkspaceLoaderTests {
 
         @Test
         void when_load_given_softwareSystemInstanceWithSomethingNotASoftwareSystem_thenFail() {
-            var loader = new WorkspaceLoader();
+            var loader = loader();
             var config = builder() //
                     .deploymentEnvironment("A") //
                     .deploymentNode("A", "B") //
@@ -407,7 +406,7 @@ public class WorkspaceLoaderTests {
     class ContainerInstance {
         @Test
         void when_load_given_containerInstanceOnRoot_thenFail() {
-            var loader = new WorkspaceLoader();
+            var loader = loader();
             var config = builder().containerInstance("A", "c").build();
             var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
             assertEquals("Can't add ContainerInstance (A) to Model", e.getMessage());
@@ -415,7 +414,7 @@ public class WorkspaceLoaderTests {
 
         @Test
         void when_load_given_containerInstanceOnDeploymentEnvironment_thenFail() {
-            var loader = new WorkspaceLoader();
+            var loader = loader();
             var config = builder() //
                     .deploymentEnvironment("A") //
                     .containerInstance("A", "B", "c") //
@@ -427,7 +426,7 @@ public class WorkspaceLoaderTests {
 
         @Test
         void when_load_given_containerOnContainerInstance_thenSucceed() {
-            var loader = new WorkspaceLoader();
+            var loader = loader();
             var config = builder() //
                     .deploymentEnvironment("A") //
                     .deploymentNode("A", "B") //
@@ -448,7 +447,7 @@ public class WorkspaceLoaderTests {
 
         @Test
         void when_load_given_containerInstanceWithNoContainer_thenFail() {
-            var loader = new WorkspaceLoader();
+            var loader = loader();
             var config = builder() //
                     .deploymentEnvironment("A") //
                     .deploymentNode("A", "B") //
@@ -461,7 +460,7 @@ public class WorkspaceLoaderTests {
 
         @Test
         void when_load_given_containerInstanceWithMissingContainer_thenFail() {
-            var loader = new WorkspaceLoader();
+            var loader = loader();
             var config = builder() //
                     .deploymentEnvironment("A") //
                     .deploymentNode("A", "B") //
@@ -474,7 +473,7 @@ public class WorkspaceLoaderTests {
 
         @Test
         void when_load_given_containerInstanceWithSomethingNotAContainer_thenFail() {
-            var loader = new WorkspaceLoader();
+            var loader = loader();
             var config = builder() //
                     .deploymentEnvironment("A") //
                     .deploymentNode("A", "B") //
@@ -497,7 +496,7 @@ public class WorkspaceLoaderTests {
 
             @BeforeEach
             void init() {
-                loader = new WorkspaceLoader();
+                loader = loader();
                 builder = builder() //
                         .person("person1") //
                         .person("person2") //
@@ -668,63 +667,68 @@ public class WorkspaceLoaderTests {
     class ViewTests {
         @Test
         void given_noView_thenEmptyList() {
-            var loader = new WorkspaceLoader();
+            var loader = loader();
             var config = builder().build();
             var ws = loader.load(config);
             assertEquals(0, ws.getViews().getAll().size());
         }
+    }
 
-        @DisplayName("On DeploymentView")
-        @Nested
-        class DeploymentViewTests {
-            @Test
-            void given_correctConfiguration_thenSucceed() {
-                var loader = new WorkspaceLoader();
-                var config = builder().deploymentEnvironment("prod").deploymentView("*", "prod", "123").build();
-                var ws = loader.load(config);
-                var view = ws.getViews().getByName("123");
-                assertNotNull(view);
-                assertEquals(view.getClass(), DeploymentView.class);
-                var deploymentView = (DeploymentView) view;
-                assertEquals("prod", deploymentView.getEnvironment());
-                assertEquals("*", deploymentView.getScope());
-            }
-
-            @Test
-            void when_scopeIsSoftwareSystem_given_SoftwareSystemIsExists_thenSucceed() {
-                var loader = new WorkspaceLoader();
-                var config = builder() //
-                        .deploymentEnvironment("prod") //
-                        .deploymentView("A", "prod", "123") //
-                        .softwareSystem("A") //
-                        .build();
-
-                var ws = loader.load(config);
-                var view = ws.getViews().getByName("123");
-                assertNotNull(view);
-                assertEquals(view.getClass(), DeploymentView.class);
-                var deploymentView = (DeploymentView) view;
-                assertEquals("prod", deploymentView.getEnvironment());
-                assertEquals("A", deploymentView.getScope());
-            }
-            @Test
-            void given_missingDeploymentEnvironment_thenFail() {
-                var loader = new WorkspaceLoader();
-                var config = builder().deploymentEnvironment("qa").deploymentView(null, "prod", "123").build();
-                var e = Assertions.assertThrows(ElementNotFoundException.class, () -> loader.load(config));
-                assertEquals("Can't find prod", e.getMessage());
-            }
-
-            @Test
-            void when_scopeIsSoftwareSystem_given_SoftwareSystemIsMissing_thenFail() {
-                var loader = new WorkspaceLoader();
-                var config = builder() //
-                        .deploymentEnvironment("qa") //
-                        .deploymentView("ss", "prod", "123") //
-                        .build();
-                var e = Assertions.assertThrows(ElementNotFoundException.class, () -> loader.load(config));
-                assertEquals("Can't find ss", e.getMessage());
-            }
+    @DisplayName("When load DeploymentView")
+    @Nested
+    class DeploymentViewTests {
+        @Test
+        void given_correctConfiguration_thenSucceed() {
+            var loader = loader();
+            var config = builder().deploymentEnvironment("prod").deploymentView("*", "prod", "123").build();
+            var ws = loader.load(config);
+            var view = ws.getViews().getByName("123");
+            assertNotNull(view);
+            assertEquals(view.getClass(), DeploymentView.class);
+            var deploymentView = (DeploymentView) view;
+            assertEquals("prod", deploymentView.getEnvironment());
+            assertEquals("*", deploymentView.getScope());
         }
+
+        @Test
+        void when_scopeIsSoftwareSystem_given_SoftwareSystemIsExists_thenSucceed() {
+            var loader = loader();
+            var config = builder() //
+                    .deploymentEnvironment("prod") //
+                    .deploymentView("A", "prod", "123") //
+                    .softwareSystem("A") //
+                    .build();
+
+            var ws = loader.load(config);
+            var view = ws.getViews().getByName("123");
+            assertNotNull(view);
+            assertEquals(view.getClass(), DeploymentView.class);
+            var deploymentView = (DeploymentView) view;
+            assertEquals("prod", deploymentView.getEnvironment());
+            assertEquals("A", deploymentView.getScope());
+        }
+
+        @Test
+        void given_missingDeploymentEnvironment_thenFail() {
+            var loader = loader();
+            var config = builder().deploymentEnvironment("qa").deploymentView(null, "prod", "123").build();
+            var e = Assertions.assertThrows(ElementNotFoundException.class, () -> loader.load(config));
+            assertEquals("Can't find prod: required on view 123", e.getMessage());
+        }
+
+        @Test
+        void when_scopeIsSoftwareSystem_given_SoftwareSystemIsMissing_thenFail() {
+            var loader = loader();
+            var config = builder() //
+                    .deploymentEnvironment("prod") //
+                    .deploymentView("ss", "prod", "123") //
+                    .build();
+            var e = Assertions.assertThrows(RuntimeException.class, () -> loader.load(config));
+            assertEquals("Scope ss on view 123 is invalid. Expected one of: [ALL, SOFTWARE_SYSTEM]. Check if all objects exist.", e.getMessage());
+        }
+    }
+
+    static WorkspaceLoader loader() {
+        return new WorkspaceLoaderFactory().build();
     }
 }

@@ -1,6 +1,7 @@
-package it.vitalegi.archi.model;
+package it.vitalegi.archi.workspace;
 
-import it.vitalegi.archi.model.view.Views;
+import it.vitalegi.archi.model.Model;
+import it.vitalegi.archi.view.dto.Views;
 import lombok.Data;
 
 @Data
