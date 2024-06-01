@@ -108,6 +108,19 @@ public class WorkspaceLoaderBuilder {
         return this;
     }
 
+    public WorkspaceLoaderBuilder infrastructureNode(String id) {
+        return infrastructureNode(null, id);
+    }
+
+    public WorkspaceLoaderBuilder infrastructureNode(String parentId, String id) {
+        return infrastructureNode(parentId, id, UUID.randomUUID().toString());
+    }
+
+    public WorkspaceLoaderBuilder infrastructureNode(String parentId, String id, String name) {
+        workspace.getElements().add(element(ElementType.INFRASTRUCTURE_NODE, parentId, id, name, null, null, null));
+        return this;
+    }
+
     public Workspace build() {
         return workspace;
     }

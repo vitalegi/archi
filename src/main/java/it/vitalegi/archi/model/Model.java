@@ -2,7 +2,6 @@ package it.vitalegi.archi.model;
 
 import it.vitalegi.archi.exception.ElementNotAllowedException;
 import it.vitalegi.archi.exception.NonUniqueIdException;
-import it.vitalegi.archi.util.StringUtil;
 import it.vitalegi.archi.util.WorkspaceUtil;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -12,7 +11,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
@@ -93,6 +91,14 @@ public class Model extends Node {
 
     protected boolean addDeploymentNode(Node parent, Element child) {
         if (WorkspaceUtil.isDeploymentNode(child)) {
+            addChild(parent, child);
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean addInfrastructureNode(Node parent, Element child) {
+        if (WorkspaceUtil.isInfrastructureNode(child)) {
             addChild(parent, child);
             return true;
         }

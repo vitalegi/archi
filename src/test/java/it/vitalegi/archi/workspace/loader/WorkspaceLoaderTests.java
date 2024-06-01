@@ -214,6 +214,7 @@ public class WorkspaceLoaderTests {
         var e = Assertions.assertThrows(NoSuchElementException.class, () -> loader.load(config));
         assertEquals("Container c doesn't exist. Dependency is unsatisfied for ContainerInstance (C)", e.getMessage());
     }
+
     @Test
     void when_load_given_containerInstanceWithSomethingNotAContainer_thenFail() {
         var loader = new WorkspaceLoader();
@@ -221,6 +222,7 @@ public class WorkspaceLoaderTests {
         var e = Assertions.assertThrows(IllegalArgumentException.class, () -> loader.load(config));
         assertEquals("Dependency is unsatisfied for ContainerInstance (C). Expected a Container; Actual: SoftwareSystem (ss)", e.getMessage());
     }
+
     @Test
     void when_load_given_cycle_thenFail() {
         var loader = new WorkspaceLoader();
@@ -243,6 +245,45 @@ public class WorkspaceLoaderTests {
         var config = builder().softwareSystem(null).softwareSystem(null).build();
         var ws = loader.load(config);
         assertEquals(2, ws.getModel().getSoftwareSystems().size());
+    }
+
+    @Test
+    void when_load_given_infrastructureNode_thenSucceed() {
+        var loader = new WorkspaceLoader();
+        var config = builder() //
+                .deploymentEnvironment("A") //
+                .deploymentNode("A", "B") //
+                .containerInstance("B", "C", "c") //
+                .softwareSystem("SS") //
+                .container("SS", "c") //
+                .infrastructureNode("A", "infra1") //
+                .infrastructureNode("B", "infra2") //
+                .build();
+
+        var ws = loader.load(config);
+        var a = ws.getModel().findDeploymentEnvironmentById("A");
+        assertNotNull(a);
+        var b = a.findDeploymentNodeById("B");
+        assertNotNull(b);
+        var infra1 = a.findInfrastructureNodeById("infra1");
+        assertNotNull(infra1);
+        var infra2 = b.findInfrastructureNodeById("infra2");
+        assertNotNull(infra2);
+    }
+
+    @Test
+    void when_load_given_infrastructureNodeOnWrongParent_thenFail() {
+        var loader = new WorkspaceLoader();
+        var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load( //
+                builder().softwareSystem("A").infrastructureNode("A", "B").build() //
+        ));
+        assertEquals("Can't add InfrastructureNode (B) to SoftwareSystem (A)", e.getMessage());
+
+        e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load( //
+                builder().softwareSystem("A").container("A", "B").infrastructureNode("B", "C").build() //
+        ));
+        assertEquals("Can't add InfrastructureNode (C) to Container (B)", e.getMessage());
+
     }
 
     protected WorkspaceLoaderBuilder builder() {

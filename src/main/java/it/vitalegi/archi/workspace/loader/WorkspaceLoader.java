@@ -7,6 +7,7 @@ import it.vitalegi.archi.model.DeploymentEnvironment;
 import it.vitalegi.archi.model.DeploymentNode;
 import it.vitalegi.archi.model.Element;
 import it.vitalegi.archi.model.Group;
+import it.vitalegi.archi.model.InfrastructureNode;
 import it.vitalegi.archi.model.Model;
 import it.vitalegi.archi.model.Person;
 import it.vitalegi.archi.model.SoftwareSystem;
@@ -82,6 +83,9 @@ public class WorkspaceLoader {
         }
         if (isContainerInstance(source)) {
             return new ElementPair(source, toContainerInstance(model, source));
+        }
+        if (isInfrastructureNode(source)) {
+            return new ElementPair(source, toInfrastructureNode(model, source));
         }
         throw new RuntimeException("Can't process " + source);
     }
@@ -177,6 +181,13 @@ public class WorkspaceLoader {
         return out;
     }
 
+    protected InfrastructureNode toInfrastructureNode(Model model, ElementYaml element) {
+        var out = new InfrastructureNode(model);
+        applyCommonProperties(element, out);
+        return out;
+    }
+
+
     protected void applyCommonProperties(ElementYaml in, Element out) {
         out.setId(in.getId());
         out.setName(in.getName());
@@ -186,10 +197,18 @@ public class WorkspaceLoader {
         out.setUniqueId(WorkspaceUtil.createUniqueId(out));
     }
 
+    protected boolean isInfrastructureNode(ElementYaml element) {
+        if (element.getType() == null) {
+            throw new NullPointerException("Element type is null");
+        }
+        return element.getType() == ElementType.INFRASTRUCTURE_NODE;
+    }
+
     @AllArgsConstructor
     @Data
     protected static class ElementPair {
         ElementYaml source;
         Element out;
     }
+
 }

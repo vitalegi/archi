@@ -6,6 +6,7 @@ import it.vitalegi.archi.model.DeploymentEnvironment;
 import it.vitalegi.archi.model.DeploymentNode;
 import it.vitalegi.archi.model.Element;
 import it.vitalegi.archi.model.Group;
+import it.vitalegi.archi.model.InfrastructureNode;
 import it.vitalegi.archi.model.Model;
 import it.vitalegi.archi.model.Person;
 import it.vitalegi.archi.model.SoftwareSystem;
@@ -24,7 +25,7 @@ public class WorkspaceUtil {
         if (StringUtil.isNotNullOrEmpty(id)) {
             return element.getClass().getSimpleName() + "_" + element.getId();
         }
-        return element.getClass().getSimpleName() + "_auto_" + UUID.randomUUID().toString();
+        return element.getClass().getSimpleName() + "_auto_" + UUID.randomUUID();
     }
 
     public static Person getPerson(List<Element> elements, String id) {
@@ -175,6 +176,25 @@ public class WorkspaceUtil {
         throw new IllegalArgumentException("Element with id " + id + " is not a ContainerInstance: " + element);
     }
 
+    public static InfrastructureNode getInfrastructureNode(List<? extends Element> elements, String id) {
+        var element = findInfrastructureNode(elements, id);
+        if (element == null) {
+            throw new NoSuchElementException("No element with id " + id + ". Available IDs: " + Element.collectIds(elements));
+        }
+        return element;
+    }
+
+    public static InfrastructureNode findInfrastructureNode(List<? extends Element> elements, String id) {
+        var element = findElementById(elements, id);
+        if (element == null) {
+            return null;
+        }
+        if (isInfrastructureNode(element)) {
+            return (InfrastructureNode) element;
+        }
+        throw new IllegalArgumentException("Element with id " + id + " is not a InfrastructureNode: " + element);
+    }
+
     public static List<Group> getGroups(List<? extends Element> elements) {
         return elements.stream().filter(WorkspaceUtil::isGroup).map(e -> ((Group) e)).collect(Collectors.toList());
     }
@@ -189,6 +209,10 @@ public class WorkspaceUtil {
 
     public static List<ContainerInstance> getContainerInstances(List<? extends Element> elements) {
         return elements.stream().filter(WorkspaceUtil::isContainerInstance).map(e -> ((ContainerInstance) e)).collect(Collectors.toList());
+    }
+
+    public static List<InfrastructureNode> getInfrastructureNodes(List<? extends Element> elements) {
+        return elements.stream().filter(WorkspaceUtil::isInfrastructureNode).map(e -> ((InfrastructureNode) e)).collect(Collectors.toList());
     }
 
     public static boolean isPerson(Element element) {
@@ -221,6 +245,10 @@ public class WorkspaceUtil {
 
     public static boolean isContainerInstance(Element element) {
         return element instanceof ContainerInstance;
+    }
+
+    public static boolean isInfrastructureNode(Element element) {
+        return element instanceof InfrastructureNode;
     }
 
     public static Element findElementById(List<? extends Element> elements, String id) {

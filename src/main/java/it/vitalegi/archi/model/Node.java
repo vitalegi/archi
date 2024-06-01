@@ -76,4 +76,15 @@ public abstract class Node extends Element {
     public List<ContainerInstance> getContainerInstances() {
         return WorkspaceUtil.getContainerInstances(elements);
     }
+
+
+    public InfrastructureNode findInfrastructureNodeById(String id) {
+        return WorkspaceUtil.findInfrastructureNode(elements, id);
+    }
+
+    public List<InfrastructureNode> getInfrastructureNodes() {
+        return WorkspaceUtil.getInfrastructureNodes(elements);
+    }
+
+
 }

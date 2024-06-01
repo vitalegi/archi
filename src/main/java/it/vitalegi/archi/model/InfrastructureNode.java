@@ -8,22 +8,13 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class DeploymentEnvironment extends Node {
+public class InfrastructureNode extends Node {
 
-    public DeploymentEnvironment(Model model) {
+    public InfrastructureNode(Model model) {
         super(model);
     }
 
     public void addChild(Element child) {
-        if (getModel().addGroup(this, child)) {
-            return;
-        }
-        if (getModel().addDeploymentNode(this, child)) {
-            return;
-        }
-        if (getModel().addInfrastructureNode(this, child)) {
-            return;
-        }
         throw new ElementNotAllowedException(this, child);
     }
 }
