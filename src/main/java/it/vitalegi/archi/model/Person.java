@@ -13,4 +13,8 @@ public class Person extends Element {
     public void addChild(Element child) {
         throw new ElementNotAllowedException(this, child);
     }
+
+    public ElementType getElementType() {
+        return ElementType.PERSON;
+    }
 }

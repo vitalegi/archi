@@ -41,4 +41,7 @@ public class ContainerInstance extends Element {
             throw new IllegalArgumentException("Dependency is unsatisfied for " + this.toShortString() + ". Expected a Container; Actual: " + container.toShortString());
         }
     }
+    public ElementType getElementType() {
+        return ElementType.CONTAINER_INSTANCE;
+    }
 }

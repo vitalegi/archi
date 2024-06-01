@@ -41,4 +41,7 @@ public class SoftwareSystemInstance extends Element {
             throw new IllegalArgumentException("Dependency is unsatisfied for " + this.toShortString() + ". Expected a SoftwareSystem; Actual: " + softwareSystem.toShortString());
         }
     }
+    public ElementType getElementType() {
+        return ElementType.SOFTWARE_SYSTEM_INSTANCE;
+    }
 }

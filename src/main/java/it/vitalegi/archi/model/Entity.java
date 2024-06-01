@@ -1,19 +1,25 @@
 package it.vitalegi.archi.model;
 
-import lombok.Data;
+import lombok.AccessLevel;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Data
-@ToString(exclude = "model")
+@Getter
+@Setter
+@EqualsAndHashCode
+@ToString
 public abstract class Entity {
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    @Setter(AccessLevel.PROTECTED)
     @Getter
     protected Model model;
     String id;
@@ -37,4 +43,6 @@ public abstract class Entity {
 
     public void validate() {
     }
+
+    public abstract ElementType getElementType();
 }

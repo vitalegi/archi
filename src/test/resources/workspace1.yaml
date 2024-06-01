@@ -44,8 +44,8 @@ elements:
     name: Group 3
     parentId: group2
 relations:
-  - from: group1
-    to: group2
+  - from: B
+    to: C
     description: Rel 1
     tags:
       - a

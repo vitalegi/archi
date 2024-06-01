@@ -19,7 +19,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class WorkspaceUtil {
-    public static String createUniqueId(Element element) {
+    public static String createUniqueId(Entity element) {
         if (element == null) {
             throw new NullPointerException("Element is null");
         }

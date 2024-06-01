@@ -26,4 +26,8 @@ public class DeploymentEnvironment extends Node {
         }
         throw new ElementNotAllowedException(this, child);
     }
+
+    public ElementType getElementType() {
+        return ElementType.DEPLOYMENT_ENVIRONMENT;
+    }
 }

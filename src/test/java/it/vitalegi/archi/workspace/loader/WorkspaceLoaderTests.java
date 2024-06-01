@@ -3,6 +3,7 @@ package it.vitalegi.archi.workspace.loader;
 import it.vitalegi.archi.exception.CycleNotAllowedException;
 import it.vitalegi.archi.exception.ElementNotAllowedException;
 import it.vitalegi.archi.exception.NonUniqueIdException;
+import it.vitalegi.archi.exception.RelationNotAllowedException;
 import it.vitalegi.archi.util.WorkspaceLoaderBuilder;
 import it.vitalegi.archi.util.WorkspaceUtil;
 import org.junit.jupiter.api.Assertions;
@@ -524,6 +525,7 @@ public class WorkspaceLoaderTests {
                         //
                         .softwareSystemInstance("node11", "softwareSystemInstance1", "softwareSystem1") //
                         .softwareSystemInstance("node11", "softwareSystemInstance2", "softwareSystem2") //
+                        .softwareSystemInstance("node21", "softwareSystemInstance3", "softwareSystem1") //
                         //
                         .containerInstance("node11", "containerInstance11", "container11") //
                         .containerInstance("node11", "containerInstance12", "container12") //
@@ -544,7 +546,94 @@ public class WorkspaceLoaderTests {
                         arg("person1", "node11", false, "Relation from Person to DeploymentNode is NOT allowed"), //
                         arg("person1", "infra11", false, "Relation from Person to InfrastructureNode is NOT allowed"), //
                         arg("person1", "softwareSystemInstance1", false, "Relation from Person to SoftwareSystemInstance is NOT allowed"), //
-                        arg("person1", "containerInstance11", false, "Relation from Person to ContainerInstance is NOT allowed") //
+                        arg("person1", "containerInstance11", false, "Relation from Person to ContainerInstance is NOT allowed"), //
+                        //
+
+                        arg("softwareSystem1", "softwareSystem1", true, "Relation from SoftwareSystem to self is allowed"), //
+                        arg("softwareSystem1", "person2", true, "Relation from SoftwareSystem to Person is allowed"), //
+                        arg("softwareSystem1", "softwareSystem2", true, "Relation from SoftwareSystem to SoftwareSystem is allowed"), //
+                        arg("softwareSystem1", "container11", true, "Relation from SoftwareSystem to Container is allowed"), //
+                        arg("softwareSystem1", "group1", false, "Relation from SoftwareSystem to Group is NOT allowed"), //
+                        arg("softwareSystem1", "env1", false, "Relation from SoftwareSystem to DeploymentEnvironment is NOT allowed"), //
+                        arg("softwareSystem1", "node11", false, "Relation from SoftwareSystem to DeploymentNode is NOT allowed"), //
+                        arg("softwareSystem1", "infra11", false, "Relation from SoftwareSystem to InfrastructureNode is NOT allowed"), //
+                        arg("softwareSystem1", "softwareSystemInstance1", false, "Relation from SoftwareSystem to SoftwareSystemInstance is NOT allowed"), //
+                        arg("softwareSystem1", "containerInstance11", false, "Relation from SoftwareSystem to ContainerInstance is NOT allowed"), //
+                        //
+
+                        arg("container21", "container21", true, "Relation from Container to self is allowed"), //
+                        arg("container21", "person2", true, "Relation from Container to Person is allowed"), //
+                        arg("container21", "softwareSystem1", true, "Relation from Container to SoftwareSystem is allowed"), //
+                        arg("container21", "container11", true, "Relation from Container to Container is allowed"), //
+                        arg("container21", "group1", false, "Relation from Container to Group is NOT allowed"), //
+                        arg("container21", "env1", false, "Relation from Container to DeploymentEnvironment is NOT allowed"), //
+                        arg("container21", "node11", false, "Relation from Container to DeploymentNode is NOT allowed"), //
+                        arg("container21", "infra11", false, "Relation from Container to InfrastructureNode is NOT allowed"), //
+                        arg("container21", "softwareSystemInstance1", false, "Relation from Container to SoftwareSystemInstance is NOT allowed"), //
+                        arg("container21", "containerInstance11", false, "Relation from Container to ContainerInstance is NOT allowed"), //
+                        //
+
+                        arg("env1", "env1", false, "Relation from DeploymentEnvironment to self is NOT allowed"), //
+                        arg("env1", "person2", false, "Relation from DeploymentEnvironment to Person is NOT allowed"), //
+                        arg("env1", "softwareSystem1", false, "Relation from DeploymentEnvironment to SoftwareSystem is NOT allowed"), //
+                        arg("env1", "container11", false, "Relation from DeploymentEnvironment to Container is NOT allowed"), //
+                        arg("env1", "group1", false, "Relation from DeploymentEnvironment to Group is NOT allowed"), //
+                        arg("env1", "env2", false, "Relation from DeploymentEnvironment to DeploymentEnvironment is NOT allowed"), //
+                        arg("env1", "node11", false, "Relation from DeploymentEnvironment to DeploymentNode is NOT allowed"), //
+                        arg("env1", "infra11", false, "Relation from DeploymentEnvironment to InfrastructureNode is NOT allowed"), //
+                        arg("env1", "softwareSystemInstance1", false, "Relation from DeploymentEnvironment to SoftwareSystemInstance is NOT allowed"), //
+                        arg("env1", "containerInstance11", false, "Relation from DeploymentEnvironment to ContainerInstance is NOT allowed"), //
+                        //
+
+                        arg("node12", "node12", true, "Relation from DeploymentNode to self is allowed"), //
+                        arg("node12", "person2", false, "Relation from DeploymentNode to Person is NOT allowed"), //
+                        arg("node12", "softwareSystem1", false, "Relation from DeploymentNode to SoftwareSystem is NOT allowed"), //
+                        arg("node12", "container11", false, "Relation from DeploymentNode to Container is NOT allowed"), //
+                        arg("node12", "group1", false, "Relation from DeploymentNode to Group is NOT allowed"), //
+                        arg("node12", "env1", false, "Relation from DeploymentNode to DeploymentEnvironment is NOT allowed"), //
+                        arg("node12", "node11", true, "Relation from DeploymentNode to DeploymentNode is allowed"), //
+                        arg("node12", "node21", false, "Relation from DeploymentNode to DeploymentNode on different environment is NOT allowed"), //
+                        arg("node12", "infra11", false, "Relation from DeploymentNode to InfrastructureNode is NOT allowed"), //
+                        arg("node12", "softwareSystemInstance1", false, "Relation from DeploymentNode to SoftwareSystemInstance is NOT allowed"), //
+                        arg("node12", "containerInstance11", false, "Relation from DeploymentNode to ContainerInstance is NOT allowed"), //
+                        //
+
+                        arg("infra12", "infra12", true, "Relation from InfrastructureNode to self is allowed"), //
+                        arg("infra12", "person2", false, "Relation from InfrastructureNode to Person is NOT allowed"), //
+                        arg("infra12", "softwareSystem1", false, "Relation from InfrastructureNode to SoftwareSystem is NOT allowed"), //
+                        arg("infra12", "container11", false, "Relation from InfrastructureNode to Container is NOT allowed"), //
+                        arg("infra12", "group1", false, "Relation from InfrastructureNode to Group is NOT allowed"), //
+                        arg("infra12", "env1", false, "Relation from InfrastructureNode to DeploymentEnvironment is NOT allowed"), //
+                        arg("infra12", "node11", true, "Relation from InfrastructureNode to DeploymentNode is allowed"), //
+                        arg("infra12", "infra11", true, "Relation from InfrastructureNode to InfrastructureNode is allowed"), //
+                        arg("infra12", "infra21", false, "Relation from InfrastructureNode to DeploymentNode on different environment is NOT allowed"), //
+                        arg("infra12", "softwareSystemInstance1", true, "Relation from InfrastructureNode to SoftwareSystemInstance is allowed"), //
+                        arg("infra12", "containerInstance11", true, "Relation from InfrastructureNode to ContainerInstance is allowed"), //
+                        //
+
+                        arg("softwareSystemInstance2", "softwareSystemInstance2", false, "Relation from SoftwareSystemInstance to self is NOT allowed"), //
+                        arg("softwareSystemInstance2", "person2", false, "Relation from SoftwareSystemInstance to Person is NOT allowed"), //
+                        arg("softwareSystemInstance2", "softwareSystem1", false, "Relation from SoftwareSystemInstance to SoftwareSystem is NOT allowed"), //
+                        arg("softwareSystemInstance2", "container11", false, "Relation from SoftwareSystemInstance to Container is NOT allowed"), //
+                        arg("softwareSystemInstance2", "group1", false, "Relation from SoftwareSystemInstance to Group is NOT allowed"), //
+                        arg("softwareSystemInstance2", "env1", false, "Relation from SoftwareSystemInstance to DeploymentEnvironment is NOT allowed"), //
+                        arg("softwareSystemInstance2", "node11", false, "Relation from SoftwareSystemInstance to DeploymentNode is NOT allowed"), //
+                        arg("softwareSystemInstance2", "infra11", true, "Relation from SoftwareSystemInstance to InfrastructureNode is allowed"), //
+                        arg("softwareSystemInstance2", "infra22", false, "Relation from SoftwareSystemInstance to InfrastructureNode on different environment is NOT allowed"), //
+                        arg("softwareSystemInstance2", "softwareSystemInstance1", false, "Relation from SoftwareSystemInstance to SoftwareSystemInstance is NOT allowed"), //
+                        arg("softwareSystemInstance2", "containerInstance11", false, "Relation from SoftwareSystemInstance to ContainerInstance is NOT allowed"), //
+                        //
+                        arg("containerInstance12", "containerInstance12", false, "Relation from ContainerInstance to self is NOT allowed"), //
+                        arg("containerInstance12", "person2", false, "Relation from ContainerInstance to Person is NOT allowed"), //
+                        arg("containerInstance12", "softwareSystem1", false, "Relation from ContainerInstance to SoftwareSystem is NOT allowed"), //
+                        arg("containerInstance12", "container11", false, "Relation from ContainerInstance to Container is NOT allowed"), //
+                        arg("containerInstance12", "group1", false, "Relation from ContainerInstance to Group is NOT allowed"), //
+                        arg("containerInstance12", "env1", false, "Relation from ContainerInstance to DeploymentEnvironment is NOT allowed"), //
+                        arg("containerInstance12", "node11", false, "Relation from ContainerInstance to DeploymentNode is NOT allowed"), //
+                        arg("containerInstance12", "infra11", true, "Relation from ContainerInstance to InfrastructureNode is allowed"), //
+                        arg("containerInstance12", "infra22", false, "Relation from ContainerInstance to InfrastructureNode on different environment is NOT allowed"), //
+                        arg("containerInstance12", "softwareSystemInstance1", false, "Relation from ContainerInstance to SoftwareSystemInstance is NOT allowed"), //
+                        arg("containerInstance12", "containerInstance11", false, "Relation from ContainerInstance to ContainerInstance is NOT allowed") //
                         //
                 );
             }
@@ -553,18 +642,18 @@ public class WorkspaceLoaderTests {
                 return Arguments.of(sourceId, destinationId, shouldSucceed, displayName);
             }
 
-            @ParameterizedTest(name = "{index} - {3}")
+            @ParameterizedTest(name = "{index} - {3}: from {0} to {1}")
             @MethodSource("allowedRelations")
             void allowedRelations(String sourceId, String destinationId, boolean shouldSucceed, String displayName) {
                 builder.relation(sourceId, destinationId);
                 if (shouldSucceed) {
                     var ws = loader.load(builder.build());
-                    var relations = ws.getModel().getAllRelations();
+                    var relations = ws.getModel().getRelations();
                     assertEquals(1, relations.size());
-                    assertEquals(sourceId, relations.get(0).getFrom());
-                    assertEquals(destinationId, relations.get(0).getTo());
+                    assertEquals(sourceId, relations.get(0).getFrom().getId());
+                    assertEquals(destinationId, relations.get(0).getTo().getId());
                 } else {
-                    var e = Assertions.assertThrows(Exception.class, () -> loader.load(builder.build()));
+                    Assertions.assertThrows(RelationNotAllowedException.class, () -> loader.load(builder.build()));
                 }
             }
         }
