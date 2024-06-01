@@ -14,11 +14,16 @@ import it.vitalegi.archi.model.Person;
 import it.vitalegi.archi.model.Relation;
 import it.vitalegi.archi.model.SoftwareSystem;
 import it.vitalegi.archi.model.SoftwareSystemInstance;
-import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.util.StringUtil;
 import it.vitalegi.archi.util.WorkspaceUtil;
+import it.vitalegi.archi.view.dto.DeploymentView;
+import it.vitalegi.archi.view.dto.View;
+import it.vitalegi.archi.view.validator.ViewValidator;
+import it.vitalegi.archi.workspace.Workspace;
+import it.vitalegi.archi.workspace.loader.model.DeploymentViewRaw;
 import it.vitalegi.archi.workspace.loader.model.ElementRaw;
 import it.vitalegi.archi.workspace.loader.model.RelationRaw;
+import it.vitalegi.archi.workspace.loader.model.ViewRaw;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +34,12 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class WorkspaceLoader {
+    ViewValidator viewValidator;
+
+    public WorkspaceLoader(ViewValidator viewValidator) {
+        this.viewValidator = viewValidator;
+    }
+
     public Workspace load(it.vitalegi.archi.workspace.loader.model.Workspace in) {
         Workspace workspace = new Workspace();
         var model = workspace.getModel();
@@ -52,11 +63,12 @@ public class WorkspaceLoader {
             }
             log.debug("Load relations");
             in.getRelations().stream().map(r -> toRelation(r, model)).forEach(model::addRelation);
+            workspace.validate();
 
             log.debug("Load views");
-            in.getViews().forEach(view -> workspace.getViews().add(view));
+            in.getViews().forEach(view -> workspace.getViews().add(toView(view, model)));
+            workspace.getViews().getAll().forEach(viewValidator::validate);
 
-            workspace.validate();
             return workspace;
         } catch (Throwable e) {
             model.getAllElements().forEach(element -> log.info("> {}: {}", element.toShortString(), element));
@@ -255,6 +267,21 @@ public class WorkspaceLoader {
         out.setTags(in.getTags());
         out.setMetadata(in.getMetadata());
         out.setUniqueId(WorkspaceUtil.createUniqueId(out));
+        return out;
+    }
+
+    protected View toView(ViewRaw in, Model model) {
+        if (in instanceof DeploymentViewRaw) {
+            return toDeploymentView((DeploymentViewRaw) in, model);
+        }
+        throw new IllegalArgumentException("Missing mapper for " + in);
+    }
+
+    protected DeploymentView toDeploymentView(DeploymentViewRaw in, Model model) {
+        var out = new DeploymentView(model);
+        out.setEnvironment(in.getEnvironment());
+        out.setScope(in.getScope());
+        out.setName(in.getName());
         return out;
     }
 

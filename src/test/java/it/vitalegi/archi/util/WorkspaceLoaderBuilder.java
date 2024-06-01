@@ -1,7 +1,8 @@
 package it.vitalegi.archi.util;
 
 import it.vitalegi.archi.model.ElementType;
-import it.vitalegi.archi.model.view.DeploymentView;
+import it.vitalegi.archi.view.dto.DeploymentView;
+import it.vitalegi.archi.workspace.loader.model.DeploymentViewRaw;
 import it.vitalegi.archi.workspace.loader.model.ElementRaw;
 import it.vitalegi.archi.workspace.loader.model.RelationRaw;
 import it.vitalegi.archi.workspace.loader.model.Workspace;
@@ -156,7 +157,7 @@ public class WorkspaceLoaderBuilder {
     }
 
     public WorkspaceLoaderBuilder deploymentView(String scope, String environment, String name) {
-        var view = new DeploymentView();
+        var view = new DeploymentViewRaw();
         view.setScope(scope);
         view.setEnvironment(environment);
         view.setName(name);

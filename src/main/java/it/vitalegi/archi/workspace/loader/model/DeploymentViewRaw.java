@@ -1,4 +1,4 @@
-package it.vitalegi.archi.model.view;
+package it.vitalegi.archi.workspace.loader.model;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.ToString;
 @Setter
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class DeploymentView extends BaseView {
+public class DeploymentViewRaw extends ViewRaw {
     String scope;
     String environment;
 }
