@@ -18,10 +18,13 @@ public class DeploymentNode extends Node {
         if (getModel().addGroup(this, child)) {
             return;
         }
+        if (getModel().addInfrastructureNode(this, child)) {
+            return;
+        }
         if (getModel().addContainerInstancce(this, child)) {
             return;
         }
-        if (getModel().addInfrastructureNode(this, child)) {
+        if (getModel().addSoftwareSystemInstance(this, child)) {
             return;
         }
         throw new ElementNotAllowedException(this, child);

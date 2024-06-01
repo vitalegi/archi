@@ -86,5 +86,13 @@ public abstract class Node extends Element {
         return WorkspaceUtil.getInfrastructureNodes(elements);
     }
 
+    public SoftwareSystemInstance findSoftwareSystemInstanceById(String id) {
+        return WorkspaceUtil.findSoftwareSystemInstance(elements, id);
+    }
+
+    public List<SoftwareSystemInstance> getSoftwareSystemInstances() {
+        return WorkspaceUtil.getSoftwareSystemInstances(elements);
+    }
+
 
 }
