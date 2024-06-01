@@ -12,6 +12,7 @@ import it.vitalegi.archi.model.Person;
 import it.vitalegi.archi.model.SoftwareSystem;
 import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.util.StringUtil;
+import it.vitalegi.archi.util.WorkspaceUtil;
 import it.vitalegi.archi.workspace.loader.model.ElementType;
 import it.vitalegi.archi.workspace.loader.model.ElementYaml;
 import lombok.AllArgsConstructor;
@@ -182,6 +183,7 @@ public class WorkspaceLoader {
         out.setDescription(in.getDescription());
         out.setTags(in.getTags());
         out.setMetadata(in.getMetadata());
+        out.setUniqueId(WorkspaceUtil.createUniqueId(out));
     }
 
     @AllArgsConstructor

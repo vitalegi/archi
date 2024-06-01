@@ -12,9 +12,21 @@ import it.vitalegi.archi.model.SoftwareSystem;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class WorkspaceUtil {
+    public static String createUniqueId(Element element) {
+        if (element == null) {
+            throw new NullPointerException("Element is null");
+        }
+        var id = element.getId();
+        if (StringUtil.isNotNullOrEmpty(id)) {
+            return element.getClass().getSimpleName() + "_" + element.getId();
+        }
+        return element.getClass().getSimpleName() + "_auto_" + UUID.randomUUID().toString();
+    }
+
     public static Person getPerson(List<Element> elements, String id) {
         var element = findPerson(elements, id);
         if (element == null) {
