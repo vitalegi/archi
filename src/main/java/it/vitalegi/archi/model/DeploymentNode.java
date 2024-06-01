@@ -21,6 +21,9 @@ public class DeploymentNode extends Node {
         if (getModel().addContainerInstancce(this, child)) {
             return;
         }
+        if (getModel().addInfrastructureNode(this, child)) {
+            return;
+        }
         throw new ElementNotAllowedException(this, child);
     }
 }
