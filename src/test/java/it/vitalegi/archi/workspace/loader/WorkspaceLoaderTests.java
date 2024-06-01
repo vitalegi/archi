@@ -2,6 +2,7 @@ package it.vitalegi.archi.workspace.loader;
 
 import it.vitalegi.archi.exception.CycleNotAllowedException;
 import it.vitalegi.archi.exception.ElementNotAllowedException;
+import it.vitalegi.archi.exception.NonUniqueIdException;
 import it.vitalegi.archi.util.WorkspaceLoaderBuilder;
 import it.vitalegi.archi.util.WorkspaceUtil;
 import org.junit.jupiter.api.Assertions;
@@ -226,6 +227,22 @@ public class WorkspaceLoaderTests {
         var config = builder().group("A", "B").group("B", "A").group("C").group("D").group(null).group("A", "E").group("A", null).build();
         var e = Assertions.assertThrows(CycleNotAllowedException.class, () -> loader.load(config));
         assertEquals("Unresolved dependencies. Known: C, D, null. Unresolved: A: B; B: A; E: A; null: A", e.getMessage());
+    }
+
+    @Test
+    void when_load_given_duplicateIds_thenFail() {
+        var loader = new WorkspaceLoader();
+        var config = builder().softwareSystem("a").softwareSystem("b").container("b", "a").build();
+        var e = Assertions.assertThrows(NonUniqueIdException.class, () -> loader.load(config));
+        assertEquals("ID a is defined more than once", e.getMessage());
+    }
+
+    @Test
+    void when_load_given_nullIds_thenSucceed() {
+        var loader = new WorkspaceLoader();
+        var config = builder().softwareSystem(null).softwareSystem(null).build();
+        var ws = loader.load(config);
+        assertEquals(2, ws.getModel().getSoftwareSystems().size());
     }
 
     protected WorkspaceLoaderBuilder builder() {

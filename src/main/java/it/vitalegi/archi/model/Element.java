@@ -24,6 +24,7 @@ public abstract class Element {
     @Getter
     Node parent;
     String id;
+    String uniqueId;
     String name;
     String description;
     List<String> tags;
@@ -44,10 +45,6 @@ public abstract class Element {
     }
 
     public abstract void addChild(Element child);
-
-    public boolean sameId(String id) {
-        return sameId(this.id, id);
-    }
 
     public String toShortString() {
         return getClass().getSimpleName() + " (" + getId() + ")";

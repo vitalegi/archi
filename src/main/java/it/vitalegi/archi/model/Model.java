@@ -1,6 +1,9 @@
 package it.vitalegi.archi.model;
 
 import it.vitalegi.archi.exception.ElementNotAllowedException;
+import it.vitalegi.archi.exception.NonUniqueIdException;
+import it.vitalegi.archi.util.StringUtil;
+import it.vitalegi.archi.util.WorkspaceUtil;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +52,7 @@ public class Model extends Node {
     }
 
     protected boolean addSoftwareSystem(Node parent, Element child) {
-        if (child instanceof SoftwareSystem) {
+        if (WorkspaceUtil.isSoftwareSystem(child)) {
             addChild(parent, child);
             return true;
         }
@@ -57,7 +60,7 @@ public class Model extends Node {
     }
 
     protected boolean addGroup(Node parent, Element child) {
-        if (child instanceof Group) {
+        if (WorkspaceUtil.isGroup(child)) {
             addChild(parent, child);
             return true;
         }
@@ -65,7 +68,7 @@ public class Model extends Node {
     }
 
     protected boolean addContainer(Node parent, Element child) {
-        if (child instanceof Container) {
+        if (WorkspaceUtil.isContainer(child)) {
             addChild(parent, child);
             return true;
         }
@@ -73,7 +76,7 @@ public class Model extends Node {
     }
 
     protected boolean addPerson(Node parent, Element child) {
-        if (child instanceof Person) {
+        if (WorkspaceUtil.isPerson(child)) {
             addChild(parent, child);
             return true;
         }
@@ -81,7 +84,7 @@ public class Model extends Node {
     }
 
     protected boolean addDeploymentEnvironment(Node parent, Element child) {
-        if (child instanceof DeploymentEnvironment) {
+        if (WorkspaceUtil.isDeploymentEnvironment(child)) {
             addChild(parent, child);
             return true;
         }
@@ -89,7 +92,7 @@ public class Model extends Node {
     }
 
     protected boolean addDeploymentNode(Node parent, Element child) {
-        if (child instanceof DeploymentNode) {
+        if (WorkspaceUtil.isDeploymentNode(child)) {
             addChild(parent, child);
             return true;
         }
@@ -105,7 +108,10 @@ public class Model extends Node {
     }
 
     protected void addChild(Node parent, Element child) {
-        log.info("Add {} ({}) to {} ({})", child.getId(), child.getClass().getSimpleName(), parent.getId(), parent.getClass().getSimpleName());
+        log.info("Add {} to {}", child.toShortString(), parent.toShortString());
+        if (child.getId() != null && elementIds.containsKey(child.getId())) {
+            throw new NonUniqueIdException(child.getId());
+        }
         parent.getElements().add(child);
         child.setParent(parent);
         elementIds.put(child.getId(), child);
