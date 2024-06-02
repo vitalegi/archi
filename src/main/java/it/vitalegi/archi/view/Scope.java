@@ -16,7 +16,7 @@ public class Scope {
     public void validate(View view, String scope) {
         var acceptable = validScopes.stream().filter(valid -> valid.accept(view, scope)).collect(Collectors.toList());
         if (acceptable.isEmpty()) {
-            throw new RuntimeException("Scope " + scope + " on view " + view.getName() + " is invalid. Expected one of: " + validScopes+". Check if all objects exist.");
+            throw new RuntimeException("Scope " + scope + " on view " + view.getName() + " is invalid. Expected one of: " + validScopes + ". Check if all objects exist.");
         }
     }
 }

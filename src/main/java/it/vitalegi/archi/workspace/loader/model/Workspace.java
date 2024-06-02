@@ -10,6 +10,7 @@ public class Workspace {
     List<ElementRaw> elements;
     List<RelationRaw> relations;
     List<ViewRaw> views;
+
     public Workspace() {
         elements = new ArrayList<>();
         relations = new ArrayList<>();

@@ -23,6 +23,7 @@ public class SoftwareSystem extends Node {
         }
         throw new ElementNotAllowedException(this, child);
     }
+
     public ElementType getElementType() {
         return ElementType.SOFTWARE_SYSTEM;
     }
