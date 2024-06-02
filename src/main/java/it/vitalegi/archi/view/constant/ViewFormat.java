@@ -1,4 +1,4 @@
-package it.vitalegi.archi.view.renderer;
+package it.vitalegi.archi.view.constant;
 
 public enum ViewFormat {
     PNG, SVG, PUML;

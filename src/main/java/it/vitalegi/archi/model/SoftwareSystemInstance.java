@@ -33,6 +33,10 @@ public class SoftwareSystemInstance extends Element {
         if (StringUtil.isNullOrEmpty(softwareSystemId)) {
             throw new IllegalArgumentException("softwareSystemId is missing on " + toShortString());
         }
+        getSoftwareSystem();
+    }
+
+    public SoftwareSystem getSoftwareSystem() {
         var softwareSystem = model.getElementById(softwareSystemId);
         if (softwareSystem == null) {
             throw new NoSuchElementException("SoftwareSystem " + softwareSystemId + " doesn't exist. Dependency is unsatisfied for " + toShortString());
@@ -40,6 +44,7 @@ public class SoftwareSystemInstance extends Element {
         if (!WorkspaceUtil.isSoftwareSystem(softwareSystem)) {
             throw new IllegalArgumentException("Dependency is unsatisfied for " + this.toShortString() + ". Expected a SoftwareSystem; Actual: " + softwareSystem.toShortString());
         }
+        return (SoftwareSystem) softwareSystem;
     }
 
     public ElementType getElementType() {

@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Getter
 @Slf4j
@@ -17,6 +18,15 @@ public abstract class Node extends Element {
     public Node(Model model) {
         super(model);
         elements = new ArrayList<>();
+    }
+
+    public Stream<Element> getAllChildren() {
+        return elements.stream().flatMap(e -> {
+            if (e instanceof Node) {
+                return Stream.concat(Stream.of(e), ((Node) e).getAllChildren());
+            }
+            return Stream.of(e);
+        });
     }
 
     public Container findContainerById(String id) {

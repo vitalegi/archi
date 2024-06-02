@@ -1,18 +1,18 @@
 package it.vitalegi.archi.workspace.loader;
 
-import it.vitalegi.archi.view.ViewService;
-import it.vitalegi.archi.view.validator.ViewValidator;
+import it.vitalegi.archi.view.ViewProcessorFacade;
+import lombok.Data;
 import lombok.Setter;
 
-@Setter
+@Data
 public class WorkspaceLoaderFactory {
-    ViewValidator viewValidator;
+    ViewProcessorFacade viewProcessorFacade;
 
     public WorkspaceLoaderFactory() {
-        viewValidator = new ViewService();
+        viewProcessorFacade = new ViewProcessorFacade();
     }
 
     public WorkspaceLoader build() {
-        return new WorkspaceLoader(viewValidator);
+        return new WorkspaceLoader(viewProcessorFacade);
     }
 }

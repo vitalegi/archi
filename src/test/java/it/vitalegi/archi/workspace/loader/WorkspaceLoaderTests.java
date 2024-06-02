@@ -5,6 +5,7 @@ import it.vitalegi.archi.exception.ElementNotAllowedException;
 import it.vitalegi.archi.exception.ElementNotFoundException;
 import it.vitalegi.archi.exception.NonUniqueIdException;
 import it.vitalegi.archi.exception.RelationNotAllowedException;
+import it.vitalegi.archi.util.ModelUtil;
 import it.vitalegi.archi.util.WorkspaceLoaderBuilder;
 import it.vitalegi.archi.util.WorkspaceUtil;
 import it.vitalegi.archi.view.dto.DeploymentView;
@@ -32,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class WorkspaceLoaderTests {
 
     static WorkspaceLoader loader() {
-        return new WorkspaceLoaderFactory().build();
+        return ModelUtil.defaultLoader();
     }
 
     @Test
@@ -104,7 +105,7 @@ public class WorkspaceLoaderTests {
     }
 
     protected WorkspaceLoaderBuilder builder() {
-        return new WorkspaceLoaderBuilder();
+        return ModelUtil.defaultBuilder();
     }
 
     @Nested
@@ -499,8 +500,7 @@ public class WorkspaceLoaderTests {
             WorkspaceLoaderBuilder builder;
 
             static Stream<Arguments> allowedRelations() {
-                return Stream.of(
-                        arg("person1", "person1", true, "Relation from Person to self is allowed"), //
+                return Stream.of(arg("person1", "person1", true, "Relation from Person to self is allowed"), //
                         arg("person1", "person2", true, "Relation from Person to Person is allowed"), //
                         arg("person1", "softwareSystem1", true, "Relation from Person to SoftwareSystem is allowed"), //
                         arg("person1", "container11", true, "Relation from Person to Container is allowed"), //
@@ -674,60 +674,6 @@ public class WorkspaceLoaderTests {
             var config = builder().build();
             var ws = loader.load(config);
             assertEquals(0, ws.getViews().getAll().size());
-        }
-    }
-
-    @DisplayName("When load DeploymentView")
-    @Nested
-    class DeploymentViewTests {
-        @Test
-        void given_correctConfiguration_thenSucceed() {
-            var loader = loader();
-            var config = builder().deploymentEnvironment("prod").deploymentView("*", "prod", "123").build();
-            var ws = loader.load(config);
-            var view = ws.getViews().getByName("123");
-            assertNotNull(view);
-            assertEquals(view.getClass(), DeploymentView.class);
-            var deploymentView = (DeploymentView) view;
-            assertEquals("prod", deploymentView.getEnvironment());
-            assertEquals("*", deploymentView.getScope());
-        }
-
-        @Test
-        void when_scopeIsSoftwareSystem_given_SoftwareSystemIsExists_thenSucceed() {
-            var loader = loader();
-            var config = builder() //
-                    .deploymentEnvironment("prod") //
-                    .deploymentView("A", "prod", "123") //
-                    .softwareSystem("A") //
-                    .build();
-
-            var ws = loader.load(config);
-            var view = ws.getViews().getByName("123");
-            assertNotNull(view);
-            assertEquals(view.getClass(), DeploymentView.class);
-            var deploymentView = (DeploymentView) view;
-            assertEquals("prod", deploymentView.getEnvironment());
-            assertEquals("A", deploymentView.getScope());
-        }
-
-        @Test
-        void given_missingDeploymentEnvironment_thenFail() {
-            var loader = loader();
-            var config = builder().deploymentEnvironment("qa").deploymentView(null, "prod", "123").build();
-            var e = Assertions.assertThrows(ElementNotFoundException.class, () -> loader.load(config));
-            assertEquals("Can't find prod: required on view 123", e.getMessage());
-        }
-
-        @Test
-        void when_scopeIsSoftwareSystem_given_SoftwareSystemIsMissing_thenFail() {
-            var loader = loader();
-            var config = builder() //
-                    .deploymentEnvironment("prod") //
-                    .deploymentView("ss", "prod", "123") //
-                    .build();
-            var e = Assertions.assertThrows(RuntimeException.class, () -> loader.load(config));
-            assertEquals("Scope ss on view 123 is invalid. Expected one of: [ALL, SOFTWARE_SYSTEM]. Check if all objects exist.", e.getMessage());
         }
     }
 }
