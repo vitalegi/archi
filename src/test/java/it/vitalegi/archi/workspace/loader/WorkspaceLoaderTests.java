@@ -31,6 +31,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @ExtendWith(MockitoExtension.class)
 public class WorkspaceLoaderTests {
 
+    static WorkspaceLoader loader() {
+        return new WorkspaceLoaderFactory().build();
+    }
+
     @Test
     void when_load_given_validWorkspace_thenLoads() throws IOException {
         FileSystemWorkspaceLoader loader = new FileSystemWorkspaceLoader();
@@ -494,49 +498,6 @@ public class WorkspaceLoaderTests {
             WorkspaceLoader loader;
             WorkspaceLoaderBuilder builder;
 
-            @BeforeEach
-            void init() {
-                loader = loader();
-                builder = builder() //
-                        .person("person1") //
-                        .person("person2") //
-                        //
-                        .softwareSystem("softwareSystem1") //
-                        .softwareSystem("softwareSystem2") //
-                        //
-                        .group("group1") //
-                        .group("group2") //
-                        //
-                        .container("softwareSystem1", "container11") //
-                        .container("softwareSystem1", "container12") //
-                        .container("softwareSystem2", "container21") //
-                        .container("softwareSystem2", "container22") //
-                        //
-                        .deploymentEnvironment("env1") //
-                        .deploymentEnvironment("env2") //
-                        //
-                        .deploymentNode("env1", "node11") //
-                        .deploymentNode("env1", "node12") //
-                        .deploymentNode("env2", "node21") //
-                        .deploymentNode("env2", "node22") //
-                        //
-                        .infrastructureNode("env1", "infra11") //
-                        .infrastructureNode("env1", "infra12") //
-                        .infrastructureNode("env2", "infra21") //
-                        .infrastructureNode("env2", "infra22") //
-                        //
-                        .softwareSystemInstance("node11", "softwareSystemInstance1", "softwareSystem1") //
-                        .softwareSystemInstance("node11", "softwareSystemInstance2", "softwareSystem2") //
-                        .softwareSystemInstance("node21", "softwareSystemInstance3", "softwareSystem1") //
-                        //
-                        .containerInstance("node11", "containerInstance11", "container11") //
-                        .containerInstance("node11", "containerInstance12", "container12") //
-                        .containerInstance("node11", "containerInstance21", "container21") //
-                        .containerInstance("node11", "containerInstance22", "container22") //
-                //
-                ;
-            }
-
             static Stream<Arguments> allowedRelations() {
                 return Stream.of(
                         arg("person1", "person1", true, "Relation from Person to self is allowed"), //
@@ -644,6 +605,49 @@ public class WorkspaceLoaderTests {
                 return Arguments.of(sourceId, destinationId, shouldSucceed, displayName);
             }
 
+            @BeforeEach
+            void init() {
+                loader = loader();
+                builder = builder() //
+                        .person("person1") //
+                        .person("person2") //
+                        //
+                        .softwareSystem("softwareSystem1") //
+                        .softwareSystem("softwareSystem2") //
+                        //
+                        .group("group1") //
+                        .group("group2") //
+                        //
+                        .container("softwareSystem1", "container11") //
+                        .container("softwareSystem1", "container12") //
+                        .container("softwareSystem2", "container21") //
+                        .container("softwareSystem2", "container22") //
+                        //
+                        .deploymentEnvironment("env1") //
+                        .deploymentEnvironment("env2") //
+                        //
+                        .deploymentNode("env1", "node11") //
+                        .deploymentNode("env1", "node12") //
+                        .deploymentNode("env2", "node21") //
+                        .deploymentNode("env2", "node22") //
+                        //
+                        .infrastructureNode("env1", "infra11") //
+                        .infrastructureNode("env1", "infra12") //
+                        .infrastructureNode("env2", "infra21") //
+                        .infrastructureNode("env2", "infra22") //
+                        //
+                        .softwareSystemInstance("node11", "softwareSystemInstance1", "softwareSystem1") //
+                        .softwareSystemInstance("node11", "softwareSystemInstance2", "softwareSystem2") //
+                        .softwareSystemInstance("node21", "softwareSystemInstance3", "softwareSystem1") //
+                        //
+                        .containerInstance("node11", "containerInstance11", "container11") //
+                        .containerInstance("node11", "containerInstance12", "container12") //
+                        .containerInstance("node11", "containerInstance21", "container21") //
+                        .containerInstance("node11", "containerInstance22", "container22") //
+                //
+                ;
+            }
+
             @ParameterizedTest(name = "{index} - {3}: from {0} to {1}")
             @MethodSource("allowedRelations")
             void allowedRelations(String sourceId, String destinationId, boolean shouldSucceed, String displayName) {
@@ -660,7 +664,6 @@ public class WorkspaceLoaderTests {
             }
         }
     }
-
 
     @DisplayName("When load view")
     @Nested
@@ -726,9 +729,5 @@ public class WorkspaceLoaderTests {
             var e = Assertions.assertThrows(RuntimeException.class, () -> loader.load(config));
             assertEquals("Scope ss on view 123 is invalid. Expected one of: [ALL, SOFTWARE_SYSTEM]. Check if all objects exist.", e.getMessage());
         }
-    }
-
-    static WorkspaceLoader loader() {
-        return new WorkspaceLoaderFactory().build();
     }
 }

@@ -1,7 +1,6 @@
 package it.vitalegi.archi.util;
 
 import it.vitalegi.archi.model.ElementType;
-import it.vitalegi.archi.view.dto.DeploymentView;
 import it.vitalegi.archi.workspace.loader.model.DeploymentViewRaw;
 import it.vitalegi.archi.workspace.loader.model.ElementRaw;
 import it.vitalegi.archi.workspace.loader.model.RelationRaw;

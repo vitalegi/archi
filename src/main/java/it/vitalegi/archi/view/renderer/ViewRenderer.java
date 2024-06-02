@@ -5,5 +5,5 @@ import it.vitalegi.archi.view.dto.View;
 import java.nio.file.Path;
 
 public interface ViewRenderer {
-    void render(View view, Path path, String format);
+    void render(View view, Path basePath, ViewFormat[] formats);
 }
