@@ -16,9 +16,9 @@ import it.vitalegi.archi.model.SoftwareSystem;
 import it.vitalegi.archi.model.SoftwareSystemInstance;
 import it.vitalegi.archi.util.StringUtil;
 import it.vitalegi.archi.util.WorkspaceUtil;
+import it.vitalegi.archi.view.ViewProcessorFacade;
 import it.vitalegi.archi.view.dto.DeploymentView;
 import it.vitalegi.archi.view.dto.View;
-import it.vitalegi.archi.view.validator.ViewValidator;
 import it.vitalegi.archi.workspace.Workspace;
 import it.vitalegi.archi.workspace.loader.model.DeploymentViewRaw;
 import it.vitalegi.archi.workspace.loader.model.ElementRaw;
@@ -34,10 +34,10 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class WorkspaceLoader {
-    ViewValidator viewValidator;
+    ViewProcessorFacade viewProcessorFacade;
 
-    public WorkspaceLoader(ViewValidator viewValidator) {
-        this.viewValidator = viewValidator;
+    public WorkspaceLoader(ViewProcessorFacade viewProcessorFacade) {
+        this.viewProcessorFacade = viewProcessorFacade;
     }
 
     public Workspace load(it.vitalegi.archi.workspace.loader.model.Workspace in) {
@@ -67,7 +67,7 @@ public class WorkspaceLoader {
 
             log.debug("Load views");
             in.getViews().forEach(view -> workspace.getViews().add(toView(view, model)));
-            workspace.getViews().getAll().forEach(viewValidator::validate);
+            workspace.getViews().getAll().forEach(viewProcessorFacade::validate);
 
             return workspace;
         } catch (Throwable e) {

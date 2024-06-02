@@ -33,6 +33,10 @@ public class ContainerInstance extends Element {
         if (StringUtil.isNullOrEmpty(containerId)) {
             throw new IllegalArgumentException("containerId is missing on " + toShortString());
         }
+        getContainer();
+    }
+
+    public Container getContainer() {
         var container = model.getElementById(containerId);
         if (container == null) {
             throw new NoSuchElementException("Container " + containerId + " doesn't exist. Dependency is unsatisfied for " + toShortString());
@@ -40,6 +44,7 @@ public class ContainerInstance extends Element {
         if (!WorkspaceUtil.isContainer(container)) {
             throw new IllegalArgumentException("Dependency is unsatisfied for " + this.toShortString() + ". Expected a Container; Actual: " + container.toShortString());
         }
+        return (Container) container;
     }
 
     public ElementType getElementType() {

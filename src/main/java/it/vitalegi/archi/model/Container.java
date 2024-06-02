@@ -1,6 +1,7 @@
 package it.vitalegi.archi.model;
 
 import it.vitalegi.archi.exception.ElementNotAllowedException;
+import it.vitalegi.archi.util.WorkspaceUtil;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -17,5 +18,13 @@ public class Container extends Node {
 
     public ElementType getElementType() {
         return ElementType.CONTAINER;
+    }
+
+    public SoftwareSystem getSoftwareSystem() {
+        var curr = getParent();
+        while (!WorkspaceUtil.isSoftwareSystem(curr)) {
+            curr = curr.getParent();
+        }
+        return (SoftwareSystem) curr;
     }
 }

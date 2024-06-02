@@ -1,7 +1,7 @@
 package it.vitalegi.archi.plantuml;
 
 import it.vitalegi.archi.util.FileUtil;
-import it.vitalegi.archi.view.renderer.ViewFormat;
+import it.vitalegi.archi.view.constant.ViewFormat;
 import lombok.extern.slf4j.Slf4j;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;

@@ -1,5 +1,6 @@
 package it.vitalegi.archi;
 
+import it.vitalegi.archi.view.constant.ViewFormat;
 import it.vitalegi.archi.workspace.loader.FileSystemWorkspaceLoader;
 import it.vitalegi.archi.workspace.loader.WorkspaceLoaderFactory;
 import org.slf4j.Logger;
@@ -21,9 +22,10 @@ public class App {
         log.info("Model:      {}", model);
         log.info("Output dir: {}", mainDir);
         var fsLoader = new FileSystemWorkspaceLoader();
-        var loader = new WorkspaceLoaderFactory().build();
+        var factory = new WorkspaceLoaderFactory();
+        var loader = factory.build();
         var workspace = loader.load(fsLoader.load(model));
         log.info("Loaded workspace");
-
+        workspace.getViews().getAll().forEach(view -> factory.getViewProcessorFacade().render(view, mainDir, ViewFormat.values()));
     }
 }
