@@ -8,18 +8,12 @@ What's found to be missing?
 
 - Easy and fast export of all diagrams
 - Generation of additional documentation in a portable format (markdown, in our case)
-- Auto-generation of containers/components
 - Flexibility of the views
 
 ## Prerequirements
 
 - Java 17
 - Maven
-- (TBV) <https://graphviz.org/>
-
-```
-$env:PATH="C:\a\software\graphviz-8.1.0-win32\Graphviz\bin;${env:PATH}"
-```
 
 ## Build
 
