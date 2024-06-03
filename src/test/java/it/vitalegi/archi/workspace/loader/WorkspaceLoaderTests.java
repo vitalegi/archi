@@ -654,7 +654,7 @@ public class WorkspaceLoaderTests {
                 builder.relation(sourceId, destinationId);
                 if (shouldSucceed) {
                     var ws = loader.load(builder.build());
-                    var relations = ws.getModel().getRelations();
+                    var relations = ws.getModel().getRelations().getAll();
                     assertEquals(1, relations.size());
                     assertEquals(sourceId, relations.get(0).getFrom().getId());
                     assertEquals(destinationId, relations.get(0).getTo().getId());
