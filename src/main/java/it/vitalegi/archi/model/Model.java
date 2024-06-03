@@ -3,7 +3,6 @@ package it.vitalegi.archi.model;
 import it.vitalegi.archi.exception.ElementNotAllowedException;
 import it.vitalegi.archi.exception.NonUniqueIdException;
 import it.vitalegi.archi.util.WorkspaceUtil;
-import it.vitalegi.archi.workspace.RelationManager;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -21,15 +20,13 @@ public class Model extends Node {
 
     Map<String, Element> elementMap;
     @Getter
-    List<Relation> relations;
-    RelationManager relationManager;
+    Relations relations;
 
     public Model() {
         super(null);
         model = this;
         elementMap = new HashMap<>();
-        relations = new ArrayList<>();
-        relationManager = new RelationManager();
+        relations = new Relations();
     }
 
     public void addChild(Element child) {
@@ -49,8 +46,7 @@ public class Model extends Node {
     }
 
     public void addRelation(Relation relation) {
-        relationManager.checkAllowed(relation);
-        relations.add(relation);
+        relations.addRelation(relation);
     }
 
     public Element getElementById(String id) {
@@ -59,10 +55,6 @@ public class Model extends Node {
 
     public List<Element> getAllElements() {
         return new ArrayList<>(elementMap.values());
-    }
-
-    public Relation findRelationById(String id) {
-        return relations.stream().filter(r -> Entity.equals(r.getId(), id)).findFirst().orElse(null);
     }
 
     protected boolean addSoftwareSystem(Node parent, Element child) {

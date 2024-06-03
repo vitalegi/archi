@@ -8,19 +8,18 @@ import it.vitalegi.archi.view.dto.DeploymentView;
 import it.vitalegi.archi.workspace.Workspace;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static it.vitalegi.archi.util.AssertionUtil.assertArrayEqualsUnsorted;
 import static it.vitalegi.archi.util.ModelUtil.defaultBuilder;
 import static it.vitalegi.archi.util.ModelUtil.defaultLoader;
+import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -116,74 +115,120 @@ public class DeploymentViewProcessorTests {
     @Nested
     class ElementsInScope {
 
-        WorkspaceLoaderBuilder model;
-
-        @BeforeEach
-        void init() {
-            model = b() //
+        @Test
+        void given_scopeAll_thenAllContainerInstancesAreIncluded() {
+            var ws = load(b() //
                     .softwareSystem("A") //
                     .container("A", "A_C1") //
                     .container("A", "A_C2") //
-                    .container("A", "A_C3") //
-
-                    .group("group1") //
-                    .softwareSystem("group1", "B") //
-
-                    .softwareSystem("C") //
-                    .container("C", "C_C1") //
-
-                    .softwareSystem("D") //
 
                     .deploymentEnvironment("env1") //
-                    .deploymentNode("env1", "env1_node_1") //
-                    .deploymentNode("env1", "env1_node_2") //
-                    .deploymentNode("env1", "env1_node_3") //
-                    .infrastructureNode("env1_node_3", "env1_infra1")
-                    .softwareSystemInstance("env1_node_1", "env1_A", "A") //
-                    .containerInstance("env1_node_1", "env1_A_C1", "A_C1") //
-                    .containerInstance("env1_node_1", "env1_A_C2", "A_C2") //
-                    .softwareSystemInstance("env1_node_1", "env1_B", "B") //
+                    .deploymentNode("env1", "node_1") //
+                    .containerInstance("node_1", "env1_A_C1", "A_C1") //
+                    .containerInstance("node_1", "env1_A_C2", "A_C2") //
 
-                    .relation("A_C1", "B") //
-                    .relation("A_C2", "C_C1") //
-
-
-                    .deploymentEnvironment("env2") //
-                    .deploymentNode("env2", "env2_node_1") //
-                    .deploymentNode("env2", "env2_node_2") //
-                    .softwareSystemInstance("env2_node_1", "env2_C", "C") //
-
-                    .deploymentView("*", "env1", "view1_all") //
-                    .deploymentView("A", "env1", "view1_A") //
-                    .deploymentView("*", "env2", "view2") //
-            ;
-        }
-
-        @Test
-        void given_scopeAll_thenAllContainerInstancesAreIncluded() {
-            var ws = load(model);
-            var view = ws.getViews().getByName("view1_all");
+                    .deploymentView("*", "env1", "view") //
+            );
+            var view = ws.getViews().getByName("view");
             var elements = viewProcessor.getElementsInScope(viewProcessor.cast(view));
             var ids = getIds(WorkspaceUtil.getContainerInstances(elements));
-            assertArrayEqualsUnsorted(Arrays.asList("env1_A_C1", "env1_A_C2"), ids);
+            assertArrayEqualsUnsorted(asList("env1_A_C1", "env1_A_C2"), ids);
         }
 
         @Test
         void given_scopeAll_thenAllSoftwareSystemInstancesAreIncluded() {
-            var ws = load(model);
-            var view = ws.getViews().getByName("view1_all");
+            var ws = load(b() //
+                    .softwareSystem("A") //
+                    .softwareSystem("B") //
+
+                    .deploymentEnvironment("env1") //
+                    .deploymentNode("env1", "node_1") //
+                    .softwareSystemInstance("node_1", "env1_A", "A") //
+                    .softwareSystemInstance("node_1", "env1_B", "B") //
+
+                    .deploymentView("*", "env1", "view") //
+            );
+            var view = ws.getViews().getByName("view");
             var elements = viewProcessor.getElementsInScope(viewProcessor.cast(view));
             var ids = getIds(WorkspaceUtil.getSoftwareSystemInstances(elements));
-            assertArrayEqualsUnsorted(Arrays.asList("env1_A", "env1_B"), ids);
+            assertArrayEqualsUnsorted(asList("env1_A", "env1_B"), ids);
         }
 
-        @DisplayName("Given scope SoftwareSystem then should include 1) the element of the software system itself 2) other containerInstances/softwareSystemInstances with max distance 1 from any of the elements in scope at point 1, 3) infrastructureNode with max distance 1 from any of the elements in scope at point 1, 4) DeploymentNode parent of any of the elements at point 1, 2, 3")
+
         @Test
-        void given_scopeSoftwareSystem_thenOnlyContainerInstancesAndSoftwareSystemInstancesWithMaxDistance1AreIncluded() {
-            var ws = load(model);
-            var view = ws.getViews().getByName("view1_all");
+        void given_scopeSoftwareSystem_thenAllConnectedContainerInstancesAreIncluded() {
+            var ws = load(b() //
+                    .softwareSystem("A") //
+                    .container("A", "A_C1") //
+                    .container("A", "A_C2") //
+                    .softwareSystem("B") //
+                    .container("B", "B_C1") //
+                    .container("B", "B_C2") //
+                    .container("B", "B_C3") //
+
+                    .relation("A_C1", "B_C1") //
+                    .relation("B_C2", "A_C2") //
+
+                    .deploymentEnvironment("env1") //
+                    .deploymentNode("env1", "node_1") //
+                    .containerInstance("node_1", "env1_A_C1", "A_C1") //
+                    .containerInstance("node_1", "env1_A_C2", "A_C2") //
+                    .containerInstance("node_1", "env1_B_C1", "B_C1") //
+                    .containerInstance("node_1", "env1_B_C2", "B_C2") //
+                    .containerInstance("node_1", "env1_B_C3", "B_C3") //
+
+                    .deploymentView("A", "env1", "view") //
+            );
+            var view = ws.getViews().getByName("view");
             var elements = viewProcessor.getElementsInScope(viewProcessor.cast(view));
-            assertArrayEqualsUnsorted(Arrays.asList("env1_A_C1", "env1_A_C2"), getIds(WorkspaceUtil.getContainerInstances(elements)));
+            var ids = getIds(WorkspaceUtil.getContainerInstances(elements));
+            assertArrayEqualsUnsorted(asList("env1_A_C1", "env1_A_C2", "env1_B_C1", "env1_B_C2"), ids);
+        }
+
+
+        @Test
+        void given_scopeSoftwareSystem_thenAllConnectedSoftwareSystemInstancesAreIncluded() {
+            var ws = load(b() //
+                    .softwareSystem("A") //
+                    .softwareSystem("B") //
+                    .softwareSystem("C") //
+
+                    .relation("A", "B") //
+
+                    .deploymentEnvironment("env1") //
+                    .deploymentNode("env1", "node_1") //
+                    .softwareSystemInstance("node_1", "env1_A", "A") //
+                    .softwareSystemInstance("node_1", "env1_B", "B") //
+                    .softwareSystemInstance("node_1", "env1_C", "C") //
+
+                    .deploymentView("A", "env1", "view") //
+            );
+            var view = ws.getViews().getByName("view");
+            var elements = viewProcessor.getElementsInScope(viewProcessor.cast(view));
+            var ids = getIds(WorkspaceUtil.getSoftwareSystemInstances(elements));
+            assertArrayEqualsUnsorted(asList("env1_A", "env1_B"), ids);
+        }
+
+        @Test
+        void given_scopeSoftwareSystem_thenAllConnectedInfrastructureNodesAreIncluded() {
+            var ws = load(b() //
+                    .softwareSystem("A") //
+                    .container("A", "A1") //
+
+                    .deploymentEnvironment("env1") //
+                    .deploymentNode("env1", "node1") //
+                    .containerInstance("node1", "node1_A", "A1") //
+                    .infrastructureNode("node1", "infra1") //
+                    .infrastructureNode("node1", "infra2") //
+
+                    .relation("node1_A", "infra1") //
+
+                    .deploymentView("A", "env1", "view") //
+            );
+            var view = ws.getViews().getByName("view");
+            var elements = viewProcessor.getElementsInScope(viewProcessor.cast(view));
+            var ids = getIds(WorkspaceUtil.getInfrastructureNodes(elements));
+            assertArrayEqualsUnsorted(asList("infra1"), ids);
         }
     }
 

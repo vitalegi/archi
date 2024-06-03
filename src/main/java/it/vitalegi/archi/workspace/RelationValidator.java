@@ -14,10 +14,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-public class RelationManager {
+public class RelationValidator {
     private final Map<ElementType, List<ElementType>> FROM_TO_ALLOWED = new HashMap<>();
 
-    public RelationManager() {
+    public RelationValidator() {
         FROM_TO_ALLOWED.put(ElementType.PERSON, Arrays.asList(ElementType.PERSON, ElementType.SOFTWARE_SYSTEM, ElementType.CONTAINER));
         FROM_TO_ALLOWED.put(ElementType.SOFTWARE_SYSTEM, Arrays.asList(ElementType.PERSON, ElementType.SOFTWARE_SYSTEM, ElementType.CONTAINER));
         FROM_TO_ALLOWED.put(ElementType.CONTAINER, Arrays.asList(ElementType.PERSON, ElementType.SOFTWARE_SYSTEM, ElementType.CONTAINER));

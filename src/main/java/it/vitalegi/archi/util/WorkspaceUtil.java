@@ -9,6 +9,7 @@ import it.vitalegi.archi.model.Entity;
 import it.vitalegi.archi.model.Group;
 import it.vitalegi.archi.model.InfrastructureNode;
 import it.vitalegi.archi.model.Model;
+import it.vitalegi.archi.model.Node;
 import it.vitalegi.archi.model.Person;
 import it.vitalegi.archi.model.SoftwareSystem;
 import it.vitalegi.archi.model.SoftwareSystemInstance;
@@ -19,15 +20,15 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class WorkspaceUtil {
-    public static String createUniqueId(Entity element) {
-        if (element == null) {
+    public static String createUniqueId(Entity entity) {
+        if (entity == null) {
             throw new NullPointerException("Element is null");
         }
-        var id = element.getId();
+        var id = entity.getId();
         if (StringUtil.isNotNullOrEmpty(id)) {
-            return element.getClass().getSimpleName() + "_" + element.getId();
+            return entity.getClass().getSimpleName() + "_" + entity.getId();
         }
-        return element.getClass().getSimpleName() + "_auto_" + UUID.randomUUID();
+        return entity.getClass().getSimpleName() + "_auto_" + UUID.randomUUID();
     }
 
     public static Person getPerson(List<Element> elements, String id) {
@@ -244,39 +245,39 @@ public class WorkspaceUtil {
         return element instanceof Person;
     }
 
-    public static boolean isSoftwareSystem(Element element) {
+    public static boolean isSoftwareSystem(Entity element) {
         return element instanceof SoftwareSystem;
     }
 
-    public static boolean isContainer(Element element) {
+    public static boolean isContainer(Entity element) {
         return element instanceof Container;
     }
 
-    public static boolean isGroup(Element element) {
+    public static boolean isGroup(Entity element) {
         return element instanceof Group;
     }
 
-    public static boolean isModel(Element element) {
+    public static boolean isModel(Entity element) {
         return element instanceof Model;
     }
 
-    public static boolean isDeploymentEnvironment(Element element) {
+    public static boolean isDeploymentEnvironment(Entity element) {
         return element instanceof DeploymentEnvironment;
     }
 
-    public static boolean isDeploymentNode(Element element) {
+    public static boolean isDeploymentNode(Entity element) {
         return element instanceof DeploymentNode;
     }
 
-    public static boolean isContainerInstance(Element element) {
+    public static boolean isContainerInstance(Entity element) {
         return element instanceof ContainerInstance;
     }
 
-    public static boolean isSoftwareSystemInstance(Element element) {
+    public static boolean isSoftwareSystemInstance(Entity element) {
         return element instanceof SoftwareSystemInstance;
     }
 
-    public static boolean isInfrastructureNode(Element element) {
+    public static boolean isInfrastructureNode(Entity element) {
         return element instanceof InfrastructureNode;
     }
 

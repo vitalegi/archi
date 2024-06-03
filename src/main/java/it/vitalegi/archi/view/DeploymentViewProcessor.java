@@ -117,7 +117,7 @@ public class DeploymentViewProcessor implements ViewProcessor {
         }
         if (WorkspaceUtil.isContainerInstance(element)) {
             writer.deploymentNodeStart(getAlias(element), element.getName(), null, element.getDescription(), "", formatTags(element), "");
-            var containerInstance = (ContainerInstance)element;
+            var containerInstance = (ContainerInstance) element;
             var container = containerInstance.getContainer();
             writer.container(getAlias(container), container.getName(), null, container.getDescription(), "", formatTags(container), "", "");
             writer.deploymentNodeEnd();
@@ -125,7 +125,7 @@ public class DeploymentViewProcessor implements ViewProcessor {
         }
         if (WorkspaceUtil.isSoftwareSystemInstance(element)) {
             writer.deploymentNodeStart(getAlias(element), element.getName(), null, element.getDescription(), "", formatTags(element), "");
-            var softwareSystemInstance = (SoftwareSystemInstance)element;
+            var softwareSystemInstance = (SoftwareSystemInstance) element;
             var softwareSystem = softwareSystemInstance.getSoftwareSystem();
             writer.container(getAlias(softwareSystem), softwareSystem.getName(), null, softwareSystem.getDescription(), "", formatTags(softwareSystem), "", "");
             writer.deploymentNodeEnd();
@@ -142,7 +142,7 @@ public class DeploymentViewProcessor implements ViewProcessor {
     }
 
     protected List<Relation> getRelationsInScope(DeploymentView view, List<Element> elementsInScope) {
-        return view.getModel().getRelations().stream().filter(r -> isInScope(view, elementsInScope, r)).collect(Collectors.toList());
+        return view.getModel().getRelations().getAll().stream().filter(r -> isInScope(view, elementsInScope, r)).collect(Collectors.toList());
     }
 
     protected boolean isScopeAll(DeploymentView view) {
@@ -186,7 +186,7 @@ public class DeploymentViewProcessor implements ViewProcessor {
     protected boolean isInScope(DeploymentView view, List<Element> baseScope, Element element) {
         // if it's already in scope, keep it
         if (baseScope.contains(element)) {
-            log.debug("View {}, {} is in scope, #1", view.getName(), element.toShortString());
+            log.debug("View {}, {} is in scope", view.getName(), element.toShortString());
             return true;
         }
         // if it is parent of anything in scope, it's in scope
@@ -207,15 +207,9 @@ public class DeploymentViewProcessor implements ViewProcessor {
     }
 
     protected boolean hasDistance1(Model model, Element element1, Element element2) {
-        if (model.getRelations().stream().anyMatch(r -> r.getFrom().equals(element1) && r.getTo().equals(element2))) {
-            log.debug("Found a relation such that {} => {}", element1.toShortString(), element2.toShortString());
-            return true;
-        }
-        if (model.getRelations().stream().anyMatch(r -> r.getFrom().equals(element2) && r.getTo().equals(element1))) {
-            log.debug("Found a relation such that {} => {}", element2.toShortString(), element1.toShortString());
-            return true;
-        }
-        return false;
+        var relations = model.getRelations().getRelationsBetween(element1, element2);
+        log.debug("Relations between {} and {}: {}", element1.toShortString(), element2.toShortString(), relations.size());
+        return !relations.isEmpty();
     }
 
     protected boolean isInScope(DeploymentView view, List<Element> elementsInScope, Relation relation) {
