@@ -1,14 +1,15 @@
 package it.vitalegi.archi.view;
 
 import it.vitalegi.archi.exception.ElementNotFoundException;
+import it.vitalegi.archi.model.Container;
 import it.vitalegi.archi.model.ContainerInstance;
 import it.vitalegi.archi.model.DeploymentEnvironment;
 import it.vitalegi.archi.model.DeploymentNode;
 import it.vitalegi.archi.model.Element;
 import it.vitalegi.archi.model.Entity;
 import it.vitalegi.archi.model.Model;
-import it.vitalegi.archi.model.Node;
 import it.vitalegi.archi.model.Relation;
+import it.vitalegi.archi.model.SoftwareSystem;
 import it.vitalegi.archi.model.SoftwareSystemInstance;
 import it.vitalegi.archi.plantuml.LayoutDirection;
 import it.vitalegi.archi.plantuml.PlantUmlExporter;
@@ -24,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 public class DeploymentViewProcessor implements ViewProcessor {
@@ -95,6 +97,8 @@ public class DeploymentViewProcessor implements ViewProcessor {
 
         deploymentEnvironment.getElements().forEach(element -> addElementTreeToPuml(elements, element, writer));
 
+        relations.forEach(relation -> addRelationToPuml(relation, writer));
+
         writer.hideStereotypes();
         writer.enduml();
         return writer.build();
@@ -134,14 +138,30 @@ public class DeploymentViewProcessor implements ViewProcessor {
         throw new RuntimeException("Unable to process " + element.toShortString());
     }
 
+    protected void addRelationToPuml(Relation relation, C4PlantUMLWriter writer) {
+        writer.addRelation(getAlias(relation.getFrom()), getAlias(relation.getTo()), relation.getDescription(), null, formatTags(relation), null);
+    }
+
     protected List<Element> getElementsInScope(DeploymentView view) {
+        var perimeter = getElementsPerimeter(view).collect(Collectors.toList());
+        var baseSet = getBaseSet(view, perimeter);
+        return getElementsInScope(view, perimeter, baseSet);
+    }
+
+    protected Stream<Element> getElementsPerimeter(DeploymentView view) {
         var deploymentEnvironment = getDeploymentEnvironment(view);
-        var deploymentChildren = deploymentEnvironment.getAllChildren().collect(Collectors.toList());
-        var baseSet = deploymentChildren.stream().filter(e -> isInBaseScope(view, e)).collect(Collectors.toList());
-        return deploymentChildren.stream().filter(e -> isInScope(view, baseSet, e)).collect(Collectors.toList());
+        return deploymentEnvironment.getAllChildren().distinct();
+    }
+
+    protected List<Element> getBaseSet(DeploymentView view, List<Element> perimeter) {
+        return perimeter.stream().filter(e -> isInBaseScope(view, e)).collect(Collectors.toList());
+    }
+    protected List<Element> getElementsInScope(DeploymentView view, List<Element> perimeter, List<Element> baseSet) {
+        return perimeter.stream().filter(e -> isInScope(view, baseSet, e)).collect(Collectors.toList());
     }
 
     protected List<Relation> getRelationsInScope(DeploymentView view, List<Element> elementsInScope) {
+        log.debug("Elements in scope: {}", elementsInScope.stream().map(Element::toShortString).collect(Collectors.joining(", ")));
         return view.getModel().getRelations().getAll().stream().filter(r -> isInScope(view, elementsInScope, r)).collect(Collectors.toList());
     }
 
@@ -165,17 +185,25 @@ public class DeploymentViewProcessor implements ViewProcessor {
 
     protected boolean isInBaseScope(DeploymentView view, Element element) {
         if (isScopeAll(view)) {
-            return WorkspaceUtil.isContainerInstance(element) || WorkspaceUtil.isSoftwareSystemInstance(element);
+            return WorkspaceUtil.isContainerInstance(element) || WorkspaceUtil.isSoftwareSystemInstance(element) || WorkspaceUtil.isContainer(element) || WorkspaceUtil.isSoftwareSystem(element);
         }
         if (isScopeSoftwareSystem(view)) {
+            if (WorkspaceUtil.isContainer(element)) {
+                var curr = (Container) element;
+                return Entity.equals(curr.getSoftwareSystem().getId(), view.getScope());
+            }
             if (WorkspaceUtil.isContainerInstance(element)) {
-                var ci = (ContainerInstance) element;
-                var container = ci.getContainer();
+                var curr = (ContainerInstance) element;
+                var container = curr.getContainer();
                 return Entity.equals(container.getSoftwareSystem().getId(), view.getScope());
             }
+            if (WorkspaceUtil.isSoftwareSystem(element)) {
+                var curr = (SoftwareSystem) element;
+                return Entity.equals(curr.getId(), view.getScope());
+            }
             if (WorkspaceUtil.isSoftwareSystemInstance(element)) {
-                var ssi = (SoftwareSystemInstance) element;
-                var softwareSystem = ssi.getSoftwareSystem();
+                var curr = (SoftwareSystemInstance) element;
+                var softwareSystem = curr.getSoftwareSystem();
                 return Entity.equals(softwareSystem.getId(), view.getScope());
             }
         }
@@ -190,13 +218,11 @@ public class DeploymentViewProcessor implements ViewProcessor {
             return true;
         }
         // if it is parent of anything in scope, it's in scope
-        if (element instanceof Node) {
-            var children = ((Node) element).getAllChildren();
-            var firstMatchedChild = children.filter(baseScope::contains).findFirst().orElse(null);
-            if (firstMatchedChild != null) {
-                log.debug("View {}, {} is in scope because it's parent of {}", view.getName(), element.toShortString(), firstMatchedChild.toShortString());
-                return true;
-            }
+        var children = element.getAllChildren();
+        var firstMatchedChild = children.filter(baseScope::contains).findFirst().orElse(null);
+        if (firstMatchedChild != null) {
+            log.debug("View {}, {} is in scope because it's parent of {}", view.getName(), element.toShortString(), firstMatchedChild.toShortString());
+            return true;
         }
         // if there's a direct connection with anything in scope, it's in scope
         if (baseScope.stream().anyMatch(scope -> hasDistance1(view.getModel(), scope, element))) {
@@ -223,7 +249,14 @@ public class DeploymentViewProcessor implements ViewProcessor {
     }
 
     protected String formatTags(Element element) {
-        var tags = element.getTags();
+        return formatTags(element.getTags());
+    }
+
+    protected String formatTags(Relation relation) {
+        return formatTags(relation.getTags());
+    }
+
+    protected String formatTags(List<String> tags) {
         if (tags == null) {
             return null;
         }

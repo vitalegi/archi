@@ -10,7 +10,7 @@ AddElementTag("Container", $bgColor="#006daa", $borderColor="#004c76", $fontColo
 AddRelTag("Relationship", $textColor="#707070", $lineColor="#707070", $lineStyle="")
 Deployment_Node(DeploymentNode_netlify, Netlify, $type="", $descr="", $sprite="", $tags="", $link="") {
 Deployment_Node(DeploymentNode_app_netlify_app, app.netlify.app, $type="", $descr="", $sprite="", $tags="", $link="") {
-    Deployment_Node(ContainerInstance_auto_56c1032f_6f43_4870_8ab7_4b2e59c58960, , $type="", $descr="", $sprite="", $tags="", $link="") {
+    Deployment_Node(ContainerInstance_auto_f88e2bcc_dc7c_4032_ae18_79dfa7c1c3af, , $type="", $descr="", $sprite="", $tags="", $link="") {
         Container($alias="Container_reader_frontend", $label="Single Page Application", $techn="", $descr="Allows users to use reader functionalities", $sprite="", $tags="", $link="", $baseShape="")
             }
         }
@@ -18,11 +18,12 @@ Deployment_Node(DeploymentNode_app_netlify_app, app.netlify.app, $type="", $desc
 Deployment_Node(DeploymentNode_fly_io, fly.io, $type="", $descr="", $sprite="", $tags="", $link="") {
 Deployment_Node(DeploymentNode_app_fly_io, app.fly.io, $type="", $descr="", $sprite="", $tags="", $link="") {
     Deployment_Node(DeploymentNode_Application_Server, Application Server, $type="", $descr="", $sprite="", $tags="", $link="") {
-        Deployment_Node(ContainerInstance_auto_159a176f_947b_4b2e_ab95_d70bb3940d88, , $type="", $descr="", $sprite="", $tags="", $link="") {
+        Deployment_Node(ContainerInstance_auto_9ebb089f_11e5_4374_a3ca_91eaf7f7c7d2, , $type="", $descr="", $sprite="", $tags="", $link="") {
             Container($alias="Container_reader_backend", $label="Backend", $techn="", $descr="Business Logic of the reader", $sprite="", $tags="", $link="", $baseShape="")
                 }
             }
         }
     }
+Rel("Container_reader_frontend","Container_reader_backend","Uses","","","")
 hide stereotypes
 @enduml

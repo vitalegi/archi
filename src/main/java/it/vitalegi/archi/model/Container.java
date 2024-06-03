@@ -7,7 +7,7 @@ import lombok.ToString;
 
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class Container extends Node {
+public class Container extends Element {
     public Container(Model model) {
         super(model);
     }
