@@ -9,7 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class Group extends Node {
+public class Group extends Element {
 
     public Group(Model model) {
         super(model);

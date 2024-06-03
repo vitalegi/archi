@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class SoftwareSystem extends Node {
+public class SoftwareSystem extends Element {
 
     public SoftwareSystem(Model model) {
         super(model);

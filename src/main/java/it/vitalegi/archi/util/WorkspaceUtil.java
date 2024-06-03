@@ -9,7 +9,6 @@ import it.vitalegi.archi.model.Entity;
 import it.vitalegi.archi.model.Group;
 import it.vitalegi.archi.model.InfrastructureNode;
 import it.vitalegi.archi.model.Model;
-import it.vitalegi.archi.model.Node;
 import it.vitalegi.archi.model.Person;
 import it.vitalegi.archi.model.SoftwareSystem;
 import it.vitalegi.archi.model.SoftwareSystemInstance;

@@ -16,7 +16,7 @@ import java.util.Map;
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class Model extends Node {
+public class Model extends Element {
 
     Map<String, Element> elementMap;
     @Getter
@@ -57,7 +57,7 @@ public class Model extends Node {
         return new ArrayList<>(elementMap.values());
     }
 
-    protected boolean addSoftwareSystem(Node parent, Element child) {
+    protected boolean addSoftwareSystem(Element parent, Element child) {
         if (WorkspaceUtil.isSoftwareSystem(child)) {
             addChild(parent, child);
             return true;
@@ -65,7 +65,7 @@ public class Model extends Node {
         return false;
     }
 
-    protected boolean addGroup(Node parent, Element child) {
+    protected boolean addGroup(Element parent, Element child) {
         if (WorkspaceUtil.isGroup(child)) {
             addChild(parent, child);
             return true;
@@ -73,7 +73,7 @@ public class Model extends Node {
         return false;
     }
 
-    protected boolean addContainer(Node parent, Element child) {
+    protected boolean addContainer(Element parent, Element child) {
         if (WorkspaceUtil.isContainer(child)) {
             addChild(parent, child);
             return true;
@@ -81,7 +81,7 @@ public class Model extends Node {
         return false;
     }
 
-    protected boolean addPerson(Node parent, Element child) {
+    protected boolean addPerson(Element parent, Element child) {
         if (WorkspaceUtil.isPerson(child)) {
             addChild(parent, child);
             return true;
@@ -89,7 +89,7 @@ public class Model extends Node {
         return false;
     }
 
-    protected boolean addDeploymentEnvironment(Node parent, Element child) {
+    protected boolean addDeploymentEnvironment(Element parent, Element child) {
         if (WorkspaceUtil.isDeploymentEnvironment(child)) {
             addChild(parent, child);
             return true;
@@ -97,7 +97,7 @@ public class Model extends Node {
         return false;
     }
 
-    protected boolean addDeploymentNode(Node parent, Element child) {
+    protected boolean addDeploymentNode(Element parent, Element child) {
         if (WorkspaceUtil.isDeploymentNode(child)) {
             addChild(parent, child);
             return true;
@@ -105,7 +105,7 @@ public class Model extends Node {
         return false;
     }
 
-    protected boolean addInfrastructureNode(Node parent, Element child) {
+    protected boolean addInfrastructureNode(Element parent, Element child) {
         if (WorkspaceUtil.isInfrastructureNode(child)) {
             addChild(parent, child);
             return true;
@@ -113,7 +113,7 @@ public class Model extends Node {
         return false;
     }
 
-    protected boolean addContainerInstancce(Node parent, Element child) {
+    protected boolean addContainerInstancce(Element parent, Element child) {
         if (WorkspaceUtil.isContainerInstance(child)) {
             addChild(parent, child);
             return true;
@@ -121,7 +121,7 @@ public class Model extends Node {
         return false;
     }
 
-    protected boolean addSoftwareSystemInstance(Node parent, Element child) {
+    protected boolean addSoftwareSystemInstance(Element parent, Element child) {
         if (WorkspaceUtil.isSoftwareSystemInstance(child)) {
             addChild(parent, child);
             return true;
@@ -129,7 +129,7 @@ public class Model extends Node {
         return false;
     }
 
-    protected void addChild(Node parent, Element child) {
+    protected void addChild(Element parent, Element child) {
         log.debug("Add {} to {}", child.toShortString(), parent.toShortString());
         if (child.getId() != null && elementMap.containsKey(child.getId())) {
             throw new NonUniqueIdException(child.getId());

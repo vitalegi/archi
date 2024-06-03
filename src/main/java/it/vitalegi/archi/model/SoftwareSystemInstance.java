@@ -10,6 +10,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.NoSuchElementException;
+import java.util.stream.Stream;
 
 @Slf4j
 @Getter
@@ -29,6 +30,10 @@ public class SoftwareSystemInstance extends Element {
         throw new ElementNotAllowedException(this, child);
     }
 
+    @Override
+    public Stream<Element> getAllChildren() {
+        return Stream.of(getSoftwareSystem());
+    }
     public void validate() {
         if (StringUtil.isNullOrEmpty(softwareSystemId)) {
             throw new IllegalArgumentException("softwareSystemId is missing on " + toShortString());
