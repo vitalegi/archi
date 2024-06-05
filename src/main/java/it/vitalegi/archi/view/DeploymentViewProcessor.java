@@ -28,15 +28,10 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j
-public class DeploymentViewProcessor implements ViewProcessor {
+public class DeploymentViewProcessor extends AbstractViewProcessor<DeploymentView> {
 
     public boolean accept(View view) {
         return view instanceof DeploymentView;
-    }
-
-    @Override
-    public void validate(View view) {
-        doValidate(cast(view));
     }
 
     protected void doValidate(DeploymentView view) {
@@ -61,17 +56,11 @@ public class DeploymentViewProcessor implements ViewProcessor {
         throw new ElementNotFoundException(view.getScope(), "Scope " + view.getScope() + " on view " + view.getName() + " is invalid. Check if all objects exist.");
     }
 
-    @Override
-    public void render(View view, Path basePath, ViewFormat[] formats) {
-        var pumlDiagram = createPuml(cast(view));
-        var exporter = new PlantUmlExporter();
-        exporter.export(basePath, view.getName(), formats, pumlDiagram);
-    }
-
     protected DeploymentView cast(View view) {
         return (DeploymentView) view;
     }
 
+    @Override
     protected String createPuml(DeploymentView view) {
         var writer = new C4PlantUMLWriter();
         writer.startuml();
@@ -246,29 +235,6 @@ public class DeploymentViewProcessor implements ViewProcessor {
             return false;
         }
         return true;
-    }
-
-    protected String formatTags(Element element) {
-        return formatTags(element.getTags());
-    }
-
-    protected String formatTags(Relation relation) {
-        return formatTags(relation.getTags());
-    }
-
-    protected String formatTags(List<String> tags) {
-        if (tags == null) {
-            return null;
-        }
-        return tags.stream().collect(Collectors.joining(","));
-    }
-
-    protected String getAlias(Element element) {
-        var alias = element.getUniqueId();
-        alias = alias.replace('-', '_');
-        alias = alias.replace('.', '_');
-        alias = alias.replace(' ', '_');
-        return alias;
     }
 
 }
