@@ -9,11 +9,11 @@ import java.util.List;
 public class Workspace {
     List<ElementRaw> elements;
     List<RelationRaw> relations;
-    List<ViewRaw> views;
+    List<DiagramRaw> diagrams;
 
     public Workspace() {
         elements = new ArrayList<>();
         relations = new ArrayList<>();
-        views = new ArrayList<>();
+        diagrams = new ArrayList<>();
     }
 }

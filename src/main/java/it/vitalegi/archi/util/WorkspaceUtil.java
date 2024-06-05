@@ -5,11 +5,13 @@ import it.vitalegi.archi.model.ContainerInstance;
 import it.vitalegi.archi.model.DeploymentEnvironment;
 import it.vitalegi.archi.model.DeploymentNode;
 import it.vitalegi.archi.model.Element;
+import it.vitalegi.archi.model.ElementType;
 import it.vitalegi.archi.model.Entity;
 import it.vitalegi.archi.model.Group;
 import it.vitalegi.archi.model.InfrastructureNode;
 import it.vitalegi.archi.model.Model;
 import it.vitalegi.archi.model.Person;
+import it.vitalegi.archi.model.Relation;
 import it.vitalegi.archi.model.SoftwareSystem;
 import it.vitalegi.archi.model.SoftwareSystemInstance;
 
@@ -240,7 +242,7 @@ public class WorkspaceUtil {
         return elements.stream().filter(WorkspaceUtil::isInfrastructureNode).map(e -> ((InfrastructureNode) e)).collect(Collectors.toList());
     }
 
-    public static boolean isPerson(Element element) {
+    public static boolean isPerson(Entity element) {
         return element instanceof Person;
     }
 
@@ -278,6 +280,46 @@ public class WorkspaceUtil {
 
     public static boolean isInfrastructureNode(Entity element) {
         return element instanceof InfrastructureNode;
+    }
+
+    public static boolean isRelation(Entity element) {
+        return element instanceof Relation;
+    }
+
+    public static boolean isSameType(Entity element, ElementType type) {
+        switch (type) {
+            case PERSON -> {
+                return isPerson(element);
+            }
+            case SOFTWARE_SYSTEM -> {
+                return isSoftwareSystem(element);
+            }
+            case CONTAINER -> {
+                return isContainer(element);
+            }
+            case GROUP -> {
+                return isGroup(element);
+            }
+            case DEPLOYMENT_ENVIRONMENT -> {
+                return isDeploymentEnvironment(element);
+            }
+            case DEPLOYMENT_NODE -> {
+                return isDeploymentNode(element);
+            }
+            case INFRASTRUCTURE_NODE -> {
+                return isInfrastructureNode(element);
+            }
+            case SOFTWARE_SYSTEM_INSTANCE -> {
+                return isSoftwareSystemInstance(element);
+            }
+            case CONTAINER_INSTANCE -> {
+                return isContainerInstance(element);
+            }
+            case RELATION -> {
+                return isRelation(element);
+            }
+        }
+        throw new IllegalArgumentException("Element " + element.toShortString() + " is not supported");
     }
 
     public static Element findElementById(List<? extends Element> elements, String id) {

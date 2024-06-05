@@ -2,13 +2,11 @@ package it.vitalegi.archi.workspace.loader;
 
 import it.vitalegi.archi.exception.CycleNotAllowedException;
 import it.vitalegi.archi.exception.ElementNotAllowedException;
-import it.vitalegi.archi.exception.ElementNotFoundException;
 import it.vitalegi.archi.exception.NonUniqueIdException;
 import it.vitalegi.archi.exception.RelationNotAllowedException;
 import it.vitalegi.archi.util.ModelUtil;
 import it.vitalegi.archi.util.WorkspaceLoaderBuilder;
 import it.vitalegi.archi.util.WorkspaceUtil;
-import it.vitalegi.archi.view.dto.DeploymentView;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -665,15 +663,15 @@ public class WorkspaceLoaderTests {
         }
     }
 
-    @DisplayName("When load view")
+    @DisplayName("When load diagram")
     @Nested
-    class ViewTests {
+    class DiagramTests {
         @Test
-        void given_noView_thenEmptyList() {
+        void given_noDiagram_thenEmptyList() {
             var loader = loader();
             var config = builder().build();
             var ws = loader.load(config);
-            assertEquals(0, ws.getViews().getAll().size());
+            assertEquals(0, ws.getDiagrams().getAll().size());
         }
     }
 }

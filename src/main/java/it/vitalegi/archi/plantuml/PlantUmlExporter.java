@@ -1,7 +1,7 @@
 package it.vitalegi.archi.plantuml;
 
 import it.vitalegi.archi.util.FileUtil;
-import it.vitalegi.archi.view.constant.ViewFormat;
+import it.vitalegi.archi.diagram.constant.DiagramFormat;
 import lombok.extern.slf4j.Slf4j;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
@@ -16,13 +16,13 @@ import java.nio.file.Path;
 
 @Slf4j
 public class PlantUmlExporter {
-    public void export(Path outDir, String name, ViewFormat[] formats, String pumlDiagram) {
+    public void export(Path outDir, String name, DiagramFormat[] formats, String pumlDiagram) {
         for (var format : formats) {
             export(outDir, name, format, pumlDiagram);
         }
     }
 
-    public void export(Path outDir, String name, ViewFormat format, String pumlDiagram) {
+    public void export(Path outDir, String name, DiagramFormat format, String pumlDiagram) {
         switch (format) {
             case PUML -> saveAsPuml(outDir, name, pumlDiagram);
             case PNG -> saveAsPng(outDir, name, pumlDiagram);
