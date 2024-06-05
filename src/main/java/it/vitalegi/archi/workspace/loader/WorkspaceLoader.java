@@ -16,14 +16,16 @@ import it.vitalegi.archi.model.SoftwareSystem;
 import it.vitalegi.archi.model.SoftwareSystemInstance;
 import it.vitalegi.archi.util.StringUtil;
 import it.vitalegi.archi.util.WorkspaceUtil;
-import it.vitalegi.archi.view.ViewProcessorFacade;
-import it.vitalegi.archi.view.dto.DeploymentView;
-import it.vitalegi.archi.view.dto.View;
+import it.vitalegi.archi.diagram.DiagramProcessorFacade;
+import it.vitalegi.archi.diagram.dto.DeploymentDiagram;
+import it.vitalegi.archi.diagram.dto.SystemContextDiagram;
+import it.vitalegi.archi.diagram.dto.Diagram;
 import it.vitalegi.archi.workspace.Workspace;
-import it.vitalegi.archi.workspace.loader.model.DeploymentViewRaw;
+import it.vitalegi.archi.workspace.loader.model.DeploymentDiagramRaw;
 import it.vitalegi.archi.workspace.loader.model.ElementRaw;
 import it.vitalegi.archi.workspace.loader.model.RelationRaw;
-import it.vitalegi.archi.workspace.loader.model.ViewRaw;
+import it.vitalegi.archi.workspace.loader.model.SystemContextDiagramRaw;
+import it.vitalegi.archi.workspace.loader.model.DiagramRaw;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -34,10 +36,10 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public class WorkspaceLoader {
-    ViewProcessorFacade viewProcessorFacade;
+    DiagramProcessorFacade diagramProcessorFacade;
 
-    public WorkspaceLoader(ViewProcessorFacade viewProcessorFacade) {
-        this.viewProcessorFacade = viewProcessorFacade;
+    public WorkspaceLoader(DiagramProcessorFacade diagramProcessorFacade) {
+        this.diagramProcessorFacade = diagramProcessorFacade;
     }
 
     public Workspace load(it.vitalegi.archi.workspace.loader.model.Workspace in) {
@@ -65,9 +67,9 @@ public class WorkspaceLoader {
             in.getRelations().stream().map(r -> toRelation(r, model)).forEach(model::addRelation);
             workspace.validate();
 
-            log.debug("Load views");
-            in.getViews().forEach(view -> workspace.getViews().add(toView(view, model)));
-            workspace.getViews().getAll().forEach(viewProcessorFacade::validate);
+            log.debug("Load diagrams");
+            in.getDiagrams().forEach(diagram -> workspace.getDiagrams().add(toDiagram(diagram, model)));
+            workspace.getDiagrams().getAll().forEach(diagramProcessorFacade::validate);
 
             return workspace;
         } catch (Throwable e) {
@@ -270,18 +272,29 @@ public class WorkspaceLoader {
         return out;
     }
 
-    protected View toView(ViewRaw in, Model model) {
-        if (in instanceof DeploymentViewRaw) {
-            return toDeploymentView((DeploymentViewRaw) in, model);
+    protected Diagram toDiagram(DiagramRaw in, Model model) {
+        if (in instanceof DeploymentDiagramRaw) {
+            return toDeploymentDiagram((DeploymentDiagramRaw) in, model);
+        }
+        if (in instanceof SystemContextDiagramRaw) {
+            return toSystemContextDiagram((SystemContextDiagramRaw) in, model);
         }
         throw new IllegalArgumentException("Missing mapper for " + in);
     }
 
-    protected DeploymentView toDeploymentView(DeploymentViewRaw in, Model model) {
-        var out = new DeploymentView(model);
+    protected DeploymentDiagram toDeploymentDiagram(DeploymentDiagramRaw in, Model model) {
+        var out = new DeploymentDiagram(model);
         out.setEnvironment(in.getEnvironment());
         out.setScope(in.getScope());
         out.setName(in.getName());
+        out.setTitle(in.getTitle());
+        return out;
+    }
+
+    protected SystemContextDiagram toSystemContextDiagram(SystemContextDiagramRaw in, Model model) {
+        var out = new SystemContextDiagram(model);
+        out.setName(in.getName());
+        out.setTitle(in.getTitle());
         return out;
     }
 

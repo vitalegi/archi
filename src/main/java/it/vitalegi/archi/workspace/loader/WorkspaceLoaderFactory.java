@@ -1,18 +1,17 @@
 package it.vitalegi.archi.workspace.loader;
 
-import it.vitalegi.archi.view.ViewProcessorFacade;
+import it.vitalegi.archi.diagram.DiagramProcessorFacade;
 import lombok.Data;
-import lombok.Setter;
 
 @Data
 public class WorkspaceLoaderFactory {
-    ViewProcessorFacade viewProcessorFacade;
+    DiagramProcessorFacade diagramProcessorFacade;
 
     public WorkspaceLoaderFactory() {
-        viewProcessorFacade = new ViewProcessorFacade();
+        diagramProcessorFacade = new DiagramProcessorFacade();
     }
 
     public WorkspaceLoader build() {
-        return new WorkspaceLoader(viewProcessorFacade);
+        return new WorkspaceLoader(diagramProcessorFacade);
     }
 }

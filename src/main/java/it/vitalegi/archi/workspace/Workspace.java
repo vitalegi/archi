@@ -1,17 +1,17 @@
 package it.vitalegi.archi.workspace;
 
 import it.vitalegi.archi.model.Model;
-import it.vitalegi.archi.view.dto.Views;
+import it.vitalegi.archi.diagram.dto.Diagrams;
 import lombok.Data;
 
 @Data
 public class Workspace {
     Model model;
-    Views views;
+    Diagrams diagrams;
 
     public Workspace() {
         model = new Model();
-        views = new Views();
+        diagrams = new Diagrams();
     }
 
     public void validate() {

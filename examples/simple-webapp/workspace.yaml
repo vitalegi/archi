@@ -112,9 +112,20 @@ relations:
   - from: reader_frontend
     to: aws_s3_bucket_reader
     description: Download books
+  - from: user
+    to: reader_ss
+    description: Uses
+  - from: reader_ss
+    to: aws_ss
+    description: Upload/Download media
 
-views:
+
+diagrams:
   - type: DEPLOYMENT
     scope: '*'
     environment: live
     name: diagram1
+    title: Title
+  - type: SYSTEM_CONTEXT
+    name: diagram2
+    title: Title 2

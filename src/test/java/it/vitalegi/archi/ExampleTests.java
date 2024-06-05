@@ -1,10 +1,9 @@
 package it.vitalegi.archi;
 
-import it.vitalegi.archi.view.ViewProcessorFacade;
-import it.vitalegi.archi.view.constant.ViewFormat;
+import it.vitalegi.archi.diagram.DiagramProcessorFacade;
+import it.vitalegi.archi.diagram.constant.DiagramFormat;
 import it.vitalegi.archi.workspace.loader.FileSystemWorkspaceLoader;
 import it.vitalegi.archi.workspace.loader.WorkspaceLoaderFactory;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -20,11 +19,11 @@ public class ExampleTests {
         FileSystemWorkspaceLoader loader = new FileSystemWorkspaceLoader();
         var baseDir = Path.of("examples", "simple-webapp");
         var out = baseDir.resolve("output");
-        var viewProcessor = new ViewProcessorFacade();
+        var diagramProcessor = new DiagramProcessorFacade();
         var factory = new WorkspaceLoaderFactory();
-        factory.setViewProcessorFacade(viewProcessor);
+        factory.setDiagramProcessorFacade(diagramProcessor);
         var ws = factory.build().load(loader.load(baseDir.resolve("workspace.yaml")));
 
-        ws.getViews().getAll().forEach(view -> viewProcessor.render(view, out, ViewFormat.values()));
+        ws.getDiagrams().getAll().forEach(diagram -> diagramProcessor.render(diagram, out, DiagramFormat.values()));
     }
 }
