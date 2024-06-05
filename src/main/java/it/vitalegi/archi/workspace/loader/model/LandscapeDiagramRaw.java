@@ -9,6 +9,5 @@ import lombok.ToString;
 @Setter
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class SystemContextDiagramRaw extends DiagramRaw {
-    String target;
+public class LandscapeDiagramRaw extends DiagramRaw {
 }

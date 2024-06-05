@@ -124,8 +124,12 @@ diagrams:
   - type: DEPLOYMENT
     scope: '*'
     environment: live
-    name: diagram1
-    title: Title
+    name: deployment
+    title: Deployment
+  - type: LANDSCAPE
+    name: landscape
+    title: Application Landscape
   - type: SYSTEM_CONTEXT
-    name: diagram2
-    title: Title 2
+    target: reader_ss
+    name: reader_system_context
+    title: "Reader: System Context"

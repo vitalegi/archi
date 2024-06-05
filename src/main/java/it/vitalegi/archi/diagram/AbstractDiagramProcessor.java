@@ -17,6 +17,7 @@ public abstract class AbstractDiagramProcessor<E extends Diagram> implements Dia
 
     @Override
     public void validate(Diagram diagram) {
+        // TODO validate String name
         doValidate(cast(diagram));
     }
 

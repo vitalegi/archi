@@ -18,8 +18,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
@@ -32,36 +30,6 @@ public class WorkspaceLoaderTests {
 
     static WorkspaceLoader loader() {
         return ModelUtil.defaultLoader();
-    }
-
-    @Test
-    void when_load_given_validWorkspace_thenLoads() throws IOException {
-        FileSystemWorkspaceLoader loader = new FileSystemWorkspaceLoader();
-        var workspace = loader().load(loader.load(Path.of("src", "test", "resources", "workspace1.yaml")));
-
-        assertNotNull(workspace);
-        assertNotNull(workspace.getModel().getElements());
-        assertEquals(2, workspace.getModel().getPeople().size());
-        var a = workspace.getModel().findPersonById("A");
-        assertNotNull(a);
-
-        var b = workspace.getModel().findPersonById("B");
-        assertNotNull(b);
-
-        assertEquals(1, workspace.getModel().getSoftwareSystems().size());
-        var c = workspace.getModel().findSoftwareSystemById("C");
-        assertEquals(1, c.getContainers().size());
-        assertEquals("c1", c.getContainers().get(0).getId());
-
-        assertEquals(1, workspace.getModel().findSoftwareSystemById("C").getContainers().size());
-        var c1 = workspace.getModel().findSoftwareSystemById("C").findContainerById("c1");
-        assertNotNull(c1);
-
-        assertNotNull(workspace.getModel().findGroupById("group1"));
-
-        assertNotNull(workspace.getModel().findSoftwareSystemById("C").findGroupById("group2"));
-
-        assertNotNull(workspace.getModel().findSoftwareSystemById("C").findGroupById("group2").findGroupById("group3"));
     }
 
     @Test

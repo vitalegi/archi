@@ -4,6 +4,7 @@ import it.vitalegi.archi.model.ElementType;
 import it.vitalegi.archi.workspace.loader.model.DeploymentDiagramRaw;
 import it.vitalegi.archi.workspace.loader.model.ElementRaw;
 import it.vitalegi.archi.workspace.loader.model.RelationRaw;
+import it.vitalegi.archi.workspace.loader.model.LandscapeDiagramRaw;
 import it.vitalegi.archi.workspace.loader.model.SystemContextDiagramRaw;
 import it.vitalegi.archi.workspace.loader.model.Workspace;
 
@@ -164,12 +165,26 @@ public class WorkspaceLoaderBuilder {
         workspace.getDiagrams().add(diagram);
         return this;
     }
-    public WorkspaceLoaderBuilder systemContextDiagram(String name) {
-        return systemContextDiagram(name, null);
+
+    public WorkspaceLoaderBuilder systemContextDiagram(String name, String target) {
+        return systemContextDiagram(name, target, null);
     }
 
-    public WorkspaceLoaderBuilder systemContextDiagram(String name, String title) {
+    public WorkspaceLoaderBuilder systemContextDiagram(String name, String target, String title) {
         var diagram = new SystemContextDiagramRaw();
+        diagram.setName(name);
+        diagram.setTarget(target);
+        diagram.setTitle(title);
+        workspace.getDiagrams().add(diagram);
+        return this;
+    }
+
+    public WorkspaceLoaderBuilder landscapeDiagram(String name) {
+        return landscapeDiagram(name, null);
+    }
+
+    public WorkspaceLoaderBuilder landscapeDiagram(String name, String title) {
+        var diagram = new LandscapeDiagramRaw();
         diagram.setName(name);
         diagram.setTitle(title);
         workspace.getDiagrams().add(diagram);

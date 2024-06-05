@@ -1,5 +1,6 @@
 package it.vitalegi.archi.workspace.loader;
 
+import it.vitalegi.archi.diagram.dto.SystemContextDiagram;
 import it.vitalegi.archi.exception.CycleNotAllowedException;
 import it.vitalegi.archi.model.Container;
 import it.vitalegi.archi.model.ContainerInstance;
@@ -18,14 +19,15 @@ import it.vitalegi.archi.util.StringUtil;
 import it.vitalegi.archi.util.WorkspaceUtil;
 import it.vitalegi.archi.diagram.DiagramProcessorFacade;
 import it.vitalegi.archi.diagram.dto.DeploymentDiagram;
-import it.vitalegi.archi.diagram.dto.SystemContextDiagram;
+import it.vitalegi.archi.diagram.dto.LandscapeDiagram;
 import it.vitalegi.archi.diagram.dto.Diagram;
 import it.vitalegi.archi.workspace.Workspace;
 import it.vitalegi.archi.workspace.loader.model.DeploymentDiagramRaw;
 import it.vitalegi.archi.workspace.loader.model.ElementRaw;
 import it.vitalegi.archi.workspace.loader.model.RelationRaw;
-import it.vitalegi.archi.workspace.loader.model.SystemContextDiagramRaw;
+import it.vitalegi.archi.workspace.loader.model.LandscapeDiagramRaw;
 import it.vitalegi.archi.workspace.loader.model.DiagramRaw;
+import it.vitalegi.archi.workspace.loader.model.SystemContextDiagramRaw;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -276,6 +278,9 @@ public class WorkspaceLoader {
         if (in instanceof DeploymentDiagramRaw) {
             return toDeploymentDiagram((DeploymentDiagramRaw) in, model);
         }
+        if (in instanceof LandscapeDiagramRaw) {
+            return toLandscapeDiagram((LandscapeDiagramRaw) in, model);
+        }
         if (in instanceof SystemContextDiagramRaw) {
             return toSystemContextDiagram((SystemContextDiagramRaw) in, model);
         }
@@ -284,18 +289,26 @@ public class WorkspaceLoader {
 
     protected DeploymentDiagram toDeploymentDiagram(DeploymentDiagramRaw in, Model model) {
         var out = new DeploymentDiagram(model);
+        mapDiagram(in, out);
         out.setEnvironment(in.getEnvironment());
         out.setScope(in.getScope());
-        out.setName(in.getName());
-        out.setTitle(in.getTitle());
         return out;
     }
 
+    protected LandscapeDiagram toLandscapeDiagram(LandscapeDiagramRaw in, Model model) {
+        var out = new LandscapeDiagram(model);
+        mapDiagram(in, out);
+        return out;
+    }
     protected SystemContextDiagram toSystemContextDiagram(SystemContextDiagramRaw in, Model model) {
         var out = new SystemContextDiagram(model);
+        mapDiagram(in, out);
+        out.setTarget(in.getTarget());
+        return out;
+    }
+    protected void mapDiagram(DiagramRaw in, Diagram out) {
         out.setName(in.getName());
         out.setTitle(in.getTitle());
-        return out;
     }
 
     @AllArgsConstructor

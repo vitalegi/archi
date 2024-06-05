@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 public class DiagramProcessorFacade {
     private static final List<DiagramProcessor> DIAGRAM_PROCESSORS = Arrays.asList( //
             new DeploymentDiagramProcessor(), //
+            new LandscapeDiagramProcessor(), //
             new SystemContextDiagramProcessor() //
     );
 
