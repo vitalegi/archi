@@ -1,0 +1,24 @@
+@startuml
+set separator none
+top to bottom direction
+title Reader: System Context
+!include <C4/C4>
+!include <C4/C4_Context>
+!include <C4/C4_Container>
+AddElementTag("Element", $bgColor="#ffffff", $borderColor="#888888", $fontColor="#000000", $sprite="", $shadowing="", $borderStyle="solid")
+AddElementTag("Container", $bgColor="#006daa", $borderColor="#004c76", $fontColor="#000000", $sprite="", $shadowing="", $borderStyle="solid")
+AddRelTag("Relationship", $textColor="#707070", $lineColor="#707070", $lineStyle="")
+Container($alias="Person_user", $label="User", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="")
+Container($alias="Person_sysadmin", $label="Sysadmin", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="")
+Boundary(SoftwareSystem_reader_ss, "Reader", $tags="") {
+Container($alias="Container_reader_frontend", $label="Single Page Application", $techn="", $descr="Allows users to use reader functionalities", $sprite="", $tags="", $link="", $baseShape="")
+    Container($alias="Container_reader_backend", $label="Backend", $techn="", $descr="Business Logic of the reader", $sprite="", $tags="", $link="", $baseShape="")
+    Container($alias="Container_reader_database", $label="RDBMS", $techn="", $descr="Stores books info", $sprite="", $tags="", $link="", $baseShape="")
+    }
+Rel("Person_user","Container_reader_frontend","Uses","","","")
+Rel("Person_sysadmin","Container_reader_database","Access","","","")
+Rel("Container_reader_frontend","Container_reader_backend","Uses","","","")
+Rel("Container_reader_backend","Container_reader_database","Reads from and writes to","","","")
+Rel("Person_user","SoftwareSystem_reader_ss","Uses","","","")
+hide stereotypes
+@enduml
