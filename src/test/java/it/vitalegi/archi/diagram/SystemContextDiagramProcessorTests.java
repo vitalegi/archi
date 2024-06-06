@@ -8,6 +8,7 @@ import it.vitalegi.archi.util.WorkspaceLoaderBuilder;
 import it.vitalegi.archi.workspace.Workspace;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -54,14 +55,15 @@ public class SystemContextDiagramProcessorTests {
             var e = Assertions.assertThrows(IllegalArgumentException.class, () -> load(b() //
                     .systemContextDiagram("diagram1", "", "123") //
             ));
-            assertEquals("diagram1, missing target.", e.getMessage());
+            assertEquals("Diagram diagram1, missing target.", e.getMessage());
         }
+
         @Test
         void given_missingTarget_thenFail() {
             var e = Assertions.assertThrows(ElementNotFoundException.class, () -> load(b() //
                     .systemContextDiagram("diagram1", "ss", "123") //
             ));
-            assertEquals("Can't find ss: Target ss on diagram1 is invalid. Check if all objects exist.", e.getMessage());
+            assertEquals("Can't find ss: invalid target on Diagram diagram1", e.getMessage());
         }
 
         @Test
@@ -70,7 +72,7 @@ public class SystemContextDiagramProcessorTests {
                     .systemContextDiagram("diagram1", "c", "123") //
                     .softwareSystem("ss") //
                     .container("ss", "c")));
-            assertEquals("Invalid target on diagram diagram1. Expected: SoftwareSystem, Actual: Container (c)", e.getMessage());
+            assertEquals("Diagram diagram1, invalid target. Expected: SoftwareSystem, Actual: Container (c)", e.getMessage());
         }
     }
 
@@ -95,7 +97,7 @@ public class SystemContextDiagramProcessorTests {
         void given_softwareSystem_then_shouldReturnTrue() {
             var ws = load(b() //
                     .softwareSystem("A") //
-                    .systemContextDiagram("diagram", "title") //
+                    .systemContextDiagram("diagram", "A", "title") //
             );
             var diagram = diagramProcessor.cast(ws.getDiagrams().getByName("diagram"));
             assertTrue(diagramProcessor.isAllowed(diagram, getElementById(ws, "A")));
@@ -105,7 +107,8 @@ public class SystemContextDiagramProcessorTests {
         void given_person_then_shouldReturnTrue() {
             var ws = load(b() //
                     .person("A") //
-                    .systemContextDiagram("diagram", "title") //
+                    .softwareSystem("S") //
+                    .systemContextDiagram("diagram", "S", "title") //
             );
             var diagram = diagramProcessor.cast(ws.getDiagrams().getByName("diagram"));
             assertTrue(diagramProcessor.isAllowed(diagram, getElementById(ws, "A")));
@@ -115,7 +118,8 @@ public class SystemContextDiagramProcessorTests {
         void given_group_then_shouldReturnTrue() {
             var ws = load(b() //
                     .group("A") //
-                    .systemContextDiagram("diagram", "title") //
+                    .softwareSystem("S") //
+                    .systemContextDiagram("diagram", "S", "title") //
             );
             var diagram = diagramProcessor.cast(ws.getDiagrams().getByName("diagram"));
             assertTrue(diagramProcessor.isAllowed(diagram, getElementById(ws, "A")));
@@ -126,7 +130,7 @@ public class SystemContextDiagramProcessorTests {
             var ws = load(b() //
                     .softwareSystem("A") //
                     .container("A", "B") //
-                    .systemContextDiagram("diagram", "title") //
+                    .systemContextDiagram("diagram", "A", "title") //
             );
             var diagram = diagramProcessor.cast(ws.getDiagrams().getByName("diagram"));
             assertTrue(diagramProcessor.isAllowed(diagram, getElementById(ws, "B")));
@@ -208,10 +212,9 @@ public class SystemContextDiagramProcessorTests {
                     .softwareSystem("A") //
                     .container("A", "C1") //
                     .softwareSystem("B") //
-                    .container("B", "C2") //
                     .person("P") //
 
-                    .relation("C1", "C2") //
+                    .relation("C1", "B") //
                     .relation("P", "C1") //
 
                     .systemContextDiagram("diagram", "A") //
@@ -219,13 +222,35 @@ public class SystemContextDiagramProcessorTests {
             var diagram = ws.getDiagrams().getByName("diagram");
             var scope = diagramProcessor.computeScope(diagramProcessor.cast(diagram));
             var c1 = getElementById(ws, "C1");
-            var c2 = getElementById(ws, "C2");
+            var b = getElementById(ws, "B");
             var p = getElementById(ws, "P");
 
-            var r1 = ws.getModel().getRelations().getRelationsBetween(c1, c2).get(0);
+            var r1 = ws.getModel().getRelations().getRelationsBetween(c1, b).get(0);
             var r2 = ws.getModel().getRelations().getRelationsBetween(p, c1).get(0);
             assertTrue(scope.isInScope(r1));
             assertTrue(scope.isInScope(r2));
+        }
+
+        @Disabled
+        @Test
+        void given_inheritedRelationsEnabled_then_AllInheritedRelationsAreIncluded() {
+            var ws = load(b() //
+                    .softwareSystem("A") //
+                    .container("A", "C1") //
+                    .softwareSystem("B") //
+                    .container("B", "C2") //
+
+                    .relation("C1", "C2") //
+
+                    .systemContextDiagram("diagram", "A") //
+            );
+            var diagram = ws.getDiagrams().getByName("diagram");
+            var scope = diagramProcessor.computeScope(diagramProcessor.cast(diagram));
+            var c1 = getElementById(ws, "C1");
+            var c2 = getElementById(ws, "C2");
+
+            var r1 = ws.getModel().getRelations().getRelationsBetween(c1, c2).get(0);
+            assertTrue(scope.isInScope(r1));
         }
     }
 

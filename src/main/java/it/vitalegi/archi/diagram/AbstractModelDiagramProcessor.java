@@ -1,17 +1,20 @@
 package it.vitalegi.archi.diagram;
 
-import it.vitalegi.archi.model.Element;
-import it.vitalegi.archi.model.Relation;
-import it.vitalegi.archi.diagram.dto.DiagramScope;
 import it.vitalegi.archi.diagram.dto.Diagram;
+import it.vitalegi.archi.diagram.dto.DiagramScope;
+import it.vitalegi.archi.diagram.rule.RuleEntry;
 import it.vitalegi.archi.diagram.rule.VisibilityRule;
 import it.vitalegi.archi.diagram.rule.VisibilityRuleType;
 import it.vitalegi.archi.diagram.writer.C4PlantUMLWriter;
+import it.vitalegi.archi.model.Element;
+import it.vitalegi.archi.model.Relation;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 public abstract class AbstractModelDiagramProcessor<E extends Diagram> extends AbstractDiagramProcessor<E> {
 
     protected String createPuml(E diagram) {
@@ -36,7 +39,7 @@ public abstract class AbstractModelDiagramProcessor<E extends Diagram> extends A
      */
     protected abstract boolean isAllowed(E diagram, Element element);
 
-    protected List<VisibilityRule> getVisibilityRules(E diagram) {
+    protected List<RuleEntry> getVisibilityRules(E diagram) {
         return new ArrayList<>();
     }
 
@@ -51,11 +54,11 @@ public abstract class AbstractModelDiagramProcessor<E extends Diagram> extends A
         return scope;
     }
 
-    protected void applyRule(E diagram, VisibilityRule rule, DiagramScope scope, List<Element> elements, List<Relation> relations) {
-        if (rule.getRuleType() == VisibilityRuleType.INCLUSION) {
-            applyRuleInclusion(diagram, rule, scope, elements, relations);
-        } else if (rule.getRuleType() == VisibilityRuleType.EXCLUSION) {
-            applyRuleExclusion(diagram, rule, scope, elements, relations);
+    protected void applyRule(E diagram, RuleEntry rule, DiagramScope scope, List<Element> elements, List<Relation> relations) {
+        if (rule.getType() == VisibilityRuleType.INCLUSION) {
+            applyRuleInclusion(diagram, rule.getRule(), scope, elements, relations);
+        } else if (rule.getType() == VisibilityRuleType.EXCLUSION) {
+            applyRuleExclusion(diagram, rule.getRule(), scope, elements, relations);
         } else {
             throw new RuntimeException("Can't process rule, unknown RuleType. Rule: " + rule);
         }
@@ -65,11 +68,13 @@ public abstract class AbstractModelDiagramProcessor<E extends Diagram> extends A
         for (var element : elements) {
             if (rule.match(scope, element)) {
                 scope.add(element);
+                log.info("Diagram {}, add {} to scope via {}", diagram.getName(), element.toShortString(), rule);
             }
         }
         for (var relation : relations) {
             if (rule.match(scope, relation)) {
                 scope.add(relation);
+                log.info("Diagram {}, add {} to scope via {}", diagram.getName(), relation.toShortString(), rule);
             }
         }
     }
@@ -78,11 +83,13 @@ public abstract class AbstractModelDiagramProcessor<E extends Diagram> extends A
         for (var element : elements) {
             if (rule.match(scope, element)) {
                 scope.remove(element);
+                log.info("Diagram {}, remove {} to scope via {}", diagram.getName(), element.toShortString(), rule);
             }
         }
         for (var relation : relations) {
             if (rule.match(scope, relation)) {
                 scope.remove(relation);
+                log.info("Diagram {}, remove {} to scope via {}", diagram.getName(), relation.toShortString(), rule);
             }
         }
     }

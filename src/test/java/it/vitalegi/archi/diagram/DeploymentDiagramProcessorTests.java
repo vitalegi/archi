@@ -61,7 +61,7 @@ public class DeploymentDiagramProcessorTests {
 
         @Test
         void given_differentDiagram_then_shouldReturnFalse() {
-            var ws = load(b().deploymentEnvironment("prod").deploymentDiagram(null, "prod", "diagram1").systemContextDiagram("diagram2", "AAA"));
+            var ws = load(b().deploymentEnvironment("prod").deploymentDiagram(null, "prod", "diagram1").landscapeDiagram("diagram2"));
             assertFalse(diagramProcessor.accept(ws.getDiagrams().getByName("diagram2")));
         }
     }

@@ -1,36 +1,37 @@
 package it.vitalegi.archi.diagram.rule.element;
 
+import it.vitalegi.archi.diagram.dto.DiagramScope;
+import it.vitalegi.archi.diagram.rule.AbstractVisibilityRule;
 import it.vitalegi.archi.model.Element;
 import it.vitalegi.archi.model.ElementType;
 import it.vitalegi.archi.model.Relation;
 import it.vitalegi.archi.util.WorkspaceUtil;
-import it.vitalegi.archi.diagram.dto.DiagramScope;
-import it.vitalegi.archi.diagram.rule.AbstractVisibilityRule;
-import it.vitalegi.archi.diagram.rule.VisibilityRuleType;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@Data
-@AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
+@NoArgsConstructor
 public class HasElementTypeRule extends AbstractVisibilityRule {
 
     List<ElementType> types;
 
-    public HasElementTypeRule(VisibilityRuleType ruleType, List<ElementType> types) {
-        super(ruleType);
-        this.types = types;
+    public HasElementTypeRule(ElementType... rules) {
+        this(new ArrayList<>(List.of(rules)));
     }
 
-    public HasElementTypeRule() {
-        super();
+    public HasElementTypeRule(List<ElementType> types) {
+        this.types = types;
     }
 
     public boolean match(DiagramScope diagramScope, Element element) {
