@@ -20,7 +20,5 @@ Rel("Person_user","Container_reader_frontend","Uses","","","")
 Rel("Person_sysadmin","Container_reader_database","Access","","","")
 Rel("Container_reader_frontend","Container_reader_backend","Uses","","","")
 Rel("Container_reader_backend","Container_reader_database","Reads from and writes to","","","")
-Rel("Person_user","SoftwareSystem_reader_ss","Uses","","","")
-Rel("SoftwareSystem_reader_ss","SoftwareSystem_aws_ss","Upload/Download media","","","")
 hide stereotypes
 @enduml

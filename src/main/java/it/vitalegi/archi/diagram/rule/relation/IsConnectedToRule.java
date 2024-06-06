@@ -3,7 +3,9 @@ package it.vitalegi.archi.diagram.rule.relation;
 import it.vitalegi.archi.diagram.dto.DiagramScope;
 import it.vitalegi.archi.diagram.rule.AbstractVisibilityRule;
 import it.vitalegi.archi.model.Element;
+import it.vitalegi.archi.model.Entity;
 import it.vitalegi.archi.model.Relation;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,8 +18,10 @@ import lombok.extern.slf4j.Slf4j;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @Slf4j
-public class AnyRelationVertexOutOfScopeRule extends AbstractVisibilityRule {
+public class IsConnectedToRule extends AbstractVisibilityRule {
+    String id;
 
     public boolean match(DiagramScope diagramScope, Element element) {
         return false;
@@ -27,12 +31,12 @@ public class AnyRelationVertexOutOfScopeRule extends AbstractVisibilityRule {
         if (!diagramScope.isInScope(relation)) {
             return false;
         }
-        if (!diagramScope.isInScope(relation.getFrom())) {
-            log.debug("Relation {}, has vertex {} out of scope, match.", relation.toShortString(), relation.getFrom().toShortString());
+        if (Entity.equals(relation.getFrom().getId(), id)) {
+            log.debug("Relation {} is connected to {}, match.", relation.toShortString(), id);
             return true;
         }
-        if (!diagramScope.isInScope(relation.getTo())) {
-            log.debug("Relation {}, has vertex {} out of scope, match.", relation.toShortString(), relation.getTo().toShortString());
+        if (Entity.equals(relation.getTo().getId(), id)) {
+            log.debug("Relation {} is connected to {}, match.", relation.toShortString(), id);
             return true;
         }
         return false;
