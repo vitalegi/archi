@@ -15,10 +15,12 @@ Container($alias="Container_reader_frontend", $label="Single Page Application", 
     Container($alias="Container_reader_backend", $label="Backend", $techn="", $descr="Business Logic of the reader", $sprite="", $tags="", $link="", $baseShape="")
     Container($alias="Container_reader_database", $label="RDBMS", $techn="", $descr="Stores books info", $sprite="", $tags="", $link="", $baseShape="")
     }
+Container($alias="SoftwareSystem_aws_ss", $label="Amazon Web Services", $techn="", $descr="Stores books", $sprite="", $tags="", $link="", $baseShape="")
 Rel("Person_user","Container_reader_frontend","Uses","","","")
 Rel("Person_sysadmin","Container_reader_database","Access","","","")
 Rel("Container_reader_frontend","Container_reader_backend","Uses","","","")
 Rel("Container_reader_backend","Container_reader_database","Reads from and writes to","","","")
 Rel("Person_user","SoftwareSystem_reader_ss","Uses","","","")
+Rel("SoftwareSystem_reader_ss","SoftwareSystem_aws_ss","Upload/Download media","","","")
 hide stereotypes
 @enduml

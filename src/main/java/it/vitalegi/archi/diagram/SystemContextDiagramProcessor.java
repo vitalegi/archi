@@ -3,11 +3,11 @@ package it.vitalegi.archi.diagram;
 import it.vitalegi.archi.diagram.dto.Diagram;
 import it.vitalegi.archi.diagram.dto.SystemContextDiagram;
 import it.vitalegi.archi.diagram.rule.AndRule;
-import it.vitalegi.archi.diagram.rule.VisibilityRule;
-import it.vitalegi.archi.diagram.rule.VisibilityRuleType;
+import it.vitalegi.archi.diagram.rule.RuleEntry;
 import it.vitalegi.archi.diagram.rule.element.AnyDescendantOfElementInScopeRule;
 import it.vitalegi.archi.diagram.rule.element.HasElementTypeRule;
 import it.vitalegi.archi.diagram.rule.element.IsDescendantOfRule;
+import it.vitalegi.archi.diagram.rule.element.IsDirectlyConnectedToElementInScopeRule;
 import it.vitalegi.archi.diagram.rule.relation.AlwaysAllowRelationRule;
 import it.vitalegi.archi.diagram.rule.relation.AnyRelationVertexOutOfScopeRule;
 import it.vitalegi.archi.exception.ElementNotFoundException;
@@ -41,9 +41,11 @@ public class SystemContextDiagramProcessor extends AbstractModelDiagramProcessor
         }
         var target = diagram.getModel().getElementById(diagram.getTarget());
         if (target == null) {
-            throw new ElementNotFoundException("Diagram " + diagram.getName() + ", can't find software system " + diagram.getTarget());
+            throw new ElementNotFoundException(diagram.getTarget(), "invalid target on Diagram " + diagram.getName());
         }
-        throw new IllegalArgumentException("Diagram " + diagram.getName() + ", invalid target. Expected: SoftwareSystem, Actual: Container (c)");
+        if (!WorkspaceUtil.isSoftwareSystem(target)) {
+            throw new IllegalArgumentException("Diagram " + diagram.getName() + ", invalid target. Expected: SoftwareSystem, Actual: " + target.toShortString());
+        }
     }
 
     @Override
@@ -52,16 +54,19 @@ public class SystemContextDiagramProcessor extends AbstractModelDiagramProcessor
     }
 
     @Override
-    protected List<VisibilityRule> getVisibilityRules(SystemContextDiagram diagram) {
+    protected List<RuleEntry> getVisibilityRules(SystemContextDiagram diagram) {
         return Arrays.asList( //
-                new HasElementTypeRule(VisibilityRuleType.INCLUSION, List.of(ElementType.PERSON)), //
-                new AndRule(VisibilityRuleType.INCLUSION, Arrays.asList( //
-                        new HasElementTypeRule(VisibilityRuleType.INCLUSION, List.of(ElementType.CONTAINER)),
-                        new IsDescendantOfRule(VisibilityRuleType.INCLUSION, diagram.getTarget()) //
+                RuleEntry.include(new AndRule(
+                        new HasElementTypeRule(ElementType.CONTAINER, ElementType.SOFTWARE_SYSTEM),
+                        new IsDescendantOfRule(diagram.getTarget()) //
                 )), //
-                new AlwaysAllowRelationRule(VisibilityRuleType.INCLUSION), //
-                new AnyDescendantOfElementInScopeRule(VisibilityRuleType.INCLUSION), //
-                new AnyRelationVertexOutOfScopeRule(VisibilityRuleType.EXCLUSION) //
+                RuleEntry.include(new AndRule(
+                        new HasElementTypeRule(ElementType.PERSON, ElementType.SOFTWARE_SYSTEM),
+                        new IsDirectlyConnectedToElementInScopeRule() //
+                )), //
+                RuleEntry.include(new AlwaysAllowRelationRule()), //
+                RuleEntry.include(new AnyDescendantOfElementInScopeRule()), //
+                RuleEntry.exclude(new AnyRelationVertexOutOfScopeRule()) //
         );
     }
 }

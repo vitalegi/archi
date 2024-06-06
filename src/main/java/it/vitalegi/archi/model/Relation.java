@@ -46,4 +46,12 @@ public class Relation extends Entity {
                 ", metadata=" + metadata +
                 '}';
     }
+
+    public String toShortString() {
+        var fromTo = (from != null ? from.toShortString() : "null") + " => " + (to != null ? to.toShortString() : "null");
+        if (getId() != null) {
+            return getClass().getSimpleName() + " (" + getId() + ") " + fromTo;
+        }
+        return getClass().getSimpleName() + " " + fromTo;
+    }
 }
