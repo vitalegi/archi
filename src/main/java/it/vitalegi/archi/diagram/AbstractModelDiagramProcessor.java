@@ -48,9 +48,12 @@ public abstract class AbstractModelDiagramProcessor<E extends Diagram> extends A
         var scope = new DiagramScope();
         var elements = diagram.getModel().getAllElements().stream().filter(e -> isAllowed(diagram, e)).collect(Collectors.toList());
         var relations = diagram.getModel().getRelations().getAll();
+        log.debug("Diagram {}, start processing rules", diagram.getName());
+        log.debug("Elements in perimeter: {}", elements.stream().map(Element::toShortString).collect(Collectors.toList()));
         for (var rule : rules) {
             applyRule(diagram, rule, scope, elements, relations);
         }
+        log.debug("Diagram {}, end processing rules", diagram.getName());
         return scope;
     }
 
@@ -68,13 +71,13 @@ public abstract class AbstractModelDiagramProcessor<E extends Diagram> extends A
         for (var element : elements) {
             if (rule.match(scope, element)) {
                 scope.add(element);
-                log.info("Diagram {}, add {} to scope via {}", diagram.getName(), element.toShortString(), rule);
+                log.debug("Diagram {}, add {} to scope via {}", diagram.getName(), element.toShortString(), rule);
             }
         }
         for (var relation : relations) {
             if (rule.match(scope, relation)) {
                 scope.add(relation);
-                log.info("Diagram {}, add {} to scope via {}", diagram.getName(), relation.toShortString(), rule);
+                log.debug("Diagram {}, add {} to scope via {}", diagram.getName(), relation.toShortString(), rule);
             }
         }
     }
@@ -83,13 +86,13 @@ public abstract class AbstractModelDiagramProcessor<E extends Diagram> extends A
         for (var element : elements) {
             if (rule.match(scope, element)) {
                 scope.remove(element);
-                log.info("Diagram {}, remove {} to scope via {}", diagram.getName(), element.toShortString(), rule);
+                log.debug("Diagram {}, remove {} to scope via {}", diagram.getName(), element.toShortString(), rule);
             }
         }
         for (var relation : relations) {
             if (rule.match(scope, relation)) {
                 scope.remove(relation);
-                log.info("Diagram {}, remove {} to scope via {}", diagram.getName(), relation.toShortString(), rule);
+                log.debug("Diagram {}, remove {} to scope via {}", diagram.getName(), relation.toShortString(), rule);
             }
         }
     }

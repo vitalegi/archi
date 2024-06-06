@@ -10,6 +10,7 @@ import it.vitalegi.archi.diagram.rule.element.IsDescendantOfRule;
 import it.vitalegi.archi.diagram.rule.element.IsDirectlyConnectedToElementInScopeRule;
 import it.vitalegi.archi.diagram.rule.relation.AlwaysAllowRelationRule;
 import it.vitalegi.archi.diagram.rule.relation.AnyRelationVertexOutOfScopeRule;
+import it.vitalegi.archi.diagram.rule.relation.IsConnectedToRule;
 import it.vitalegi.archi.exception.ElementNotFoundException;
 import it.vitalegi.archi.model.Element;
 import it.vitalegi.archi.model.ElementType;
@@ -56,17 +57,21 @@ public class SystemContextDiagramProcessor extends AbstractModelDiagramProcessor
     @Override
     protected List<RuleEntry> getVisibilityRules(SystemContextDiagram diagram) {
         return Arrays.asList( //
+                // target software system and its containers are in scope
                 RuleEntry.include(new AndRule(
                         new HasElementTypeRule(ElementType.CONTAINER, ElementType.SOFTWARE_SYSTEM),
                         new IsDescendantOfRule(diagram.getTarget()) //
                 )), //
+                // directly connected software systems and people are in scope
                 RuleEntry.include(new AndRule(
                         new HasElementTypeRule(ElementType.PERSON, ElementType.SOFTWARE_SYSTEM),
                         new IsDirectlyConnectedToElementInScopeRule() //
                 )), //
                 RuleEntry.include(new AlwaysAllowRelationRule()), //
                 RuleEntry.include(new AnyDescendantOfElementInScopeRule()), //
-                RuleEntry.exclude(new AnyRelationVertexOutOfScopeRule()) //
+                RuleEntry.exclude(new AnyRelationVertexOutOfScopeRule()), //
+                // relations to/from target software system should be removed
+                RuleEntry.exclude(new IsConnectedToRule(diagram.getTarget()))
         );
     }
 }

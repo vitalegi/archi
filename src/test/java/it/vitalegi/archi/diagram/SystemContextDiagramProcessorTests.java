@@ -1,5 +1,6 @@
 package it.vitalegi.archi.diagram;
 
+import it.vitalegi.archi.diagram.dto.DiagramScope;
 import it.vitalegi.archi.diagram.dto.SystemContextDiagram;
 import it.vitalegi.archi.exception.ElementNotFoundException;
 import it.vitalegi.archi.model.Element;
@@ -231,6 +232,31 @@ public class SystemContextDiagramProcessorTests {
             assertTrue(scope.isInScope(r2));
         }
 
+
+        @Test
+        void given_defaultConfiguration_then_AllRelationsToAndFromTargetSoftwareSystemAreExcluded() {
+            var ws = load(b() //
+                    .softwareSystem("A") //
+                    .container("A", "C1") //
+                    .softwareSystem("B") //
+                    .person("P") //
+
+                    .relation("A", "P") //
+                    .relation("P", "A") //
+                    .relation("A", "B") //
+                    .relation("B", "A") //
+
+                    .relation("P", "C1") //
+
+                    .systemContextDiagram("diagram", "A") //
+            );
+            var diagram = ws.getDiagrams().getByName("diagram");
+            var scope = diagramProcessor.computeScope(diagramProcessor.cast(diagram));
+            assertTrue(hasRelationsBetween(ws, scope, "P", "C1"));
+            assertFalse(hasRelationsBetween(ws, scope, "A", "B"));
+            assertFalse(hasRelationsBetween(ws, scope, "A", "P"));
+        }
+
         @Disabled
         @Test
         void given_inheritedRelationsEnabled_then_AllInheritedRelationsAreIncluded() {
@@ -272,5 +298,29 @@ public class SystemContextDiagramProcessorTests {
 
     static Element getElementById(Workspace ws, String id) {
         return ws.getModel().getElementById(id);
+    }
+
+    static List<Relation> getRelationsBetween(Workspace ws, String a, String b) {
+        var e1 = getElementById(ws, a);
+        var e2 = getElementById(ws, b);
+        return ws.getModel().getRelations().getRelationsBetween(e1, e2);
+    }
+
+    static boolean hasRelationsBetween(Workspace ws, String a, String b) {
+        var relations = getRelationsBetween(ws, a, b);
+        return relations != null && !relations.isEmpty();
+    }
+
+    static boolean hasRelationsBetween(Workspace ws, DiagramScope scope, String a, String b) {
+        var relations = getRelationsBetween(ws, a, b);
+        if (relations == null) {
+            return false;
+        }
+        for (var r : relations) {
+            if (scope.isInScope(r)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
