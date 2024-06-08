@@ -1,9 +1,19 @@
-package it.vitalegi.archi.workspace.loader.model;
+package it.vitalegi.archi.workspaceloader.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import it.vitalegi.archi.diagram.model.Diagram;
+import it.vitalegi.archi.style.model.Style;
+import it.vitalegi.archi.workspaceloader.visitor.DiagramRawVisitor;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type", visible = true)
 @JsonSubTypes({
@@ -11,9 +21,17 @@ import lombok.Data;
         @JsonSubTypes.Type(value = LandscapeDiagramRaw.class, name = "LANDSCAPE"),
         @JsonSubTypes.Type(value = SystemContextDiagramRaw.class, name = "SYSTEM_CONTEXT")
 })
-@Data
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
 @JsonIgnoreProperties({"type"})
-public class DiagramRaw {
+@NoArgsConstructor
+@AllArgsConstructor
+public abstract class DiagramRaw {
     String name;
     String title;
+    Style style;
+
+    public abstract <E> E visit(DiagramRawVisitor<E> visitor);
 }

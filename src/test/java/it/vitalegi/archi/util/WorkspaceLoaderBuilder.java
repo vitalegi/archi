@@ -1,22 +1,23 @@
 package it.vitalegi.archi.util;
 
 import it.vitalegi.archi.model.ElementType;
-import it.vitalegi.archi.workspace.loader.model.DeploymentDiagramRaw;
-import it.vitalegi.archi.workspace.loader.model.ElementRaw;
-import it.vitalegi.archi.workspace.loader.model.RelationRaw;
-import it.vitalegi.archi.workspace.loader.model.LandscapeDiagramRaw;
-import it.vitalegi.archi.workspace.loader.model.SystemContextDiagramRaw;
-import it.vitalegi.archi.workspace.loader.model.Workspace;
+import it.vitalegi.archi.style.model.Style;
+import it.vitalegi.archi.workspaceloader.model.DeploymentDiagramRaw;
+import it.vitalegi.archi.workspaceloader.model.ElementRaw;
+import it.vitalegi.archi.workspaceloader.model.LandscapeDiagramRaw;
+import it.vitalegi.archi.workspaceloader.model.RelationRaw;
+import it.vitalegi.archi.workspaceloader.model.SystemContextDiagramRaw;
+import it.vitalegi.archi.workspaceloader.model.WorkspaceRaw;
 
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 public class WorkspaceLoaderBuilder {
-    protected Workspace workspace;
+    protected WorkspaceRaw workspace;
 
     public WorkspaceLoaderBuilder() {
-        workspace = new Workspace();
+        workspace = new WorkspaceRaw();
     }
 
     public WorkspaceLoaderBuilder person(String id) {
@@ -123,7 +124,7 @@ public class WorkspaceLoaderBuilder {
         return this;
     }
 
-    public Workspace build() {
+    public WorkspaceRaw build() {
         return workspace;
     }
 
@@ -179,6 +180,21 @@ public class WorkspaceLoaderBuilder {
         return this;
     }
 
+    public WorkspaceLoaderBuilder deploymentDiagram(DeploymentDiagramRaw.DeploymentDiagramRawBuilder builder) {
+        workspace.getDiagrams().add(builder.build());
+        return this;
+    }
+
+    public WorkspaceLoaderBuilder landscapeDiagram(LandscapeDiagramRaw.LandscapeDiagramRawBuilder builder) {
+        workspace.getDiagrams().add(builder.build());
+        return this;
+    }
+
+    public WorkspaceLoaderBuilder systemContextDiagram(SystemContextDiagramRaw.SystemContextDiagramRawBuilder builder) {
+        workspace.getDiagrams().add(builder.build());
+        return this;
+    }
+
     public WorkspaceLoaderBuilder landscapeDiagram(String name) {
         return landscapeDiagram(name, null);
     }
@@ -188,6 +204,16 @@ public class WorkspaceLoaderBuilder {
         diagram.setName(name);
         diagram.setTitle(title);
         workspace.getDiagrams().add(diagram);
+        return this;
+    }
+
+    public WorkspaceLoaderBuilder globalStyle(Style.StyleBuilder styleBuilder) {
+        workspace.setGlobalStyle(styleBuilder.build());
+        return this;
+    }
+
+    public WorkspaceLoaderBuilder globalStyle(Style style) {
+        workspace.setGlobalStyle(style);
         return this;
     }
 

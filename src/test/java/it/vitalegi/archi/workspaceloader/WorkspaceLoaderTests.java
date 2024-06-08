@@ -1,12 +1,16 @@
-package it.vitalegi.archi.workspace.loader;
+package it.vitalegi.archi.workspaceloader;
 
 import it.vitalegi.archi.exception.CycleNotAllowedException;
 import it.vitalegi.archi.exception.ElementNotAllowedException;
 import it.vitalegi.archi.exception.NonUniqueIdException;
 import it.vitalegi.archi.exception.RelationNotAllowedException;
-import it.vitalegi.archi.util.ModelUtil;
+import it.vitalegi.archi.util.ModelTestUtil;
+import it.vitalegi.archi.util.StyleTestUtil;
 import it.vitalegi.archi.util.WorkspaceLoaderBuilder;
 import it.vitalegi.archi.util.WorkspaceUtil;
+import it.vitalegi.archi.workspaceloader.model.DeploymentDiagramRaw;
+import it.vitalegi.archi.workspaceloader.model.LandscapeDiagramRaw;
+import it.vitalegi.archi.workspaceloader.model.SystemContextDiagramRaw;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class WorkspaceLoaderTests {
 
     static WorkspaceLoader loader() {
-        return ModelUtil.defaultLoader();
+        return ModelTestUtil.defaultLoader();
     }
 
     @Test
@@ -70,8 +74,25 @@ public class WorkspaceLoaderTests {
         assertEquals(2, ws.getModel().getSoftwareSystems().size());
     }
 
+    @Test
+    void when_load_given_globalStyle_thenGlobalStyleIsAvailable() {
+        var loader = loader();
+        var config = builder() //
+                .group("A", "B") //
+                .group("B", "A") //
+                .group("C") //
+                .group("D") //
+                .group(null) //
+                .group("A", "E") //
+                .group("A", null) //
+                .build();
+
+        var e = Assertions.assertThrows(CycleNotAllowedException.class, () -> loader.load(config));
+        assertEquals("Unresolved dependencies. Known: C, D, null. Unresolved: A: B; B: A; E: A; null: A", e.getMessage());
+    }
+
     protected WorkspaceLoaderBuilder builder() {
-        return ModelUtil.defaultBuilder();
+        return ModelTestUtil.defaultBuilder();
     }
 
     @Nested
@@ -640,6 +661,42 @@ public class WorkspaceLoaderTests {
             var config = builder().build();
             var ws = loader.load(config);
             assertEquals(0, ws.getDiagrams().getAll().size());
+        }
+
+        @Test
+        void given_diagramStyleIsDefined_when_landscapeDiagram_thenStyleIsLoaded() {
+            var loader = loader();
+            var style = StyleTestUtil.randomStyle();
+            var config = builder().landscapeDiagram(LandscapeDiagramRaw.builder().name("diagram").style(style)).build();
+            var ws = loader.load(config);
+            var diagram = ws.getDiagrams().getByName("diagram");
+            assertEquals(style, diagram.getStyle());
+        }
+
+        @Test
+        void given_diagramStyleIsDefined_when_systemContextDiagram_thenStyleIsLoaded() {
+            var loader = loader();
+            var style = StyleTestUtil.randomStyle();
+            var config = builder() //
+                    .softwareSystem("A") //
+                    .systemContextDiagram(SystemContextDiagramRaw.builder().name("diagram").target("A").style(style)) //
+                    .build();
+            var ws = loader.load(config);
+            var diagram = ws.getDiagrams().getByName("diagram");
+            assertEquals(style, diagram.getStyle());
+        }
+
+        @Test
+        void given_diagramStyleIsDefined_when_deploymentDiagram_thenStyleIsLoaded() {
+            var loader = loader();
+            var style = StyleTestUtil.randomStyle();
+            var config = builder() //
+                    .deploymentEnvironment("env") //
+                    .deploymentDiagram(DeploymentDiagramRaw.builder().environment("env").name("diagram").style(style)) //
+                    .build();
+            var ws = loader.load(config);
+            var diagram = ws.getDiagrams().getByName("diagram");
+            assertEquals(style, diagram.getStyle());
         }
     }
 }

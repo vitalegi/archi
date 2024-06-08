@@ -1,4 +1,4 @@
-package it.vitalegi.archi.workspace.loader.model;
+package it.vitalegi.archi.workspaceloader.model;
 
 import lombok.Data;
 

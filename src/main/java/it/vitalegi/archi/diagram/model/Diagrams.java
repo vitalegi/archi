@@ -1,4 +1,4 @@
-package it.vitalegi.archi.diagram.dto;
+package it.vitalegi.archi.diagram.model;
 
 import lombok.ToString;
 

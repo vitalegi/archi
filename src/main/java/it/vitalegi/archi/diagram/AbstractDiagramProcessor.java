@@ -1,19 +1,28 @@
 package it.vitalegi.archi.diagram;
 
+import it.vitalegi.archi.diagram.style.StyleHandler;
 import it.vitalegi.archi.model.Element;
 import it.vitalegi.archi.model.Relation;
 import it.vitalegi.archi.plantuml.LayoutDirection;
 import it.vitalegi.archi.plantuml.PlantUmlExporter;
+import it.vitalegi.archi.style.model.Style;
 import it.vitalegi.archi.util.StringUtil;
 import it.vitalegi.archi.diagram.constant.DiagramFormat;
-import it.vitalegi.archi.diagram.dto.Diagram;
+import it.vitalegi.archi.diagram.model.Diagram;
 import it.vitalegi.archi.diagram.writer.C4PlantUMLWriter;
+import it.vitalegi.archi.workspace.Workspace;
 
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class AbstractDiagramProcessor<E extends Diagram> implements DiagramProcessor {
+
+    StyleHandler styleHandler;
+
+    public AbstractDiagramProcessor(StyleHandler styleHandler) {
+        this.styleHandler = styleHandler;
+    }
 
     @Override
     public void validate(Diagram diagram) {

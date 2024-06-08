@@ -1,5 +1,6 @@
 package it.vitalegi.archi.diagram;
 
+import it.vitalegi.archi.diagram.style.StyleHandler;
 import it.vitalegi.archi.exception.ElementNotFoundException;
 import it.vitalegi.archi.model.Container;
 import it.vitalegi.archi.model.ContainerInstance;
@@ -14,8 +15,8 @@ import it.vitalegi.archi.model.SoftwareSystemInstance;
 import it.vitalegi.archi.plantuml.LayoutDirection;
 import it.vitalegi.archi.util.StringUtil;
 import it.vitalegi.archi.util.WorkspaceUtil;
-import it.vitalegi.archi.diagram.dto.DeploymentDiagram;
-import it.vitalegi.archi.diagram.dto.Diagram;
+import it.vitalegi.archi.diagram.model.DeploymentDiagram;
+import it.vitalegi.archi.diagram.model.Diagram;
 import it.vitalegi.archi.diagram.scope.Scope;
 import it.vitalegi.archi.diagram.writer.C4PlantUMLWriter;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,10 @@ import java.util.stream.Stream;
 
 @Slf4j
 public class DeploymentDiagramProcessor extends AbstractDiagramProcessor<DeploymentDiagram> {
+
+    public DeploymentDiagramProcessor(StyleHandler styleHandler) {
+        super(styleHandler);
+    }
 
     public boolean accept(Diagram diagram) {
         return diagram instanceof DeploymentDiagram;

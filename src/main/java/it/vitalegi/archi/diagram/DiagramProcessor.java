@@ -1,7 +1,7 @@
 package it.vitalegi.archi.diagram;
 
 import it.vitalegi.archi.diagram.constant.DiagramFormat;
-import it.vitalegi.archi.diagram.dto.Diagram;
+import it.vitalegi.archi.diagram.model.Diagram;
 
 import java.nio.file.Path;
 
