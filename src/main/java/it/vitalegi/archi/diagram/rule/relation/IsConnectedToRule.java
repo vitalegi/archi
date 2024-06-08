@@ -1,6 +1,6 @@
 package it.vitalegi.archi.diagram.rule.relation;
 
-import it.vitalegi.archi.diagram.dto.DiagramScope;
+import it.vitalegi.archi.diagram.model.DiagramScope;
 import it.vitalegi.archi.diagram.rule.AbstractVisibilityRule;
 import it.vitalegi.archi.model.Element;
 import it.vitalegi.archi.model.Entity;

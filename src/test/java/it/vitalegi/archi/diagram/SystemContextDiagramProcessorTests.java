@@ -1,11 +1,10 @@
 package it.vitalegi.archi.diagram;
 
-import it.vitalegi.archi.diagram.dto.DiagramScope;
-import it.vitalegi.archi.diagram.dto.SystemContextDiagram;
+import it.vitalegi.archi.diagram.model.DiagramScope;
+import it.vitalegi.archi.diagram.model.SystemContextDiagram;
 import it.vitalegi.archi.exception.ElementNotFoundException;
 import it.vitalegi.archi.model.Element;
 import it.vitalegi.archi.model.Relation;
-import it.vitalegi.archi.util.WorkspaceLoaderBuilder;
 import it.vitalegi.archi.workspace.Workspace;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,10 +15,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static it.vitalegi.archi.util.ModelUtil.defaultBuilder;
-import static it.vitalegi.archi.util.ModelUtil.defaultLoader;
+import static it.vitalegi.archi.util.WorkspaceTestUtil.b;
+import static it.vitalegi.archi.util.WorkspaceTestUtil.load;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -32,7 +30,7 @@ public class SystemContextDiagramProcessorTests {
 
     @BeforeEach
     void init() {
-        diagramProcessor = new SystemContextDiagramProcessor();
+        diagramProcessor = new DiagramFactory().systemContextDiagramProcessor();
 
     }
 
@@ -280,22 +278,6 @@ public class SystemContextDiagramProcessorTests {
         }
     }
 
-    static Workspace load(WorkspaceLoaderBuilder builder) {
-        return defaultLoader().load(builder.build());
-    }
-
-    static WorkspaceLoaderBuilder b() {
-        return defaultBuilder();
-    }
-
-    static List<String> getIds(List<? extends Element> elements) {
-        return elements.stream().map(Element::getId).collect(Collectors.toList());
-    }
-
-    static List<String> stringifyRelations(List<? extends Relation> relations) {
-        return relations.stream().map(r -> r.getFrom().toShortString() + " => " + r.getTo().toShortString()).collect(Collectors.toList());
-    }
-
     static Element getElementById(Workspace ws, String id) {
         return ws.getModel().getElementById(id);
     }
@@ -304,11 +286,6 @@ public class SystemContextDiagramProcessorTests {
         var e1 = getElementById(ws, a);
         var e2 = getElementById(ws, b);
         return ws.getModel().getRelations().getRelationsBetween(e1, e2);
-    }
-
-    static boolean hasRelationsBetween(Workspace ws, String a, String b) {
-        var relations = getRelationsBetween(ws, a, b);
-        return relations != null && !relations.isEmpty();
     }
 
     static boolean hasRelationsBetween(Workspace ws, DiagramScope scope, String a, String b) {

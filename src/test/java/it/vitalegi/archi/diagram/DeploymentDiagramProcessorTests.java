@@ -1,12 +1,10 @@
 package it.vitalegi.archi.diagram;
 
+import it.vitalegi.archi.diagram.model.DeploymentDiagram;
 import it.vitalegi.archi.exception.ElementNotFoundException;
 import it.vitalegi.archi.model.Element;
 import it.vitalegi.archi.model.Relation;
-import it.vitalegi.archi.util.WorkspaceLoaderBuilder;
 import it.vitalegi.archi.util.WorkspaceUtil;
-import it.vitalegi.archi.diagram.dto.DeploymentDiagram;
-import it.vitalegi.archi.workspace.Workspace;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -18,8 +16,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static it.vitalegi.archi.util.AssertionUtil.assertArrayEqualsUnsorted;
-import static it.vitalegi.archi.util.ModelUtil.defaultBuilder;
-import static it.vitalegi.archi.util.ModelUtil.defaultLoader;
+import static it.vitalegi.archi.util.WorkspaceTestUtil.b;
+import static it.vitalegi.archi.util.WorkspaceTestUtil.load;
 import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -33,7 +31,7 @@ public class DeploymentDiagramProcessorTests {
 
     @BeforeEach
     void init() {
-        diagramProcessor = new DeploymentDiagramProcessor();
+        diagramProcessor = new DiagramFactory().deploymentDiagramProcessor();
 
     }
 
@@ -171,7 +169,7 @@ public class DeploymentDiagramProcessorTests {
             );
             var diagram = ws.getDiagrams().getByName("diagram");
             var elements = diagramProcessor.getElementsPerimeter(diagramProcessor.cast(diagram)).collect(Collectors.toList());
-            assertArrayEqualsUnsorted(List.of("node_A1","node_A2"), getIds(WorkspaceUtil.getSoftwareSystemInstances(elements)));
+            assertArrayEqualsUnsorted(List.of("node_A1", "node_A2"), getIds(WorkspaceUtil.getSoftwareSystemInstances(elements)));
             assertArrayEqualsUnsorted(List.of("A"), getIds(WorkspaceUtil.getSoftwareSystems(elements)));
         }
     }
@@ -447,14 +445,6 @@ public class DeploymentDiagramProcessorTests {
         // relazioni implicite tra elementi in scope sono mantenute
 
 
-    }
-
-    static Workspace load(WorkspaceLoaderBuilder builder) {
-        return defaultLoader().load(builder.build());
-    }
-
-    static WorkspaceLoaderBuilder b() {
-        return defaultBuilder();
     }
 
     static List<String> getIds(List<? extends Element> elements) {

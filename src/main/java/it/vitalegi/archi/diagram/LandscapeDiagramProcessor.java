@@ -1,12 +1,13 @@
 package it.vitalegi.archi.diagram;
 
-import it.vitalegi.archi.diagram.dto.Diagram;
-import it.vitalegi.archi.diagram.dto.LandscapeDiagram;
+import it.vitalegi.archi.diagram.model.Diagram;
+import it.vitalegi.archi.diagram.model.LandscapeDiagram;
 import it.vitalegi.archi.diagram.rule.RuleEntry;
 import it.vitalegi.archi.diagram.rule.element.AnyDescendantOfElementInScopeRule;
 import it.vitalegi.archi.diagram.rule.element.HasElementTypeRule;
 import it.vitalegi.archi.diagram.rule.relation.AlwaysAllowRelationRule;
 import it.vitalegi.archi.diagram.rule.relation.AnyRelationVertexOutOfScopeRule;
+import it.vitalegi.archi.diagram.style.StyleHandler;
 import it.vitalegi.archi.model.Element;
 import it.vitalegi.archi.model.ElementType;
 import it.vitalegi.archi.util.WorkspaceUtil;
@@ -17,7 +18,10 @@ import java.util.List;
 
 @Slf4j
 public class LandscapeDiagramProcessor extends AbstractModelDiagramProcessor<LandscapeDiagram> {
-
+    
+    public LandscapeDiagramProcessor(StyleHandler styleHandler) {
+        super(styleHandler);
+    }
 
     @Override
     public boolean accept(Diagram diagram) {

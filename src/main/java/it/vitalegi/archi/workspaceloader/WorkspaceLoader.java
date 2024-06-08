@@ -1,6 +1,6 @@
-package it.vitalegi.archi.workspace.loader;
+package it.vitalegi.archi.workspaceloader;
 
-import it.vitalegi.archi.diagram.dto.SystemContextDiagram;
+import it.vitalegi.archi.diagram.DiagramProcessorFacade;
 import it.vitalegi.archi.exception.CycleNotAllowedException;
 import it.vitalegi.archi.model.Container;
 import it.vitalegi.archi.model.ContainerInstance;
@@ -15,19 +15,13 @@ import it.vitalegi.archi.model.Person;
 import it.vitalegi.archi.model.Relation;
 import it.vitalegi.archi.model.SoftwareSystem;
 import it.vitalegi.archi.model.SoftwareSystemInstance;
+import it.vitalegi.archi.style.model.Style;
 import it.vitalegi.archi.util.StringUtil;
 import it.vitalegi.archi.util.WorkspaceUtil;
-import it.vitalegi.archi.diagram.DiagramProcessorFacade;
-import it.vitalegi.archi.diagram.dto.DeploymentDiagram;
-import it.vitalegi.archi.diagram.dto.LandscapeDiagram;
-import it.vitalegi.archi.diagram.dto.Diagram;
 import it.vitalegi.archi.workspace.Workspace;
-import it.vitalegi.archi.workspace.loader.model.DeploymentDiagramRaw;
-import it.vitalegi.archi.workspace.loader.model.ElementRaw;
-import it.vitalegi.archi.workspace.loader.model.RelationRaw;
-import it.vitalegi.archi.workspace.loader.model.LandscapeDiagramRaw;
-import it.vitalegi.archi.workspace.loader.model.DiagramRaw;
-import it.vitalegi.archi.workspace.loader.model.SystemContextDiagramRaw;
+import it.vitalegi.archi.workspaceloader.model.ElementRaw;
+import it.vitalegi.archi.workspaceloader.model.RelationRaw;
+import it.vitalegi.archi.workspaceloader.model.WorkspaceRaw;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -44,7 +38,7 @@ public class WorkspaceLoader {
         this.diagramProcessorFacade = diagramProcessorFacade;
     }
 
-    public Workspace load(it.vitalegi.archi.workspace.loader.model.Workspace in) {
+    public Workspace load(WorkspaceRaw in) {
         Workspace workspace = new Workspace();
         var model = workspace.getModel();
         log.debug("Load model");
@@ -70,8 +64,13 @@ public class WorkspaceLoader {
             workspace.validate();
 
             log.debug("Load diagrams");
-            in.getDiagrams().forEach(diagram -> workspace.getDiagrams().add(toDiagram(diagram, model)));
+            var visitor = new DiagramRawMapperVisitor(model);
+            in.getDiagrams().stream() //
+                    .map(diagram -> diagram.visit(visitor)) //
+                    .forEach(diagram -> workspace.getDiagrams().add(diagram));
             workspace.getDiagrams().getAll().forEach(diagramProcessorFacade::validate);
+
+            loadGlobalStyle(workspace, in);
 
             return workspace;
         } catch (Throwable e) {
@@ -274,48 +273,21 @@ public class WorkspaceLoader {
         return out;
     }
 
-    protected Diagram toDiagram(DiagramRaw in, Model model) {
-        if (in instanceof DeploymentDiagramRaw) {
-            return toDeploymentDiagram((DeploymentDiagramRaw) in, model);
-        }
-        if (in instanceof LandscapeDiagramRaw) {
-            return toLandscapeDiagram((LandscapeDiagramRaw) in, model);
-        }
-        if (in instanceof SystemContextDiagramRaw) {
-            return toSystemContextDiagram((SystemContextDiagramRaw) in, model);
-        }
-        throw new IllegalArgumentException("Missing mapper for " + in);
-    }
-
-    protected DeploymentDiagram toDeploymentDiagram(DeploymentDiagramRaw in, Model model) {
-        var out = new DeploymentDiagram(model);
-        mapDiagram(in, out);
-        out.setEnvironment(in.getEnvironment());
-        out.setScope(in.getScope());
-        return out;
-    }
-
-    protected LandscapeDiagram toLandscapeDiagram(LandscapeDiagramRaw in, Model model) {
-        var out = new LandscapeDiagram(model);
-        mapDiagram(in, out);
-        return out;
-    }
-    protected SystemContextDiagram toSystemContextDiagram(SystemContextDiagramRaw in, Model model) {
-        var out = new SystemContextDiagram(model);
-        mapDiagram(in, out);
-        out.setTarget(in.getTarget());
-        return out;
-    }
-    protected void mapDiagram(DiagramRaw in, Diagram out) {
-        out.setName(in.getName());
-        out.setTitle(in.getTitle());
-    }
-
     @AllArgsConstructor
     @Data
     protected static class ElementPair {
         ElementRaw source;
         Element out;
+    }
+
+    protected void loadGlobalStyle(Workspace workspace, WorkspaceRaw in) {
+        log.debug("Load global styles");
+        if (in.getGlobalStyle() != null) {
+            workspace.setGlobalStyle(in.getGlobalStyle());
+        } else {
+            workspace.setGlobalStyle(Style.builder().build());
+        }
+        workspace.getGlobalStyle().validate();
     }
 
 }

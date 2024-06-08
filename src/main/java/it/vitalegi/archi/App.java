@@ -1,8 +1,8 @@
 package it.vitalegi.archi;
 
 import it.vitalegi.archi.diagram.constant.DiagramFormat;
-import it.vitalegi.archi.workspace.loader.FileSystemWorkspaceLoader;
-import it.vitalegi.archi.workspace.loader.WorkspaceLoaderFactory;
+import it.vitalegi.archi.workspaceloader.FileSystemWorkspaceLoader;
+import it.vitalegi.archi.workspaceloader.WorkspaceLoaderFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

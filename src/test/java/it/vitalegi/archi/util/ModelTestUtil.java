@@ -1,9 +1,9 @@
 package it.vitalegi.archi.util;
 
-import it.vitalegi.archi.workspace.loader.WorkspaceLoader;
-import it.vitalegi.archi.workspace.loader.WorkspaceLoaderFactory;
+import it.vitalegi.archi.workspaceloader.WorkspaceLoader;
+import it.vitalegi.archi.workspaceloader.WorkspaceLoaderFactory;
 
-public class ModelUtil {
+public class ModelTestUtil {
     public static WorkspaceLoader defaultLoader() {
         return new WorkspaceLoaderFactory().build();
     }

@@ -1,11 +1,10 @@
 package it.vitalegi.archi.diagram.rule;
 
-import it.vitalegi.archi.diagram.dto.DiagramScope;
+import it.vitalegi.archi.diagram.model.DiagramScope;
 import it.vitalegi.archi.model.Element;
 import it.vitalegi.archi.model.Entity;
 import it.vitalegi.archi.model.Relation;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,10 +1,11 @@
 package it.vitalegi.archi.diagram;
 
-import it.vitalegi.archi.diagram.dto.Diagram;
-import it.vitalegi.archi.diagram.dto.DiagramScope;
+import it.vitalegi.archi.diagram.model.Diagram;
+import it.vitalegi.archi.diagram.model.DiagramScope;
 import it.vitalegi.archi.diagram.rule.RuleEntry;
 import it.vitalegi.archi.diagram.rule.VisibilityRule;
 import it.vitalegi.archi.diagram.rule.VisibilityRuleType;
+import it.vitalegi.archi.diagram.style.StyleHandler;
 import it.vitalegi.archi.diagram.writer.C4PlantUMLWriter;
 import it.vitalegi.archi.model.Element;
 import it.vitalegi.archi.model.Relation;
@@ -16,6 +17,10 @@ import java.util.stream.Collectors;
 
 @Slf4j
 public abstract class AbstractModelDiagramProcessor<E extends Diagram> extends AbstractDiagramProcessor<E> {
+
+    public AbstractModelDiagramProcessor(StyleHandler styleHandler) {
+        super(styleHandler);
+    }
 
     protected String createPuml(E diagram) {
         var writer = new C4PlantUMLWriter();
