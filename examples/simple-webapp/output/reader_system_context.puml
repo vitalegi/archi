@@ -8,7 +8,7 @@ title Reader: System Context
 !include <C4/C4>
 !include <C4/C4_Context>
 !include <C4/C4_Container>
-AddElementTag("Element", $bgColor="red", $borderColor="green", $fontColor="orange", $sprite="", $shadowing="true", $borderStyle="dotted")
+AddElementTag("Element", $bgColor="red", $fontColor="orange", $borderColor="green", $shadowing="true", $shape="RoundedBox", $sprite="", $techn="Test 123", $legendText="Legend", $legendSprite="", $borderStyle="dotted", $borderThickness="5")
 AddRelTag("Relationship", $textColor="#707070", $lineColor="#707070", $lineStyle="")
 Container($alias="Person_user", $label="User", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="")
 Container($alias="Person_sysadmin", $label="Sysadmin", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="")

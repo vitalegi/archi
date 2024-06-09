@@ -7,11 +7,13 @@ import java.util.Formatter;
 
 public class C4PlantUMLWriter extends PlantUMLWriter {
 
-    public void addElementTag(ElementTag elementTag) {
-        addElementTag(elementTag.getAlias(), elementTag.getBackgroundColor(), elementTag.getBorderColor(), elementTag.getFontColor(), elementTag.getSprite(), elementTag.getShadowing(), elementTag.getBorderStyle());
+    public void addElementTag(ElementTag tag) {
+        addElementTag(tag.getAlias(), tag.getBackgroundColor(), tag.getFontColor(), tag.getBorderColor(), tag.getShadowing(), tag.getShape(), tag.getSprite(), tag.getTechnologies(), tag.getLegendText(), tag.getLegendSprite(), tag.getBorderStyle(), tag.getBorderThickness());
     }
-    public void addElementTag(String alias, String bgColor, String borderColor, String fontColor, String sprite, Boolean shadowing, String borderStyle) {
-        println(format("AddElementTag(\"%s\", $bgColor=\"%s\", $borderColor=\"%s\", $fontColor=\"%s\", $sprite=\"%s\", $shadowing=\"%s\", $borderStyle=\"%s\")", alias, bgColor, borderColor, fontColor, sprite, shadowing, borderStyle));
+
+    private void addElementTag(String alias, String bgColor, String fontColor, String borderColor, Boolean shadowing, String shape, String sprite, String techn, String legendText, String legendSprite, String borderStyle, Integer borderThickness) {
+        println(format("AddElementTag(\"%s\", $bgColor=\"%s\", $fontColor=\"%s\", $borderColor=\"%s\", $shadowing=\"%b\", $shape=\"%s\", $sprite=\"%s\", $techn=\"%s\", $legendText=\"%s\", $legendSprite=\"%s\", $borderStyle=\"%s\", $borderThickness=\"%d\")", //
+                alias, bgColor, fontColor, borderColor, shadowing, shape, sprite, techn, legendText, legendSprite, borderStyle, borderThickness));
     }
 
     public void addRelTag(String alias, String textColor, String lineColor, String lineStyle) {
