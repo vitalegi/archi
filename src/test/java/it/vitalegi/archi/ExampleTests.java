@@ -1,7 +1,7 @@
 package it.vitalegi.archi;
 
 import it.vitalegi.archi.model.builder.WorkspaceDirector;
-import it.vitalegi.archi.diagram.C4PlantUmlDiagramExporter;
+import it.vitalegi.archi.exporter.plantuml.PlantumlDiagramExporter;
 import it.vitalegi.archi.diagram.DiagramFormat;
 import it.vitalegi.archi.workspaceloader.FileSystemWorkspaceLoader;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,7 @@ public class ExampleTests {
         var factory = new WorkspaceDirector();
         factory.makeWorkspace(fsLoader.load(baseDir.resolve("workspace.yaml")));
         var workspace = factory.build();
-        var exporter = new C4PlantUmlDiagramExporter(workspace, out, DiagramFormat.values());
+        var exporter = new PlantumlDiagramExporter(workspace, out, DiagramFormat.values());
         workspace.getDiagrams().getAll().forEach(exporter::export);
     }
 }

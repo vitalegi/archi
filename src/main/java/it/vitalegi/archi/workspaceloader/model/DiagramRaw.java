@@ -3,7 +3,7 @@ package it.vitalegi.archi.workspaceloader.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import it.vitalegi.archi.style.Style;
+import it.vitalegi.archi.model.style.Style;
 import it.vitalegi.archi.visitor.DiagramRawVisitor;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;

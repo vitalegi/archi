@@ -1,7 +1,7 @@
 package it.vitalegi.archi.model.builder;
 
-import it.vitalegi.archi.diagram.DiagramValidatorVisitor;
-import it.vitalegi.archi.workspace.Workspace;
+import it.vitalegi.archi.exporter.plantuml.PlantumlDiagramValidatorVisitor;
+import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.workspaceloader.model.WorkspaceRaw;
 
 public class WorkspaceDirector {
@@ -21,7 +21,7 @@ public class WorkspaceDirector {
 
         var workspace = workspaceBuilder.getWorkspace();
         workspace.validate();
-        var diagramValidator = new DiagramValidatorVisitor();
+        var diagramValidator = new PlantumlDiagramValidatorVisitor();
         workspace.getDiagrams().getAll().forEach(diagram -> diagram.visit(diagramValidator));
         workspace.getStyle().validate();
         return this;

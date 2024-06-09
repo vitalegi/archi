@@ -1,14 +1,14 @@
 package it.vitalegi.archi.model.builder;
 
-import it.vitalegi.archi.model.Element;
+import it.vitalegi.archi.model.element.Element;
 import it.vitalegi.archi.model.Model;
-import it.vitalegi.archi.model.Relation;
-import it.vitalegi.archi.diagram.model.Diagrams;
+import it.vitalegi.archi.model.relation.Relation;
+import it.vitalegi.archi.model.diagram.Diagrams;
 import it.vitalegi.archi.exception.CycleNotAllowedException;
-import it.vitalegi.archi.style.Style;
+import it.vitalegi.archi.model.style.Style;
 import it.vitalegi.archi.util.StringUtil;
 import it.vitalegi.archi.util.WorkspaceUtil;
-import it.vitalegi.archi.workspace.Workspace;
+import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.workspaceloader.DiagramRawMapperVisitor;
 import it.vitalegi.archi.workspaceloader.model.DiagramRaw;
 import it.vitalegi.archi.workspaceloader.model.ElementRaw;
@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 public class WorkspaceBuilder {
 
     Workspace workspace;
+    RelationValidator relationValidator = new RelationValidator();
 
     public void buildWorkspace() {
         workspace = new Workspace();
@@ -65,7 +66,10 @@ public class WorkspaceBuilder {
     public void buildRelations(List<RelationRaw> relations) {
         log.debug("Load relations");
         var model = workspace.getModel();
-        relations.stream().map(r -> toRelation(r, model)).forEach(model::addRelation);
+        relations.stream().map(r -> toRelation(r, model)).forEach(r -> {
+            relationValidator.checkAllowed(r);
+            model.getRelations().addRelation(r);
+        });
     }
 
     public void buildDiagrams(List<DiagramRaw> diagrams) {

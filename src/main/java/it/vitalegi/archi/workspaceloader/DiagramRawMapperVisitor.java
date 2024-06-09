@@ -1,9 +1,9 @@
 package it.vitalegi.archi.workspaceloader;
 
-import it.vitalegi.archi.diagram.model.DeploymentDiagram;
-import it.vitalegi.archi.diagram.model.Diagram;
-import it.vitalegi.archi.diagram.model.LandscapeDiagram;
-import it.vitalegi.archi.diagram.model.SystemContextDiagram;
+import it.vitalegi.archi.model.diagram.DeploymentDiagram;
+import it.vitalegi.archi.model.diagram.Diagram;
+import it.vitalegi.archi.model.diagram.LandscapeDiagram;
+import it.vitalegi.archi.model.diagram.SystemContextDiagram;
 import it.vitalegi.archi.model.Model;
 import it.vitalegi.archi.workspaceloader.model.DeploymentDiagramRaw;
 import it.vitalegi.archi.workspaceloader.model.DiagramRaw;

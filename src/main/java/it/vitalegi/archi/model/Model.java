@@ -1,5 +1,8 @@
 package it.vitalegi.archi.model;
 
+import it.vitalegi.archi.model.element.Element;
+import it.vitalegi.archi.model.element.ElementType;
+import it.vitalegi.archi.model.relation.Relations;
 import it.vitalegi.archi.visitor.ElementVisitor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -24,10 +27,6 @@ public class Model extends Element {
         model = this;
         elementMap = new HashMap<>();
         relations = new Relations();
-    }
-
-    public void addRelation(Relation relation) {
-        relations.addRelation(relation);
     }
 
     public Element getElementById(String id) {

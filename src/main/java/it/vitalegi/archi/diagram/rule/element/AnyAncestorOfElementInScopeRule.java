@@ -1,8 +1,8 @@
 package it.vitalegi.archi.diagram.rule.element;
 
-import it.vitalegi.archi.model.Element;
-import it.vitalegi.archi.model.Relation;
-import it.vitalegi.archi.diagram.model.DiagramScope;
+import it.vitalegi.archi.model.element.Element;
+import it.vitalegi.archi.model.relation.Relation;
+import it.vitalegi.archi.model.diagram.DiagramScope;
 import it.vitalegi.archi.diagram.rule.AbstractVisibilityRule;
 import it.vitalegi.archi.util.WorkspaceUtil;
 import lombok.EqualsAndHashCode;

@@ -1,8 +1,8 @@
 package it.vitalegi.archi.visitor;
 
-import it.vitalegi.archi.diagram.model.DeploymentDiagram;
-import it.vitalegi.archi.diagram.model.LandscapeDiagram;
-import it.vitalegi.archi.diagram.model.SystemContextDiagram;
+import it.vitalegi.archi.model.diagram.DeploymentDiagram;
+import it.vitalegi.archi.model.diagram.LandscapeDiagram;
+import it.vitalegi.archi.model.diagram.SystemContextDiagram;
 
 public interface DiagramVisitor<E> {
     E visitLandscapeDiagram(LandscapeDiagram diagram);

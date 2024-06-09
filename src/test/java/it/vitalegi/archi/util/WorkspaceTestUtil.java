@@ -1,7 +1,7 @@
 package it.vitalegi.archi.util;
 
 import it.vitalegi.archi.model.builder.WorkspaceDirector;
-import it.vitalegi.archi.workspace.Workspace;
+import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.workspaceloader.model.WorkspaceRaw;
 
 import static it.vitalegi.archi.util.ModelTestUtil.defaultBuilder;

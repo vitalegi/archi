@@ -1,11 +1,11 @@
 package it.vitalegi.archi.util;
 
-import it.vitalegi.archi.style.ElementTag;
-import it.vitalegi.archi.style.LineStyle;
-import it.vitalegi.archi.style.RelationTag;
-import it.vitalegi.archi.style.SkinParam;
-import it.vitalegi.archi.style.Style;
-import it.vitalegi.archi.style.Tags;
+import it.vitalegi.archi.model.style.ElementTag;
+import it.vitalegi.archi.model.style.LineStyle;
+import it.vitalegi.archi.model.style.RelationTag;
+import it.vitalegi.archi.model.style.SkinParam;
+import it.vitalegi.archi.model.style.Style;
+import it.vitalegi.archi.model.style.Tags;
 
 import java.util.UUID;
 import java.util.stream.Collectors;

@@ -1,6 +1,6 @@
 package it.vitalegi.archi.exception;
 
-import it.vitalegi.archi.model.Element;
+import it.vitalegi.archi.model.element.Element;
 
 public class ElementNotAllowedException extends Error {
     Element parent;

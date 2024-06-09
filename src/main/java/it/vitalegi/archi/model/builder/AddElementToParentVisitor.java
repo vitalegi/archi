@@ -1,22 +1,22 @@
 package it.vitalegi.archi.model.builder;
 
-import it.vitalegi.archi.model.Component;
-import it.vitalegi.archi.model.Container;
-import it.vitalegi.archi.model.ContainerInstance;
-import it.vitalegi.archi.model.DeploymentEnvironment;
-import it.vitalegi.archi.model.DeploymentNode;
-import it.vitalegi.archi.model.Element;
-import it.vitalegi.archi.model.Group;
-import it.vitalegi.archi.model.InfrastructureNode;
+import it.vitalegi.archi.model.element.Component;
+import it.vitalegi.archi.model.element.Container;
+import it.vitalegi.archi.model.element.ContainerInstance;
+import it.vitalegi.archi.model.element.DeploymentEnvironment;
+import it.vitalegi.archi.model.element.DeploymentNode;
+import it.vitalegi.archi.model.element.Element;
+import it.vitalegi.archi.model.element.Group;
+import it.vitalegi.archi.model.element.InfrastructureNode;
 import it.vitalegi.archi.model.Model;
-import it.vitalegi.archi.model.Person;
-import it.vitalegi.archi.model.SoftwareSystem;
-import it.vitalegi.archi.model.SoftwareSystemInstance;
+import it.vitalegi.archi.model.element.Person;
+import it.vitalegi.archi.model.element.SoftwareSystem;
+import it.vitalegi.archi.model.element.SoftwareSystemInstance;
 import it.vitalegi.archi.exception.ElementNotAllowedException;
 import it.vitalegi.archi.exception.NonUniqueIdException;
 import it.vitalegi.archi.util.WorkspaceUtil;
 import it.vitalegi.archi.visitor.ElementVisitor;
-import it.vitalegi.archi.workspace.Workspace;
+import it.vitalegi.archi.model.Workspace;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 

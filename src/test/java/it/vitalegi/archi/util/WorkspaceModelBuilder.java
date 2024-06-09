@@ -1,7 +1,7 @@
 package it.vitalegi.archi.util;
 
-import it.vitalegi.archi.model.ElementType;
-import it.vitalegi.archi.style.Style;
+import it.vitalegi.archi.model.element.ElementType;
+import it.vitalegi.archi.model.style.Style;
 import it.vitalegi.archi.workspaceloader.model.DeploymentDiagramRaw;
 import it.vitalegi.archi.workspaceloader.model.ElementRaw;
 import it.vitalegi.archi.workspaceloader.model.LandscapeDiagramRaw;

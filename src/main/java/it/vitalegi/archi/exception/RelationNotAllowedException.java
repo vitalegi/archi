@@ -1,6 +1,6 @@
 package it.vitalegi.archi.exception;
 
-import it.vitalegi.archi.model.Relation;
+import it.vitalegi.archi.model.relation.Relation;
 
 public class RelationNotAllowedException extends Error {
     Relation relation;

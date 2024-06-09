@@ -1,6 +1,6 @@
 package it.vitalegi.archi.workspaceloader.model;
 
-import it.vitalegi.archi.model.ElementType;
+import it.vitalegi.archi.model.element.ElementType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

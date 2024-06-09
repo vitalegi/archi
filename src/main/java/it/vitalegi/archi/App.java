@@ -1,7 +1,7 @@
 package it.vitalegi.archi;
 
 import it.vitalegi.archi.model.builder.WorkspaceDirector;
-import it.vitalegi.archi.diagram.C4PlantUmlDiagramExporter;
+import it.vitalegi.archi.exporter.plantuml.PlantumlDiagramExporter;
 import it.vitalegi.archi.diagram.DiagramFormat;
 import it.vitalegi.archi.workspaceloader.FileSystemWorkspaceLoader;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ public class App {
         factory.makeWorkspace(fsLoader.load(model));
         var workspace = factory.build();
         log.info("Loaded workspace");
-        var exporter = new C4PlantUmlDiagramExporter(workspace, mainDir, DiagramFormat.values());
+        var exporter = new PlantumlDiagramExporter(workspace, mainDir, DiagramFormat.values());
         workspace.getDiagrams().getAll().forEach(exporter::export);
     }
 }

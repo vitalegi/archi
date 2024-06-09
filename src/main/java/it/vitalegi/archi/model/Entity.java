@@ -1,5 +1,6 @@
 package it.vitalegi.archi.model;
 
+import it.vitalegi.archi.model.element.ElementType;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
