@@ -4,6 +4,7 @@ import it.vitalegi.archi.model.Element;
 import it.vitalegi.archi.model.Relation;
 import it.vitalegi.archi.diagram.model.DiagramScope;
 import it.vitalegi.archi.diagram.rule.AbstractVisibilityRule;
+import it.vitalegi.archi.util.WorkspaceUtil;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +20,7 @@ import lombok.extern.slf4j.Slf4j;
 @NoArgsConstructor
 public class AnyAncestorOfElementInScopeRule extends AbstractVisibilityRule {
     public boolean match(DiagramScope diagramScope, Element element) {
-        var ancestors = element.getPathFromRoot();
+        var ancestors = WorkspaceUtil.getPathFromRoot(element);
         for (var ancestor : ancestors) {
             if (diagramScope.isInScope(ancestor)) {
                 log.debug("Element {}, ancestor of {}, is in scope, match.", ancestor.toShortString(), element.toShortString());

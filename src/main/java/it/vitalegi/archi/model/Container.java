@@ -1,7 +1,7 @@
 package it.vitalegi.archi.model;
 
-import it.vitalegi.archi.exception.ElementNotAllowedException;
 import it.vitalegi.archi.util.WorkspaceUtil;
+import it.vitalegi.archi.visitor.ElementVisitor;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
@@ -10,10 +10,6 @@ import lombok.ToString;
 public class Container extends Element {
     public Container(Model model) {
         super(model);
-    }
-
-    public void addChild(Element child) {
-        throw new ElementNotAllowedException(this, child);
     }
 
     public ElementType getElementType() {
@@ -26,5 +22,9 @@ public class Container extends Element {
             curr = curr.getParent();
         }
         return (SoftwareSystem) curr;
+    }
+    @Override
+    public <E> E visit(ElementVisitor<E> visitor) {
+        return visitor.visitContainer(this);
     }
 }

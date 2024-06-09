@@ -1,6 +1,6 @@
 package it.vitalegi.archi.model;
 
-import it.vitalegi.archi.exception.ElementNotAllowedException;
+import it.vitalegi.archi.visitor.ElementVisitor;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -14,17 +14,12 @@ public class SoftwareSystem extends Element {
         super(model);
     }
 
-    public void addChild(Element child) {
-        if (getModel().addGroup(this, child)) {
-            return;
-        }
-        if (getModel().addContainer(this, child)) {
-            return;
-        }
-        throw new ElementNotAllowedException(this, child);
-    }
-
     public ElementType getElementType() {
         return ElementType.SOFTWARE_SYSTEM;
+    }
+
+    @Override
+    public <E> E visit(ElementVisitor<E> visitor) {
+        return visitor.visitSoftwareSystem(this);
     }
 }

@@ -1,7 +1,7 @@
 package it.vitalegi.archi.model;
 
 import it.vitalegi.archi.util.WorkspaceUtil;
-import lombok.AccessLevel;
+import it.vitalegi.archi.visitor.ElementVisitor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +16,6 @@ import java.util.stream.Stream;
 @Getter
 @Setter
 public abstract class Element extends Entity {
-    @Setter(AccessLevel.PROTECTED)
-    @Getter
     Element parent;
     List<Element> elements;
 
@@ -33,20 +31,10 @@ public abstract class Element extends Entity {
         elements = new ArrayList<>();
     }
 
+    public abstract <E> E visit(ElementVisitor<E> visitor);
+
     public Stream<Element> getAllChildren() {
         return elements.stream().flatMap(e -> Stream.concat(Stream.of(e), e.getAllChildren()));
-    }
-
-    public abstract void addChild(Element child);
-
-    public List<Element> getPathFromRoot() {
-        List<Element> elements = new ArrayList<>();
-        var curr = this;
-        while (curr != null) {
-            elements.add(0, curr);
-            curr = curr.getParent();
-        }
-        return elements;
     }
 
     @Override
@@ -71,6 +59,14 @@ public abstract class Element extends Entity {
         return WorkspaceUtil.findPerson(elements, id);
     }
 
+
+    public Component findComponentById(String id) {
+        return WorkspaceUtil.findComponent(elements, id);
+    }
+
+    public List<Component> getComponents() {
+        return WorkspaceUtil.getComponents(elements);
+    }
 
     public List<Container> getContainers() {
         return WorkspaceUtil.getContainers(elements);

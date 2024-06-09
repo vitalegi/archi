@@ -1,9 +1,7 @@
 package it.vitalegi.archi.workspaceloader.model;
 
-import it.vitalegi.archi.diagram.model.Diagram;
-import it.vitalegi.archi.style.model.Style;
-import it.vitalegi.archi.workspaceloader.visitor.DiagramRawVisitor;
-import lombok.AllArgsConstructor;
+import it.vitalegi.archi.style.Style;
+import it.vitalegi.archi.visitor.DiagramRawVisitor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

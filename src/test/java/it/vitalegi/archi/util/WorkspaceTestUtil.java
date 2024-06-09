@@ -1,18 +1,24 @@
 package it.vitalegi.archi.util;
 
+import it.vitalegi.archi.model.builder.WorkspaceDirector;
 import it.vitalegi.archi.workspace.Workspace;
+import it.vitalegi.archi.workspaceloader.model.WorkspaceRaw;
 
 import static it.vitalegi.archi.util.ModelTestUtil.defaultBuilder;
-import static it.vitalegi.archi.util.ModelTestUtil.defaultLoader;
 
 public class WorkspaceTestUtil {
 
-    public static Workspace load(WorkspaceLoaderBuilder builder) {
-        return defaultLoader().load(builder.build());
-    }
 
-    public static WorkspaceLoaderBuilder b() {
+    public static WorkspaceModelBuilder b() {
         return defaultBuilder();
     }
 
+    public static Workspace load(WorkspaceModelBuilder builder) {
+        return load(builder.build());
+    }
+
+    public static Workspace load(WorkspaceRaw model) {
+        var director = new WorkspaceDirector();
+        return director.makeWorkspace(model).build();
+    }
 }

@@ -1,6 +1,6 @@
 package it.vitalegi.archi.model;
 
-import it.vitalegi.archi.exception.ElementNotAllowedException;
+import it.vitalegi.archi.visitor.ElementVisitor;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -14,20 +14,12 @@ public class DeploymentEnvironment extends Element {
         super(model);
     }
 
-    public void addChild(Element child) {
-        if (getModel().addGroup(this, child)) {
-            return;
-        }
-        if (getModel().addDeploymentNode(this, child)) {
-            return;
-        }
-        if (getModel().addInfrastructureNode(this, child)) {
-            return;
-        }
-        throw new ElementNotAllowedException(this, child);
-    }
-
     public ElementType getElementType() {
         return ElementType.DEPLOYMENT_ENVIRONMENT;
+    }
+
+    @Override
+    public <E> E visit(ElementVisitor<E> visitor) {
+        return visitor.visitDeploymentEnvironment(this);
     }
 }

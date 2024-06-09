@@ -1,8 +1,8 @@
 package it.vitalegi.archi.model;
 
-import it.vitalegi.archi.exception.ElementNotAllowedException;
 import it.vitalegi.archi.util.StringUtil;
 import it.vitalegi.archi.util.WorkspaceUtil;
+import it.vitalegi.archi.visitor.ElementVisitor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,14 +26,11 @@ public class SoftwareSystemInstance extends Element {
         this.softwareSystemId = softwareSystemId;
     }
 
-    public void addChild(Element child) {
-        throw new ElementNotAllowedException(this, child);
-    }
-
     @Override
     public Stream<Element> getAllChildren() {
         return Stream.of(getSoftwareSystem());
     }
+
     public void validate() {
         if (StringUtil.isNullOrEmpty(softwareSystemId)) {
             throw new IllegalArgumentException("softwareSystemId is missing on " + toShortString());
@@ -54,5 +51,10 @@ public class SoftwareSystemInstance extends Element {
 
     public ElementType getElementType() {
         return ElementType.SOFTWARE_SYSTEM_INSTANCE;
+    }
+
+    @Override
+    public <E> E visit(ElementVisitor<E> visitor) {
+        return visitor.visitSoftwareSystemInstance(this);
     }
 }

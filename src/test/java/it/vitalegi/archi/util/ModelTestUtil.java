@@ -1,15 +1,14 @@
 package it.vitalegi.archi.util;
 
-import it.vitalegi.archi.workspaceloader.WorkspaceLoader;
-import it.vitalegi.archi.workspaceloader.WorkspaceLoaderFactory;
+import it.vitalegi.archi.model.builder.WorkspaceDirector;
 
 public class ModelTestUtil {
-    public static WorkspaceLoader defaultLoader() {
-        return new WorkspaceLoaderFactory().build();
+    public static WorkspaceDirector defaultLoader() {
+        return new WorkspaceDirector();
     }
 
-    public static WorkspaceLoaderBuilder defaultBuilder() {
-        return new WorkspaceLoaderBuilder();
+    public static WorkspaceModelBuilder defaultBuilder() {
+        return new WorkspaceModelBuilder();
     }
 
 }

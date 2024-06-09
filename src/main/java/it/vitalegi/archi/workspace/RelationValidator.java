@@ -1,10 +1,10 @@
 package it.vitalegi.archi.workspace;
 
-import it.vitalegi.archi.exception.RelationNotAllowedException;
 import it.vitalegi.archi.model.DeploymentEnvironment;
 import it.vitalegi.archi.model.Element;
 import it.vitalegi.archi.model.ElementType;
 import it.vitalegi.archi.model.Relation;
+import it.vitalegi.archi.exception.RelationNotAllowedException;
 import it.vitalegi.archi.util.WorkspaceUtil;
 
 import java.util.Arrays;
@@ -18,9 +18,10 @@ public class RelationValidator {
     private final Map<ElementType, List<ElementType>> FROM_TO_ALLOWED = new HashMap<>();
 
     public RelationValidator() {
-        FROM_TO_ALLOWED.put(ElementType.PERSON, Arrays.asList(ElementType.PERSON, ElementType.SOFTWARE_SYSTEM, ElementType.CONTAINER));
-        FROM_TO_ALLOWED.put(ElementType.SOFTWARE_SYSTEM, Arrays.asList(ElementType.PERSON, ElementType.SOFTWARE_SYSTEM, ElementType.CONTAINER));
-        FROM_TO_ALLOWED.put(ElementType.CONTAINER, Arrays.asList(ElementType.PERSON, ElementType.SOFTWARE_SYSTEM, ElementType.CONTAINER));
+        FROM_TO_ALLOWED.put(ElementType.PERSON, Arrays.asList(ElementType.PERSON, ElementType.SOFTWARE_SYSTEM, ElementType.CONTAINER, ElementType.COMPONENT));
+        FROM_TO_ALLOWED.put(ElementType.SOFTWARE_SYSTEM, Arrays.asList(ElementType.PERSON, ElementType.SOFTWARE_SYSTEM, ElementType.CONTAINER, ElementType.COMPONENT));
+        FROM_TO_ALLOWED.put(ElementType.CONTAINER, Arrays.asList(ElementType.PERSON, ElementType.SOFTWARE_SYSTEM, ElementType.CONTAINER, ElementType.COMPONENT));
+        FROM_TO_ALLOWED.put(ElementType.COMPONENT, Arrays.asList(ElementType.PERSON, ElementType.SOFTWARE_SYSTEM, ElementType.CONTAINER, ElementType.COMPONENT));
         FROM_TO_ALLOWED.put(ElementType.DEPLOYMENT_ENVIRONMENT, Collections.emptyList());
         FROM_TO_ALLOWED.put(ElementType.DEPLOYMENT_NODE, List.of(ElementType.DEPLOYMENT_NODE));
         FROM_TO_ALLOWED.put(ElementType.INFRASTRUCTURE_NODE, Arrays.asList(ElementType.DEPLOYMENT_NODE, ElementType.INFRASTRUCTURE_NODE, ElementType.SOFTWARE_SYSTEM_INSTANCE, ElementType.CONTAINER_INSTANCE));
@@ -72,7 +73,7 @@ public class RelationValidator {
     }
 
     protected DeploymentEnvironment getDeploymentEnvironmentOrNull(Element element) {
-        var path = element.getPathFromRoot();
+        var path = WorkspaceUtil.getPathFromRoot(element);
         for (var e : path) {
             if (WorkspaceUtil.isDeploymentEnvironment(e)) {
                 return (DeploymentEnvironment) e;
