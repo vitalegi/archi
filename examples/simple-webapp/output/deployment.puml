@@ -9,12 +9,11 @@ title Deployment
 !include <C4/C4_Context>
 !include <C4/C4_Container>
 !include <C4/C4_Deployment>
-AddElementTag("Element", $bgColor="#ffffff", $borderColor="#888888", $fontColor="#000000", $sprite="", $shadowing="", $borderStyle="solid")
-AddElementTag("Container", $bgColor="#006daa", $borderColor="#004c76", $fontColor="#000000", $sprite="", $shadowing="", $borderStyle="solid")
+AddElementTag("Element", $bgColor="red", $borderColor="green", $fontColor="orange", $sprite="", $shadowing="true", $borderStyle="dotted")
 AddRelTag("Relationship", $textColor="#707070", $lineColor="#707070", $lineStyle="")
 Deployment_Node(DeploymentNode_netlify, Netlify, $type="", $descr="", $sprite="", $tags="", $link="") {
 Deployment_Node(DeploymentNode_app_netlify_app, app.netlify.app, $type="", $descr="", $sprite="", $tags="", $link="") {
-    Deployment_Node(ContainerInstance_auto_f6dba2c1_cb8d_4345_8893_cdeebf4f0aaf, , $type="", $descr="", $sprite="", $tags="", $link="") {
+    Deployment_Node(ContainerInstance_auto_8a6e2a32_fb77_4c81_938e_21e0deceb29d, , $type="", $descr="", $sprite="", $tags="", $link="") {
         Container($alias="Container_reader_frontend", $label="Single Page Application", $techn="", $descr="Allows users to use reader functionalities", $sprite="", $tags="", $link="", $baseShape="")
             }
         }
@@ -22,7 +21,7 @@ Deployment_Node(DeploymentNode_app_netlify_app, app.netlify.app, $type="", $desc
 Deployment_Node(DeploymentNode_fly_io, fly.io, $type="", $descr="", $sprite="", $tags="", $link="") {
 Deployment_Node(DeploymentNode_app_fly_io, app.fly.io, $type="", $descr="", $sprite="", $tags="", $link="") {
     Deployment_Node(DeploymentNode_Application_Server, Application Server, $type="", $descr="", $sprite="", $tags="", $link="") {
-        Deployment_Node(ContainerInstance_auto_7bf31898_075c_4c4c_bad8_4e79b4939507, , $type="", $descr="", $sprite="", $tags="", $link="") {
+        Deployment_Node(ContainerInstance_auto_62599550_d8b4_4a19_a850_a21652962831, , $type="", $descr="", $sprite="", $tags="", $link="") {
             Container($alias="Container_reader_backend", $label="Backend", $techn="", $descr="Business Logic of the reader", $sprite="", $tags="", $link="", $baseShape="")
                 }
             }

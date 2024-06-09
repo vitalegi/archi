@@ -283,11 +283,11 @@ public class WorkspaceLoader {
     protected void loadGlobalStyle(Workspace workspace, WorkspaceRaw in) {
         log.debug("Load global styles");
         if (in.getStyle() != null) {
-            workspace.setGlobalStyle(in.getStyle());
+            workspace.setStyle(in.getStyle());
         } else {
-            workspace.setGlobalStyle(Style.builder().build());
+            workspace.setStyle(Style.builder().build());
         }
-        workspace.getGlobalStyle().validate();
+        workspace.getStyle().validate();
     }
 
 }
