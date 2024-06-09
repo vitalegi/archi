@@ -146,3 +146,15 @@ style:
       value: 10
     - key: ranksep
       value: 150
+  tags:
+    elements:
+      - alias: Element
+        backgroundColor: red
+        fontColor: orange
+        borderColor: green
+        shadowing: true
+        shape: RoundedBox
+        technologies: Test 123
+        legendText: Legend
+        borderStyle: dotted
+        borderThickness: 5

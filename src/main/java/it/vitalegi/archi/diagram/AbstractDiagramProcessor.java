@@ -105,9 +105,9 @@ public abstract class AbstractDiagramProcessor<E extends Diagram> implements Dia
     }
 
 
-    protected void writeStyles(E diagram, C4PlantUMLWriter writer) {
-        writer.addElementTag("Element", "#ffffff", "#888888", "#000000", "", "", "solid");
-        writer.addElementTag("Container", "#006daa", "#004c76", "#000000", "", "", "solid");
+    protected void writeStyles(Workspace workspace, E diagram, C4PlantUMLWriter writer) {
+        var style = styleHandler.buildStyle(workspace, diagram);
+        style.getTags().getElements().forEach(writer::addElementTag);
         writer.addRelTag("Relationship", "#707070", "#707070", "");
     }
 

@@ -41,8 +41,15 @@ public class StyleHandlerTests {
         var diagram = ws.getDiagrams().getByName("diagram1");
         var style = styleHandler.buildStyle(ws, diagram);
         assertNotNull(style);
+
         assertNotNull(style.getSkinParams());
         assertTrue(style.getSkinParams().isEmpty());
+
+        assertNotNull(style.getTags());
+        assertNotNull(style.getTags().getElements());
+        assertTrue(style.getTags().getElements().isEmpty());
+        assertNotNull(style.getTags().getRelations());
+        assertTrue(style.getTags().getRelations().isEmpty());
     }
 
     @Test

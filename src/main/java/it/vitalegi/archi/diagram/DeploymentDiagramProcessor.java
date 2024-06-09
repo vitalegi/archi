@@ -67,7 +67,7 @@ public class DeploymentDiagramProcessor extends AbstractDiagramProcessor<Deploym
     protected String createPuml(Workspace workspace, DeploymentDiagram diagram) {
         var writer = new C4PlantUMLWriter();
         writeHeader(workspace, diagram, writer);
-        writeStyles(diagram, writer);
+        writeStyles(workspace, diagram, writer);
 
         var deploymentEnvironment = getDeploymentEnvironment(diagram);
         var elements = getElementsInScope(diagram);

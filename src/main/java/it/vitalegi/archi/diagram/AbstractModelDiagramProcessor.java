@@ -27,7 +27,7 @@ public abstract class AbstractModelDiagramProcessor<E extends Diagram> extends A
     protected String createPuml(Workspace workspace, E diagram) {
         var writer = new C4PlantUMLWriter();
         writeHeader(workspace, diagram, writer);
-        writeStyles(diagram, writer);
+        writeStyles(workspace, diagram, writer);
 
         var scope = computeScope(diagram);
         writeElements(diagram, scope, writer);

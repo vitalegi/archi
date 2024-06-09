@@ -9,12 +9,12 @@ import lombok.Data;
 public class Workspace {
     Model model;
     Diagrams diagrams;
-    Style globalStyle;
+    Style style;
 
     public Workspace() {
         model = new Model();
         diagrams = new Diagrams();
-        globalStyle = new Style();
+        style = new Style();
     }
 
     public void validate() {

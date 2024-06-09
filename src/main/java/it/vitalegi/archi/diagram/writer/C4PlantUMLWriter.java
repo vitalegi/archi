@@ -1,12 +1,16 @@
 package it.vitalegi.archi.diagram.writer;
 
 import it.vitalegi.archi.plantuml.Direction;
+import it.vitalegi.archi.style.model.ElementTag;
 
 import java.util.Formatter;
 
 public class C4PlantUMLWriter extends PlantUMLWriter {
 
-    public void addElementTag(String alias, String bgColor, String borderColor, String fontColor, String sprite, String shadowing, String borderStyle) {
+    public void addElementTag(ElementTag elementTag) {
+        addElementTag(elementTag.getAlias(), elementTag.getBackgroundColor(), elementTag.getBorderColor(), elementTag.getFontColor(), elementTag.getSprite(), elementTag.getShadowing(), elementTag.getBorderStyle());
+    }
+    public void addElementTag(String alias, String bgColor, String borderColor, String fontColor, String sprite, Boolean shadowing, String borderStyle) {
         println(format("AddElementTag(\"%s\", $bgColor=\"%s\", $borderColor=\"%s\", $fontColor=\"%s\", $sprite=\"%s\", $shadowing=\"%s\", $borderStyle=\"%s\")", alias, bgColor, borderColor, fontColor, sprite, shadowing, borderStyle));
     }
 
