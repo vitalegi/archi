@@ -19,6 +19,7 @@ import it.vitalegi.archi.diagram.model.DeploymentDiagram;
 import it.vitalegi.archi.diagram.model.Diagram;
 import it.vitalegi.archi.diagram.scope.Scope;
 import it.vitalegi.archi.diagram.writer.C4PlantUMLWriter;
+import it.vitalegi.archi.workspace.Workspace;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -63,38 +64,30 @@ public class DeploymentDiagramProcessor extends AbstractDiagramProcessor<Deploym
     }
 
     @Override
-    protected String createPuml(DeploymentDiagram diagram) {
+    protected String createPuml(Workspace workspace, DeploymentDiagram diagram) {
         var writer = new C4PlantUMLWriter();
-        writer.startuml();
-        writer.set("separator", "none");
-        if (StringUtil.isNotNullOrEmpty(diagram.getTitle())) {
-            writer.title(diagram.getTitle());
-        }
-        writer.direction(LayoutDirection.TOP_TO_BOTTOM);
-
-        writer.include("<C4/C4>");
-        writer.include("<C4/C4_Context>");
-        writer.include("<C4/C4_Container>");
-        writer.include("<C4/C4_Deployment>");
+        writeHeader(workspace, diagram, writer);
+        writeStyles(diagram, writer);
 
         var deploymentEnvironment = getDeploymentEnvironment(diagram);
         var elements = getElementsInScope(diagram);
         var relations = getRelationsInScope(diagram, elements);
 
-        writer.addElementTag("Element", "#ffffff", "#888888", "#000000", "", "", "solid");
-        writer.addElementTag("Container", "#006daa", "#004c76", "#000000", "", "", "solid");
-
-        writer.addRelTag("Relationship", "#707070", "#707070", "");
-
         deploymentEnvironment.getElements().forEach(element -> addElementTreeToPuml(elements, element, writer));
 
         relations.forEach(relation -> addRelationToPuml(relation, writer));
 
-        writer.hideStereotypes();
-        writer.enduml();
+        writeFooter(diagram, writer);
         return writer.build();
     }
 
+    @Override
+    protected void writeIncludes(C4PlantUMLWriter writer) {
+        writer.include("<C4/C4>");
+        writer.include("<C4/C4_Context>");
+        writer.include("<C4/C4_Container>");
+        writer.include("<C4/C4_Deployment>");
+    }
     protected void addElementTreeToPuml(List<Element> elementsInScope, Element element, C4PlantUMLWriter writer) {
         if (!elementsInScope.contains(element)) {
             return;

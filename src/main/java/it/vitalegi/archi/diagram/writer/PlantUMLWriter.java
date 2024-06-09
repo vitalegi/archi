@@ -32,4 +32,8 @@ public class PlantUMLWriter extends Writer {
         print("!include ");
         println(include);
     }
+
+    public void skinParam(String key, String value) {
+        println("skinparam " + key + " " + value);
+    }
 }

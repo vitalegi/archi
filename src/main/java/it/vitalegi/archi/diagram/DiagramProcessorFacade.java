@@ -2,6 +2,7 @@ package it.vitalegi.archi.diagram;
 
 import it.vitalegi.archi.diagram.constant.DiagramFormat;
 import it.vitalegi.archi.diagram.model.Diagram;
+import it.vitalegi.archi.workspace.Workspace;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -19,8 +20,8 @@ public class DiagramProcessorFacade {
         this.diagramFactory = diagramFactory;
     }
 
-    public void render(Diagram diagram, Path basePath, DiagramFormat[] formats) {
-        getAcceptedDiagramProcessors(diagram).forEach(r -> r.render(diagram, basePath, formats));
+    public void render(Workspace workspace, Diagram diagram, Path basePath, DiagramFormat[] formats) {
+        getAcceptedDiagramProcessors(diagram).forEach(r -> r.render(workspace, diagram, basePath, formats));
     }
 
 

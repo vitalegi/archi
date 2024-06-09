@@ -133,3 +133,16 @@ diagrams:
     target: reader_ss
     name: reader_system_context
     title: "Reader: System Context"
+    style:
+      skinParams:
+        - key: linetype
+          value: polyline
+
+style:
+  skinParams:
+    - key: linetype
+      value: ortho
+    - key: nodesep
+      value: 10
+    - key: ranksep
+      value: 150

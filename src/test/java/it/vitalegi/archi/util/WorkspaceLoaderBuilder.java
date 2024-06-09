@@ -208,12 +208,12 @@ public class WorkspaceLoaderBuilder {
     }
 
     public WorkspaceLoaderBuilder globalStyle(Style.StyleBuilder styleBuilder) {
-        workspace.setGlobalStyle(styleBuilder.build());
+        workspace.setStyle(styleBuilder.build());
         return this;
     }
 
     public WorkspaceLoaderBuilder globalStyle(Style style) {
-        workspace.setGlobalStyle(style);
+        workspace.setStyle(style);
         return this;
     }
 
