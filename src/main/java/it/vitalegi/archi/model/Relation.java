@@ -20,9 +20,17 @@ public class Relation extends Entity {
     @EqualsAndHashCode.Exclude
     Element to;
     @EqualsAndHashCode.Exclude
+    String label;
+    @EqualsAndHashCode.Exclude
     String description;
     @EqualsAndHashCode.Exclude
+    String sprite;
+    @EqualsAndHashCode.Exclude
+    String link;
+    @EqualsAndHashCode.Exclude
     List<String> tags;
+    @EqualsAndHashCode.Exclude
+    String technologies;
     @EqualsAndHashCode.Exclude
     Map<String, String> metadata;
 
@@ -42,7 +50,11 @@ public class Relation extends Entity {
                 "from=" + (from != null ? from.toShortString() : "null") +
                 ", to=" + (to != null ? to.toShortString() : "null") +
                 ", description='" + description + '\'' +
+                ", label='" + label + '\'' +
+                ", sprite=" + sprite +
+                ", link=" + link +
                 ", tags=" + tags +
+                ", technologies='" + technologies + '\'' +
                 ", metadata=" + metadata +
                 '}';
     }

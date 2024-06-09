@@ -1,6 +1,7 @@
 package it.vitalegi.archi.util;
 
 import it.vitalegi.archi.style.model.ElementTag;
+import it.vitalegi.archi.style.model.LineStyle;
 import it.vitalegi.archi.style.model.RelationTag;
 import it.vitalegi.archi.style.model.SkinParam;
 import it.vitalegi.archi.style.model.Style;
@@ -32,14 +33,32 @@ public class StyleTestUtil {
     }
 
     public static ElementTag randomElementTag() {
-        return ElementTag.builder().alias(randomString()).backgroundColor(randomString()).technologies(randomString()).build();
+        return ElementTag.builder() //
+                .alias(randomString()) //
+                .technologies(randomString()) //
+                .borderThickness(randomInt(5)) //
+                .borderStyle(randomLineStyle()) //
+                .build();
     }
 
     public static RelationTag randomRelationTag() {
-        return RelationTag.builder().alias(randomString()).build();
+        return RelationTag.builder() //
+                .alias(randomString()) //
+                .technologies(randomString()) //
+                .lineThickness(randomInt(5)) //
+                .lineStyle(randomLineStyle()) //
+                .build();
     }
 
     static String randomString() {
         return UUID.randomUUID().toString();
+    }
+
+    static LineStyle randomLineStyle() {
+        return LineStyle.values()[randomInt(LineStyle.values().length)];
+    }
+
+    static int randomInt(int size) {
+        return (int) (Math.random() * size);
     }
 }
