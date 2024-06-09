@@ -11,7 +11,7 @@ public class WorkspaceRaw {
     List<ElementRaw> elements;
     List<RelationRaw> relations;
     List<DiagramRaw> diagrams;
-    Style globalStyle;
+    Style style;
 
     public WorkspaceRaw() {
         elements = new ArrayList<>();

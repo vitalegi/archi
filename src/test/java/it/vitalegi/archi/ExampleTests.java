@@ -24,6 +24,6 @@ public class ExampleTests {
         factory.setDiagramProcessorFacade(diagramProcessor);
         var ws = factory.build().load(loader.load(baseDir.resolve("workspace.yaml")));
 
-        ws.getDiagrams().getAll().forEach(diagram -> diagramProcessor.render(diagram, out, DiagramFormat.values()));
+        ws.getDiagrams().getAll().forEach(diagram -> diagramProcessor.render(ws, diagram, out, DiagramFormat.values()));
     }
 }

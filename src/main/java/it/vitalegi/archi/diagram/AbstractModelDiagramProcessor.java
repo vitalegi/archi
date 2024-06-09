@@ -9,6 +9,7 @@ import it.vitalegi.archi.diagram.style.StyleHandler;
 import it.vitalegi.archi.diagram.writer.C4PlantUMLWriter;
 import it.vitalegi.archi.model.Element;
 import it.vitalegi.archi.model.Relation;
+import it.vitalegi.archi.workspace.Workspace;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -22,12 +23,13 @@ public abstract class AbstractModelDiagramProcessor<E extends Diagram> extends A
         super(styleHandler);
     }
 
-    protected String createPuml(E diagram) {
+    @Override
+    protected String createPuml(Workspace workspace, E diagram) {
         var writer = new C4PlantUMLWriter();
-        writeHeader(diagram, writer);
-        var scope = computeScope(diagram);
+        writeHeader(workspace, diagram, writer);
         writeStyles(diagram, writer);
 
+        var scope = computeScope(diagram);
         writeElements(diagram, scope, writer);
         writeRelations(diagram, scope, writer);
 

@@ -6,7 +6,7 @@ import it.vitalegi.archi.workspace.Workspace;
 
 public class StyleHandler {
     public Style buildStyle(Workspace workspace, Diagram diagram) {
-        return Style.merge(workspace.getGlobalStyle(), null);
+        return Style.merge(workspace.getGlobalStyle(), diagram.getStyle());
     }
 
 }

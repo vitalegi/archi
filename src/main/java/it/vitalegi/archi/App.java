@@ -1,6 +1,7 @@
 package it.vitalegi.archi;
 
 import it.vitalegi.archi.diagram.constant.DiagramFormat;
+import it.vitalegi.archi.workspace.Workspace;
 import it.vitalegi.archi.workspaceloader.FileSystemWorkspaceLoader;
 import it.vitalegi.archi.workspaceloader.WorkspaceLoaderFactory;
 import org.slf4j.Logger;
@@ -26,6 +27,6 @@ public class App {
         var loader = factory.build();
         var workspace = loader.load(fsLoader.load(model));
         log.info("Loaded workspace");
-        workspace.getDiagrams().getAll().forEach(diagram -> factory.getDiagramProcessorFacade().render(diagram, mainDir, DiagramFormat.values()));
+        workspace.getDiagrams().getAll().forEach(diagram -> factory.getDiagramProcessorFacade().render(workspace, diagram, mainDir, DiagramFormat.values()));
     }
 }
