@@ -10,6 +10,8 @@ elements:
     id: reader_ss
     name: Reader
     description: Allows users to access the reader
+    tags:
+      - HighlightedElement
 
   - type: CONTAINER
     id: reader_frontend
@@ -18,6 +20,8 @@ elements:
     description: Allows users to use reader functionalities
     metadata:
       technology: "Vue 3"
+    tags:
+      - HighlightedElement
 
   - type: CONTAINER
     id: reader_backend
@@ -94,10 +98,15 @@ elements:
 relations:
   - from: user
     to: reader_frontend
-    description: Uses
+    description: User accesses to the system via frontend app
+    label: Uses
+    link: https://google.com
+    technologies: TCP
   - from: sysadmin
     to: reader_database
     description: Access
+    tags:
+      - HighlightedRelation
   - from: reader_frontend
     to: reader_backend
     description: Uses
@@ -148,13 +157,20 @@ style:
       value: 150
   tags:
     elements:
-      - alias: Element
+      - alias: HighlightedElement
         backgroundColor: red
-        fontColor: orange
-        borderColor: green
+        fontColor: black
+        borderColor: orange
         shadowing: true
         shape: RoundedBox
-        technologies: Test 123
-        legendText: Legend
+        technologies: Awesome technologies
+        legendText: Awesome element
         borderStyle: dotted
         borderThickness: 5
+    relations:
+      - alias: HighlightedRelation
+        textColor: red
+        lineColor: red
+        lineStyle: dotted
+        legendText: Awesome relation
+        lineThickness: 2

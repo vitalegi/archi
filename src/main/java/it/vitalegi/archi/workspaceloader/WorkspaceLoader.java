@@ -269,6 +269,10 @@ public class WorkspaceLoader {
         out.setDescription(in.getDescription());
         out.setTags(in.getTags());
         out.setMetadata(in.getMetadata());
+        out.setLabel(in.getLabel());
+        out.setSprite(in.getSprite());
+        out.setLink(in.getLink());
+        out.setTechnologies(in.getTechnologies());
         out.setUniqueId(WorkspaceUtil.createUniqueId(out));
         return out;
     }

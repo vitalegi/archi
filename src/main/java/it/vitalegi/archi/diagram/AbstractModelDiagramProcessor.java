@@ -115,7 +115,7 @@ public abstract class AbstractModelDiagramProcessor<E extends Diagram> extends A
         var relations = diagram.getModel().getRelations();
         for (var relation : relations.getAll()) {
             if (scope.isInScope(relation)) {
-                writeRelation(relation, writer);
+                writer.addRelation(relation);
             }
         }
     }
@@ -127,7 +127,7 @@ public abstract class AbstractModelDiagramProcessor<E extends Diagram> extends A
         if (hasAnyChildrenInScope(diagram, scope, element)) {
             writeAsBoundary(diagram, scope, element, writer);
         } else {
-            writeAsContainer(diagram, scope, element, writer);
+            writer.container(element);
         }
     }
 
@@ -136,18 +136,10 @@ public abstract class AbstractModelDiagramProcessor<E extends Diagram> extends A
     }
 
     protected void writeAsBoundary(E diagram, DiagramScope scope, Element element, C4PlantUMLWriter writer) {
-        writer.boundaryStart(getAlias(element), element.getName(), formatTags(element));
+        writer.boundaryStart(element);
         for (var child : element.getElements()) {
             writeElements(diagram, scope, child, writer);
         }
         writer.boundaryEnd();
-    }
-
-    protected void writeAsContainer(E diagram, DiagramScope scope, Element element, C4PlantUMLWriter writer) {
-        writer.container(getAlias(element), element.getName(), null, element.getDescription(), null, formatTags(element), null, null);
-    }
-
-    protected void writeRelation(Relation relation, C4PlantUMLWriter writer) {
-        writer.addRelation(getAlias(relation.getFrom()), getAlias(relation.getTo()), relation.getDescription(), null, formatTags(relation), null);
     }
 }

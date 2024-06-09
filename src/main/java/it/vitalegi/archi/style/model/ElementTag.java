@@ -24,7 +24,7 @@ public class ElementTag implements MergeableCloneable<ElementTag> {
     String technologies;
     String legendText;
     String legendSprite;
-    String borderStyle;
+    LineStyle borderStyle;
     Integer borderThickness;
 
     @Override

@@ -8,19 +8,19 @@ title Reader: System Context
 !include <C4/C4>
 !include <C4/C4_Context>
 !include <C4/C4_Container>
-AddElementTag("Element", $bgColor="red", $fontColor="orange", $borderColor="green", $shadowing="true", $shape="RoundedBox", $sprite="", $techn="Test 123", $legendText="Legend", $legendSprite="", $borderStyle="dotted", $borderThickness="5")
-AddRelTag("Relationship", $textColor="#707070", $lineColor="#707070", $lineStyle="")
+AddElementTag("HighlightedElement", $bgColor="red", $fontColor="black", $borderColor="orange", $shadowing="true", $shape="RoundedBox", $sprite="", $techn="Awesome technologies", $legendText="Awesome element", $legendSprite="", $borderStyle="DOTTED", $borderThickness="5")
+AddRelTag("HighlightedRelation", $textColor="red", $lineColor="red", $lineStyle="DOTTED", $sprite="", $techn="", $legendText="Awesome relation", $legendSprite="", $lineThickness="2")
 Container($alias="Person_user", $label="User", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="")
 Container($alias="Person_sysadmin", $label="Sysadmin", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="")
-Boundary(SoftwareSystem_reader_ss, "Reader", $tags="") {
-Container($alias="Container_reader_frontend", $label="Single Page Application", $techn="", $descr="Allows users to use reader functionalities", $sprite="", $tags="", $link="", $baseShape="")
+Boundary(SoftwareSystem_reader_ss, "Reader", $tags="HighlightedElement") {
+Container($alias="Container_reader_frontend", $label="Single Page Application", $techn="", $descr="Allows users to use reader functionalities", $sprite="", $tags="HighlightedElement", $link="", $baseShape="")
     Container($alias="Container_reader_backend", $label="Backend", $techn="", $descr="Business Logic of the reader", $sprite="", $tags="", $link="", $baseShape="")
     Container($alias="Container_reader_database", $label="RDBMS", $techn="", $descr="Stores books info", $sprite="", $tags="", $link="", $baseShape="")
     }
 Container($alias="SoftwareSystem_aws_ss", $label="Amazon Web Services", $techn="", $descr="Stores books", $sprite="", $tags="", $link="", $baseShape="")
-Rel("Person_user","Container_reader_frontend","Uses","","","")
-Rel("Person_sysadmin","Container_reader_database","Access","","","")
-Rel("Container_reader_frontend","Container_reader_backend","Uses","","","")
-Rel("Container_reader_backend","Container_reader_database","Reads from and writes to","","","")
+Rel($from="Person_user", $to="Container_reader_frontend", $label="Uses", $techn="TCP", $descr="User accesses to the system via frontend app", $sprite="", $tags="", $link="https://google.com")
+Rel($from="Person_sysadmin", $to="Container_reader_database", $label="", $techn="", $descr="Access", $sprite="", $tags="HighlightedRelation", $link="")
+Rel($from="Container_reader_frontend", $to="Container_reader_backend", $label="", $techn="", $descr="Uses", $sprite="", $tags="", $link="")
+Rel($from="Container_reader_backend", $to="Container_reader_database", $label="", $techn="", $descr="Reads from and writes to", $sprite="", $tags="", $link="")
 hide stereotypes
 @enduml

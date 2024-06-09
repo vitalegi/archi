@@ -1,6 +1,10 @@
 package it.vitalegi.archi.diagram;
 
+import it.vitalegi.archi.diagram.model.DeploymentDiagram;
+import it.vitalegi.archi.diagram.model.Diagram;
+import it.vitalegi.archi.diagram.scope.Scope;
 import it.vitalegi.archi.diagram.style.StyleHandler;
+import it.vitalegi.archi.diagram.writer.C4PlantUMLWriter;
 import it.vitalegi.archi.exception.ElementNotFoundException;
 import it.vitalegi.archi.model.Container;
 import it.vitalegi.archi.model.ContainerInstance;
@@ -12,13 +16,8 @@ import it.vitalegi.archi.model.Model;
 import it.vitalegi.archi.model.Relation;
 import it.vitalegi.archi.model.SoftwareSystem;
 import it.vitalegi.archi.model.SoftwareSystemInstance;
-import it.vitalegi.archi.plantuml.LayoutDirection;
 import it.vitalegi.archi.util.StringUtil;
 import it.vitalegi.archi.util.WorkspaceUtil;
-import it.vitalegi.archi.diagram.model.DeploymentDiagram;
-import it.vitalegi.archi.diagram.model.Diagram;
-import it.vitalegi.archi.diagram.scope.Scope;
-import it.vitalegi.archi.diagram.writer.C4PlantUMLWriter;
 import it.vitalegi.archi.workspace.Workspace;
 import lombok.extern.slf4j.Slf4j;
 
@@ -75,7 +74,7 @@ public class DeploymentDiagramProcessor extends AbstractDiagramProcessor<Deploym
 
         deploymentEnvironment.getElements().forEach(element -> addElementTreeToPuml(elements, element, writer));
 
-        relations.forEach(relation -> addRelationToPuml(relation, writer));
+        relations.forEach(writer::addRelation);
 
         writeFooter(diagram, writer);
         return writer.build();
@@ -88,42 +87,39 @@ public class DeploymentDiagramProcessor extends AbstractDiagramProcessor<Deploym
         writer.include("<C4/C4_Container>");
         writer.include("<C4/C4_Deployment>");
     }
+
     protected void addElementTreeToPuml(List<Element> elementsInScope, Element element, C4PlantUMLWriter writer) {
         if (!elementsInScope.contains(element)) {
             return;
         }
         if (WorkspaceUtil.isDeploymentNode(element)) {
             var deploymentNode = (DeploymentNode) element;
-            writer.deploymentNodeStart(getAlias(element), element.getName(), null, element.getDescription(), "", formatTags(element), "");
+            writer.deploymentNodeStart(element);
             deploymentNode.getElements().forEach(child -> addElementTreeToPuml(elementsInScope, child, writer));
             writer.deploymentNodeEnd();
             return;
         }
         if (WorkspaceUtil.isInfrastructureNode(element)) {
-            writer.container(getAlias(element), element.getName(), null, element.getDescription(), "", formatTags(element), "", "");
+            writer.container(element);
             return;
         }
         if (WorkspaceUtil.isContainerInstance(element)) {
-            writer.deploymentNodeStart(getAlias(element), element.getName(), null, element.getDescription(), "", formatTags(element), "");
+            writer.deploymentNodeStart(element);
             var containerInstance = (ContainerInstance) element;
             var container = containerInstance.getContainer();
-            writer.container(getAlias(container), container.getName(), null, container.getDescription(), "", formatTags(container), "", "");
+            writer.container(container);
             writer.deploymentNodeEnd();
             return;
         }
         if (WorkspaceUtil.isSoftwareSystemInstance(element)) {
-            writer.deploymentNodeStart(getAlias(element), element.getName(), null, element.getDescription(), "", formatTags(element), "");
+            writer.deploymentNodeStart(element);
             var softwareSystemInstance = (SoftwareSystemInstance) element;
             var softwareSystem = softwareSystemInstance.getSoftwareSystem();
-            writer.container(getAlias(softwareSystem), softwareSystem.getName(), null, softwareSystem.getDescription(), "", formatTags(softwareSystem), "", "");
+            writer.container(softwareSystem);
             writer.deploymentNodeEnd();
             return;
         }
         throw new RuntimeException("Unable to process " + element.toShortString());
-    }
-
-    protected void addRelationToPuml(Relation relation, C4PlantUMLWriter writer) {
-        writer.addRelation(getAlias(relation.getFrom()), getAlias(relation.getTo()), relation.getDescription(), null, formatTags(relation), null);
     }
 
     protected List<Element> getElementsInScope(DeploymentDiagram diagram) {
@@ -140,6 +136,7 @@ public class DeploymentDiagramProcessor extends AbstractDiagramProcessor<Deploym
     protected List<Element> getBaseSet(DeploymentDiagram diagram, List<Element> perimeter) {
         return perimeter.stream().filter(e -> isInBaseScope(diagram, e)).collect(Collectors.toList());
     }
+
     protected List<Element> getElementsInScope(DeploymentDiagram diagram, List<Element> perimeter, List<Element> baseSet) {
         return perimeter.stream().filter(e -> isInScope(diagram, baseSet, e)).collect(Collectors.toList());
     }

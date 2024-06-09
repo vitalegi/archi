@@ -42,29 +42,6 @@ public abstract class AbstractDiagramProcessor<E extends Diagram> implements Dia
 
     protected abstract String createPuml(Workspace workspace, E diagram);
 
-    protected String formatTags(Element element) {
-        return formatTags(element.getTags());
-    }
-
-    protected String formatTags(Relation relation) {
-        return formatTags(relation.getTags());
-    }
-
-    protected String formatTags(List<String> tags) {
-        if (tags == null) {
-            return null;
-        }
-        return tags.stream().collect(Collectors.joining(","));
-    }
-
-    protected String getAlias(Element element) {
-        var alias = element.getUniqueId();
-        alias = alias.replace('-', '_');
-        alias = alias.replace('.', '_');
-        alias = alias.replace(' ', '_');
-        return alias;
-    }
-
     protected void writeHeader(Workspace workspace, E diagram, C4PlantUMLWriter writer) {
         writeStart(diagram, writer);
         writeProperties(diagram, writer);
@@ -108,7 +85,7 @@ public abstract class AbstractDiagramProcessor<E extends Diagram> implements Dia
     protected void writeStyles(Workspace workspace, E diagram, C4PlantUMLWriter writer) {
         var style = styleHandler.buildStyle(workspace, diagram);
         style.getTags().getElements().forEach(writer::addElementTag);
-        writer.addRelTag("Relationship", "#707070", "#707070", "");
+        style.getTags().getRelations().forEach(writer::addRelTag);
     }
 
     protected void writeSkinParams(Workspace workspace, E diagram, C4PlantUMLWriter writer) {

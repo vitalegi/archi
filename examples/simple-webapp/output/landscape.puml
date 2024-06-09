@@ -8,13 +8,13 @@ title Application Landscape
 !include <C4/C4>
 !include <C4/C4_Context>
 !include <C4/C4_Container>
-AddElementTag("Element", $bgColor="red", $fontColor="orange", $borderColor="green", $shadowing="true", $shape="RoundedBox", $sprite="", $techn="Test 123", $legendText="Legend", $legendSprite="", $borderStyle="dotted", $borderThickness="5")
-AddRelTag("Relationship", $textColor="#707070", $lineColor="#707070", $lineStyle="")
+AddElementTag("HighlightedElement", $bgColor="red", $fontColor="black", $borderColor="orange", $shadowing="true", $shape="RoundedBox", $sprite="", $techn="Awesome technologies", $legendText="Awesome element", $legendSprite="", $borderStyle="DOTTED", $borderThickness="5")
+AddRelTag("HighlightedRelation", $textColor="red", $lineColor="red", $lineStyle="DOTTED", $sprite="", $techn="", $legendText="Awesome relation", $legendSprite="", $lineThickness="2")
 Container($alias="Person_user", $label="User", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="")
 Container($alias="Person_sysadmin", $label="Sysadmin", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="")
-Container($alias="SoftwareSystem_reader_ss", $label="Reader", $techn="", $descr="Allows users to access the reader", $sprite="", $tags="", $link="", $baseShape="")
+Container($alias="SoftwareSystem_reader_ss", $label="Reader", $techn="", $descr="Allows users to access the reader", $sprite="", $tags="HighlightedElement", $link="", $baseShape="")
 Container($alias="SoftwareSystem_aws_ss", $label="Amazon Web Services", $techn="", $descr="Stores books", $sprite="", $tags="", $link="", $baseShape="")
-Rel("Person_user","SoftwareSystem_reader_ss","Uses","","","")
-Rel("SoftwareSystem_reader_ss","SoftwareSystem_aws_ss","Upload/Download media","","","")
+Rel($from="Person_user", $to="SoftwareSystem_reader_ss", $label="", $techn="", $descr="Uses", $sprite="", $tags="", $link="")
+Rel($from="SoftwareSystem_reader_ss", $to="SoftwareSystem_aws_ss", $label="", $techn="", $descr="Upload/Download media", $sprite="", $tags="", $link="")
 hide stereotypes
 @enduml

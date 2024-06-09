@@ -1,9 +1,15 @@
 package it.vitalegi.archi.diagram.writer;
 
+import it.vitalegi.archi.model.Element;
+import it.vitalegi.archi.model.Relation;
 import it.vitalegi.archi.plantuml.Direction;
 import it.vitalegi.archi.style.model.ElementTag;
+import it.vitalegi.archi.style.model.LineStyle;
+import it.vitalegi.archi.style.model.RelationTag;
 
 import java.util.Formatter;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class C4PlantUMLWriter extends PlantUMLWriter {
 
@@ -11,20 +17,25 @@ public class C4PlantUMLWriter extends PlantUMLWriter {
         addElementTag(tag.getAlias(), tag.getBackgroundColor(), tag.getFontColor(), tag.getBorderColor(), tag.getShadowing(), tag.getShape(), tag.getSprite(), tag.getTechnologies(), tag.getLegendText(), tag.getLegendSprite(), tag.getBorderStyle(), tag.getBorderThickness());
     }
 
-    private void addElementTag(String alias, String bgColor, String fontColor, String borderColor, Boolean shadowing, String shape, String sprite, String techn, String legendText, String legendSprite, String borderStyle, Integer borderThickness) {
+    private void addElementTag(String alias, String bgColor, String fontColor, String borderColor, Boolean shadowing, String shape, String sprite, String techn, String legendText, String legendSprite, LineStyle borderStyle, Integer borderThickness) {
         println(format("AddElementTag(\"%s\", $bgColor=\"%s\", $fontColor=\"%s\", $borderColor=\"%s\", $shadowing=\"%b\", $shape=\"%s\", $sprite=\"%s\", $techn=\"%s\", $legendText=\"%s\", $legendSprite=\"%s\", $borderStyle=\"%s\", $borderThickness=\"%d\")", //
-                alias, bgColor, fontColor, borderColor, shadowing, shape, sprite, techn, legendText, legendSprite, borderStyle, borderThickness));
+                alias, bgColor, fontColor, borderColor, shadowing, shape, sprite, techn, legendText, legendSprite, borderStyle != null ? borderStyle.name() : null, borderThickness));
     }
 
-    public void addRelTag(String alias, String textColor, String lineColor, String lineStyle) {
-        println(format("AddRelTag(\"%s\", $textColor=\"%s\", $lineColor=\"%s\", $lineStyle=\"%s\")", alias, textColor, lineColor, lineStyle));
+    public void addRelTag(RelationTag tag) {
+        addRelTag(tag.getAlias(), tag.getTextColor(), tag.getLineColor(), tag.getLineStyle(), tag.getSprite(), tag.getTechnologies(), tag.getLegendText(), tag.getLegendSprite(), tag.getLineThickness());
     }
 
-    public void addBoundaryTag(String alias, String borderColor, String fontColor, String borderStyle) {
-        println(format("AddBoundaryTag(\"%s\", $borderColor=\"%s\", $fontColor=\"%s\", $borderStyle=\"%s\")", alias, borderColor, fontColor, borderStyle));
+    private void addRelTag(String alias, String textColor, String lineColor, LineStyle lineStyle, String sprite, String techn, String legendText, String legendSprite, Integer lineThickness) {
+        println(format("AddRelTag(\"%s\", $textColor=\"%s\", $lineColor=\"%s\", $lineStyle=\"%s\", $sprite=\"%s\", $techn=\"%s\", $legendText=\"%s\", $legendSprite=\"%s\", $lineThickness=\"%s\")", //
+                alias, textColor, lineColor, lineStyle != null ? lineStyle : null, sprite, techn, legendText, legendSprite, lineThickness));
     }
 
-    public void deploymentNodeStart(String alias, String label, String type, String description, String sprite, String tags, String link) {
+    public void deploymentNodeStart(Element element) {
+        deploymentNodeStart(getAlias(element), element.getName(), null, element.getDescription(), "", formatTags(element), "");
+    }
+
+    protected void deploymentNodeStart(String alias, String label, String type, String description, String sprite, String tags, String link) {
         println(format("Deployment_Node(%s, %s, $type=\"%s\", $descr=\"%s\", $sprite=\"%s\", $tags=\"%s\", $link=\"%s\") {", alias, label, type, description, sprite, tags, link));
         increaseTab();
     }
@@ -34,7 +45,11 @@ public class C4PlantUMLWriter extends PlantUMLWriter {
         println("}");
     }
 
-    public void boundaryStart(String alias, String label, String tags) {
+    public void boundaryStart(Element element) {
+        boundaryStart(getAlias(element), element.getName(), formatTags(element));
+    }
+
+    protected void boundaryStart(String alias, String label, String tags) {
         println(format("Boundary(%s, \"%s\", $tags=\"%s\") {", alias, label, tags));
         increaseTab();
     }
@@ -44,7 +59,11 @@ public class C4PlantUMLWriter extends PlantUMLWriter {
         println("}");
     }
 
-    public void container(String alias, String label, String technology, String description, String sprite, String tags, String link, String shape) {
+    public void container(Element element) {
+        container(getAlias(element), element.getName(), null, element.getDescription(), "", formatTags(element), "", "");
+    }
+
+    protected void container(String alias, String label, String technology, String description, String sprite, String tags, String link, String shape) {
         println(format("Container($alias=\"%s\", $label=\"%s\", $techn=\"%s\", $descr=\"%s\", $sprite=\"%s\", $tags=\"%s\", $link=\"%s\", $baseShape=\"%s\")", alias, label, technology, description, sprite, tags, link, shape));
     }
 
@@ -68,16 +87,22 @@ public class C4PlantUMLWriter extends PlantUMLWriter {
         println(format("AddProperty(\"%s\",\"%s\",\"%s\",\"%s\")", col1, col2, col3, col4));
     }
 
-    public void addRelation(String aliasFrom, String aliasTo, String description, String technology, String tags, String link) {
-        addRelation("Rel", aliasFrom, aliasTo, description, technology, tags, link);
+    public void addRelation(Relation relation) {
+        addRelation("Rel", relation);
     }
 
-    public void addRelation(Direction direction, String aliasFrom, String aliasTo, String description, String technology, String tags, String link) {
-        addRelation(direction.getRelationKeyword(), aliasFrom, aliasTo, description, technology, tags, link);
+    public void addRelation(Direction direction, Relation relation) {
+        addRelation(direction.getRelationKeyword(), relation);
     }
 
-    protected void addRelation(String command, String aliasFrom, String aliasTo, String description, String technology, String tags, String link) {
-        println(format("%s(\"%s\",\"%s\",\"%s\",\"%s\",\"%s\",\"%s\")", command, aliasFrom, aliasTo, description, technology, tags, link));
+    public void addRelation(String command, Relation relation) {
+        addRelation(command, getAlias(relation.getFrom()), getAlias(relation.getTo()), relation.getLabel(), relation.getTechnologies(), relation.getDescription(), relation.getSprite(), formatTags(relation), relation.getLink());
+    }
+
+    protected void addRelation(String command, String aliasFrom, String aliasTo, String label, String technology, String description, String sprite, String tags, String link) {
+        //$from, $to, $label, $techn="", $descr="", $sprite="", $tags="", $link=""
+        println(format("%s($from=\"%s\", $to=\"%s\", $label=\"%s\", $techn=\"%s\", $descr=\"%s\", $sprite=\"%s\", $tags=\"%s\", $link=\"%s\")", //
+                command, aliasFrom, aliasTo, label, technology, description, sprite, tags, link));
     }
 
     public void hideStereotypes() {
@@ -94,5 +119,29 @@ public class C4PlantUMLWriter extends PlantUMLWriter {
             }
         }
         return new Formatter().format(format, copy).toString();
+    }
+
+    protected String getAlias(Element element) {
+        var alias = element.getUniqueId();
+        alias = alias.replace('-', '_');
+        alias = alias.replace('.', '_');
+        alias = alias.replace(' ', '_');
+        return alias;
+    }
+
+
+    protected String formatTags(Element element) {
+        return formatTags(element.getTags());
+    }
+
+    protected String formatTags(Relation relation) {
+        return formatTags(relation.getTags());
+    }
+
+    protected String formatTags(List<String> tags) {
+        if (tags == null) {
+            return null;
+        }
+        return tags.stream().collect(Collectors.joining("&"));
     }
 }
