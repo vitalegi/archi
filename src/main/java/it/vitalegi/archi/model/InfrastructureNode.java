@@ -1,6 +1,6 @@
 package it.vitalegi.archi.model;
 
-import it.vitalegi.archi.exception.ElementNotAllowedException;
+import it.vitalegi.archi.visitor.ElementVisitor;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -14,11 +14,12 @@ public class InfrastructureNode extends Element {
         super(model);
     }
 
-    public void addChild(Element child) {
-        throw new ElementNotAllowedException(this, child);
-    }
-
     public ElementType getElementType() {
         return ElementType.INFRASTRUCTURE_NODE;
+    }
+
+    @Override
+    public <E> E visit(ElementVisitor<E> visitor) {
+        return visitor.visitInfrastructureNode(this);
     }
 }

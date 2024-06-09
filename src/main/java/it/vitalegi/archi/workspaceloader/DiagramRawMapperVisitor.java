@@ -9,7 +9,7 @@ import it.vitalegi.archi.workspaceloader.model.DeploymentDiagramRaw;
 import it.vitalegi.archi.workspaceloader.model.DiagramRaw;
 import it.vitalegi.archi.workspaceloader.model.LandscapeDiagramRaw;
 import it.vitalegi.archi.workspaceloader.model.SystemContextDiagramRaw;
-import it.vitalegi.archi.workspaceloader.visitor.DiagramRawVisitor;
+import it.vitalegi.archi.visitor.DiagramRawVisitor;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

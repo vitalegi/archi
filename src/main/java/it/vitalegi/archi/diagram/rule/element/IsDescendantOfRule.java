@@ -1,10 +1,11 @@
 package it.vitalegi.archi.diagram.rule.element;
 
-import it.vitalegi.archi.diagram.model.DiagramScope;
-import it.vitalegi.archi.diagram.rule.AbstractVisibilityRule;
 import it.vitalegi.archi.model.Element;
 import it.vitalegi.archi.model.Entity;
 import it.vitalegi.archi.model.Relation;
+import it.vitalegi.archi.diagram.model.DiagramScope;
+import it.vitalegi.archi.diagram.rule.AbstractVisibilityRule;
+import it.vitalegi.archi.util.WorkspaceUtil;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,7 +28,7 @@ public class IsDescendantOfRule extends AbstractVisibilityRule {
     }
 
     public boolean match(DiagramScope diagramScope, Element element) {
-        var ancestors = element.getPathFromRoot();
+        var ancestors = WorkspaceUtil.getPathFromRoot(element);
         for (var ancestor : ancestors) {
             if (Entity.equals(id, ancestor.getId())) {
                 log.debug("Element {} is ancestor of {}, match.", ancestor.toShortString(), element.toShortString());

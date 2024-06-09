@@ -1,8 +1,6 @@
 package it.vitalegi.archi.model;
 
-import it.vitalegi.archi.exception.ElementNotAllowedException;
-import it.vitalegi.archi.exception.NonUniqueIdException;
-import it.vitalegi.archi.util.WorkspaceUtil;
+import it.vitalegi.archi.visitor.ElementVisitor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -13,13 +11,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Getter
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class Model extends Element {
-
     Map<String, Element> elementMap;
-    @Getter
     Relations relations;
 
     public Model() {
@@ -27,22 +24,6 @@ public class Model extends Element {
         model = this;
         elementMap = new HashMap<>();
         relations = new Relations();
-    }
-
-    public void addChild(Element child) {
-        if (addSoftwareSystem(this, child)) {
-            return;
-        }
-        if (addGroup(this, child)) {
-            return;
-        }
-        if (addPerson(this, child)) {
-            return;
-        }
-        if (addDeploymentEnvironment(this, child)) {
-            return;
-        }
-        throw new ElementNotAllowedException(this, child);
     }
 
     public void addRelation(Relation relation) {
@@ -57,88 +38,6 @@ public class Model extends Element {
         return new ArrayList<>(elementMap.values());
     }
 
-    protected boolean addSoftwareSystem(Element parent, Element child) {
-        if (WorkspaceUtil.isSoftwareSystem(child)) {
-            addChild(parent, child);
-            return true;
-        }
-        return false;
-    }
-
-    protected boolean addGroup(Element parent, Element child) {
-        if (WorkspaceUtil.isGroup(child)) {
-            addChild(parent, child);
-            return true;
-        }
-        return false;
-    }
-
-    protected boolean addContainer(Element parent, Element child) {
-        if (WorkspaceUtil.isContainer(child)) {
-            addChild(parent, child);
-            return true;
-        }
-        return false;
-    }
-
-    protected boolean addPerson(Element parent, Element child) {
-        if (WorkspaceUtil.isPerson(child)) {
-            addChild(parent, child);
-            return true;
-        }
-        return false;
-    }
-
-    protected boolean addDeploymentEnvironment(Element parent, Element child) {
-        if (WorkspaceUtil.isDeploymentEnvironment(child)) {
-            addChild(parent, child);
-            return true;
-        }
-        return false;
-    }
-
-    protected boolean addDeploymentNode(Element parent, Element child) {
-        if (WorkspaceUtil.isDeploymentNode(child)) {
-            addChild(parent, child);
-            return true;
-        }
-        return false;
-    }
-
-    protected boolean addInfrastructureNode(Element parent, Element child) {
-        if (WorkspaceUtil.isInfrastructureNode(child)) {
-            addChild(parent, child);
-            return true;
-        }
-        return false;
-    }
-
-    protected boolean addContainerInstancce(Element parent, Element child) {
-        if (WorkspaceUtil.isContainerInstance(child)) {
-            addChild(parent, child);
-            return true;
-        }
-        return false;
-    }
-
-    protected boolean addSoftwareSystemInstance(Element parent, Element child) {
-        if (WorkspaceUtil.isSoftwareSystemInstance(child)) {
-            addChild(parent, child);
-            return true;
-        }
-        return false;
-    }
-
-    protected void addChild(Element parent, Element child) {
-        log.debug("Add {} to {}", child.toShortString(), parent.toShortString());
-        if (child.getId() != null && elementMap.containsKey(child.getId())) {
-            throw new NonUniqueIdException(child.getId());
-        }
-        parent.getElements().add(child);
-        child.setParent(parent);
-        elementMap.put(child.getId(), child);
-    }
-
     public String toShortString() {
         return getClass().getSimpleName();
     }
@@ -150,5 +49,10 @@ public class Model extends Element {
 
     public ElementType getElementType() {
         return null;
+    }
+
+    @Override
+    public <E> E visit(ElementVisitor<E> visitor) {
+        return visitor.visitModel(this);
     }
 }

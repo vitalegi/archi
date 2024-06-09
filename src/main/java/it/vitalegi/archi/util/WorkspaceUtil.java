@@ -1,5 +1,6 @@
 package it.vitalegi.archi.util;
 
+import it.vitalegi.archi.model.Component;
 import it.vitalegi.archi.model.Container;
 import it.vitalegi.archi.model.ContainerInstance;
 import it.vitalegi.archi.model.DeploymentEnvironment;
@@ -15,6 +16,7 @@ import it.vitalegi.archi.model.Relation;
 import it.vitalegi.archi.model.SoftwareSystem;
 import it.vitalegi.archi.model.SoftwareSystemInstance;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.UUID;
@@ -97,8 +99,33 @@ public class WorkspaceUtil {
         throw new IllegalArgumentException("Element with id " + id + " is not a Container: " + element);
     }
 
+
     public static List<Container> getContainers(List<? extends Element> elements) {
         return elements.stream().filter(WorkspaceUtil::isContainer).map(e -> ((Container) e)).collect(Collectors.toList());
+    }
+
+    public static List<Component> getComponents(List<? extends Element> elements) {
+        return elements.stream().filter(WorkspaceUtil::isComponent).map(e -> ((Component) e)).collect(Collectors.toList());
+    }
+
+
+    public static Component getComponent(List<? extends Element> elements, String id) {
+        var element = findComponent(elements, id);
+        if (element == null) {
+            throw new NoSuchElementException("No element with id " + id + ". Available IDs: " + Entity.collectIds(elements));
+        }
+        return element;
+    }
+
+    public static Component findComponent(List<? extends Element> elements, String id) {
+        var element = findElementById(elements, id);
+        if (element == null) {
+            return null;
+        }
+        if (isComponent(element)) {
+            return (Component) element;
+        }
+        throw new IllegalArgumentException("Element with id " + id + " is not a Component: " + element);
     }
 
     public static Group getGroup(List<? extends Element> elements, String id) {
@@ -254,6 +281,10 @@ public class WorkspaceUtil {
         return element instanceof Container;
     }
 
+    public static boolean isComponent(Entity element) {
+        return element instanceof Component;
+    }
+
     public static boolean isGroup(Entity element) {
         return element instanceof Group;
     }
@@ -326,5 +357,13 @@ public class WorkspaceUtil {
         return elements.stream().filter(e -> Entity.equals(id, e.getId())).findFirst().orElse(null);
     }
 
-
+    public static List<Element> getPathFromRoot(Element element) {
+        List<Element> elements = new ArrayList<>();
+        var curr = element;
+        while (curr != null) {
+            elements.add(0, curr);
+            curr = curr.getParent();
+        }
+        return elements;
+    }
 }

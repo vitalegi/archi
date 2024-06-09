@@ -2,6 +2,7 @@ package it.vitalegi.archi.util;
 
 public class ObjectUtil {
 
+    @SafeVarargs
     public static <E> E getFirstNotNull(E... elements) {
         for (var element : elements) {
             if (element != null) {

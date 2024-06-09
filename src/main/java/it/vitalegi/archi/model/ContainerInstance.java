@@ -1,8 +1,8 @@
 package it.vitalegi.archi.model;
 
-import it.vitalegi.archi.exception.ElementNotAllowedException;
 import it.vitalegi.archi.util.StringUtil;
 import it.vitalegi.archi.util.WorkspaceUtil;
+import it.vitalegi.archi.visitor.ElementVisitor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,10 +24,6 @@ public class ContainerInstance extends Element {
     public ContainerInstance(Model model, String containerId) {
         super(model);
         this.containerId = containerId;
-    }
-
-    public void addChild(Element child) {
-        throw new ElementNotAllowedException(this, child);
     }
 
     @Override
@@ -55,5 +51,10 @@ public class ContainerInstance extends Element {
 
     public ElementType getElementType() {
         return ElementType.CONTAINER_INSTANCE;
+    }
+
+    @Override
+    public <E> E visit(ElementVisitor<E> visitor) {
+        return visitor.visitContainerInstance(this);
     }
 }

@@ -1,6 +1,6 @@
 package it.vitalegi.archi.model;
 
-import it.vitalegi.archi.exception.ElementNotAllowedException;
+import it.vitalegi.archi.visitor.ElementVisitor;
 import lombok.ToString;
 
 @ToString(callSuper = true)
@@ -10,11 +10,13 @@ public class Person extends Element {
         super(model);
     }
 
-    public void addChild(Element child) {
-        throw new ElementNotAllowedException(this, child);
-    }
 
     public ElementType getElementType() {
         return ElementType.PERSON;
+    }
+
+    @Override
+    public <E> E visit(ElementVisitor<E> visitor) {
+        return visitor.visitPerson(this);
     }
 }

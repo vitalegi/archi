@@ -1,6 +1,6 @@
 package it.vitalegi.archi.workspaceloader.model;
 
-import it.vitalegi.archi.style.model.Style;
+import it.vitalegi.archi.style.Style;
 import lombok.Data;
 
 import java.util.ArrayList;

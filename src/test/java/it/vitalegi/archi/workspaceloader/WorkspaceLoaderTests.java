@@ -4,11 +4,13 @@ import it.vitalegi.archi.exception.CycleNotAllowedException;
 import it.vitalegi.archi.exception.ElementNotAllowedException;
 import it.vitalegi.archi.exception.NonUniqueIdException;
 import it.vitalegi.archi.exception.RelationNotAllowedException;
+import it.vitalegi.archi.model.builder.WorkspaceDirector;
 import it.vitalegi.archi.util.ModelTestUtil;
 import it.vitalegi.archi.util.StyleTestUtil;
-import it.vitalegi.archi.util.WorkspaceLoaderBuilder;
+import it.vitalegi.archi.util.WorkspaceModelBuilder;
 import it.vitalegi.archi.util.WorkspaceUtil;
 import it.vitalegi.archi.workspaceloader.model.DeploymentDiagramRaw;
+import it.vitalegi.archi.workspaceloader.model.ElementRaw;
 import it.vitalegi.archi.workspaceloader.model.LandscapeDiagramRaw;
 import it.vitalegi.archi.workspaceloader.model.SystemContextDiagramRaw;
 import org.junit.jupiter.api.Assertions;
@@ -25,6 +27,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
+import static it.vitalegi.archi.util.WorkspaceTestUtil.load;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -32,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @ExtendWith(MockitoExtension.class)
 public class WorkspaceLoaderTests {
 
-    static WorkspaceLoader loader() {
+    static WorkspaceDirector loader() {
         return ModelTestUtil.defaultLoader();
     }
 
@@ -49,7 +52,7 @@ public class WorkspaceLoaderTests {
                 .group("A", null) //
                 .build();
 
-        var e = Assertions.assertThrows(CycleNotAllowedException.class, () -> loader.load(config));
+        var e = Assertions.assertThrows(CycleNotAllowedException.class, () -> load(config));
         assertEquals("Unresolved dependencies. Known: C, D, null. Unresolved: A: B; B: A; E: A; null: A", e.getMessage());
     }
 
@@ -62,7 +65,7 @@ public class WorkspaceLoaderTests {
                 .container("b", "a") //
                 .build();
 
-        var e = Assertions.assertThrows(NonUniqueIdException.class, () -> loader.load(config));
+        var e = Assertions.assertThrows(NonUniqueIdException.class, () -> load(config));
         assertEquals("ID a is defined more than once", e.getMessage());
     }
 
@@ -70,7 +73,7 @@ public class WorkspaceLoaderTests {
     void when_load_given_nullIds_thenSucceed() {
         var loader = loader();
         var config = builder().softwareSystem(null).softwareSystem(null).build();
-        var ws = loader.load(config);
+        var ws = loader.makeWorkspace(config).build();
         assertEquals(2, ws.getModel().getSoftwareSystems().size());
     }
 
@@ -87,11 +90,11 @@ public class WorkspaceLoaderTests {
                 .group("A", null) //
                 .build();
 
-        var e = Assertions.assertThrows(CycleNotAllowedException.class, () -> loader.load(config));
+        var e = Assertions.assertThrows(CycleNotAllowedException.class, () -> load(config));
         assertEquals("Unresolved dependencies. Known: C, D, null. Unresolved: A: B; B: A; E: A; null: A", e.getMessage());
     }
 
-    protected WorkspaceLoaderBuilder builder() {
+    protected WorkspaceModelBuilder builder() {
         return ModelTestUtil.defaultBuilder();
     }
 
@@ -100,7 +103,7 @@ public class WorkspaceLoaderTests {
         @Test
         void when_load_given_personOnRoot_thenSucceed() {
             var loader = loader();
-            var ws = loader.load(builder().person("A").build());
+            var ws = load(builder().person("A").build());
             assertEquals("A", ws.getModel().findPersonById("A").getId());
         }
 
@@ -108,7 +111,7 @@ public class WorkspaceLoaderTests {
         void when_load_given_childOnPerson_thenFail() {
             var loader = loader();
             var config = builder().person("A").person("A", "B").build();
-            var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
+            var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> load(config));
             assertEquals("Can't add Person (B) to Person (A)", e.getMessage());
         }
 
@@ -120,14 +123,14 @@ public class WorkspaceLoaderTests {
         @Test
         void when_load_given_softwareSystemOnRoot_thenSucceed() {
             var loader = loader();
-            var ws = loader.load(builder().softwareSystem("A").build());
+            var ws = load(builder().softwareSystem("A").build());
             assertEquals("A", ws.getModel().findSoftwareSystemById("A").getId());
         }
 
         @Test
         void when_load_given_softwareSystemChildOfGroup_thenSucceed() {
             var loader = loader();
-            var ws = loader.load(builder() //
+            var ws = load(builder() //
                     .group("A") //
                     .softwareSystem("A", "B") //
                     .build());
@@ -146,7 +149,7 @@ public class WorkspaceLoaderTests {
                     .softwareSystem("B", "C") //
                     .build();
 
-            var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
+            var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> load(config));
             assertEquals("Can't add SoftwareSystem (C) to Group (B)", e.getMessage());
         }
     }
@@ -157,14 +160,14 @@ public class WorkspaceLoaderTests {
         void when_load_given_containerOnRoot_thenFail() {
             var loader = loader();
             var config = builder().container("A").build();
-            var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
+            var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> load(config));
             assertEquals("Can't add Container (A) to Model", e.getMessage());
         }
 
         @Test
         void when_load_given_containerChildOfGroupChildOfSoftwareSystem_thenSucceed() {
             var loader = loader();
-            var ws = loader.load(builder() //
+            var ws = load(builder() //
                     .group("A", "B") //
                     .container("B", "C") //
                     .softwareSystem("A") //
@@ -182,18 +185,52 @@ public class WorkspaceLoaderTests {
     }
 
     @Nested
+    class Component {
+        @Test
+        void when_load_given_componentOnRoot_thenFail() {
+            var loader = loader();
+            var config = builder().component(ElementRaw.builder().id("A")).build();
+            var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> load(config));
+            assertEquals("Can't add Component (A) to Model", e.getMessage());
+        }
+
+        @Test
+        void when_load_given_componentChildOfGroupChildOfContainer_thenSucceed() {
+            var ws = load(builder() //
+                    .softwareSystem("A") //
+                    .group("A", "G1") //
+                    .container("G1", "C") //
+                    .group("C", "G2") //
+                    .component(ElementRaw.builder().parentId("G2").id("component")) //
+                    .build());
+
+            var ss = ws.getModel().findSoftwareSystemById("A");
+            assertNotNull(ss);
+            var g1 = WorkspaceUtil.findGroup(ss.getGroups(), "G1");
+            assertNotNull(g1);
+            var c = WorkspaceUtil.findContainer(g1.getContainers(), "C");
+            assertNotNull(c);
+            var g2 = WorkspaceUtil.findGroup(c.getGroups(), "G2");
+            assertNotNull(g2);
+            var component = WorkspaceUtil.findComponent(g2.getComponents(), "component");
+            assertNotNull(component);
+            assertEquals("component", component.getId());
+        }
+    }
+
+    @Nested
     class Group {
         @Test
         void when_load_given_groupOnRoot_thenSucceed() {
             var loader = loader();
-            var ws = loader.load(builder().group("A").build());
+            var ws = load(builder().group("A").build());
             assertEquals("A", ws.getModel().findGroupById("A").getId());
         }
 
         @Test
         void when_load_given_groupChildOfGroup_thenSucceed() {
             var loader = loader();
-            var ws = loader.load(builder() //
+            var ws = load(builder() //
                     .group("A") //
                     .group("A", "B") //
                     .build());
@@ -212,7 +249,7 @@ public class WorkspaceLoaderTests {
                     .group("B", "C") //
                     .build();
 
-            var ws = loader.load(config);
+            var ws = load(config);
             var g1 = ws.getModel().findGroupById("A");
             assertNotNull(g1);
             var g2 = WorkspaceUtil.getGroup(g1.getGroups(), "B");
@@ -228,7 +265,7 @@ public class WorkspaceLoaderTests {
         void when_load_given_deploymentEnvironment_thenSucceed() {
             var loader = loader();
             var config = builder().deploymentEnvironment("A").build();
-            var ws = loader.load(config);
+            var ws = load(config);
             var a = ws.getModel().findDeploymentEnvironmentById("A");
             assertNotNull(a);
         }
@@ -241,7 +278,7 @@ public class WorkspaceLoaderTests {
         void when_load_given_deploymentNodeOnDeploymentEnvironment_thenSucceed() {
             var loader = loader();
             var config = builder().deploymentEnvironment("A").deploymentNode("A", "B").build();
-            var ws = loader.load(config);
+            var ws = load(config);
             var a = ws.getModel().findDeploymentEnvironmentById("A");
             assertNotNull(a);
             var b = a.findDeploymentNodeById("B");
@@ -252,7 +289,7 @@ public class WorkspaceLoaderTests {
         void when_load_given_deploymentNodeOnRoot_thenFail() {
             var loader = loader();
             var config = builder().deploymentNode("A").build();
-            var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
+            var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> load(config));
             assertEquals("Can't add DeploymentNode (A) to Model", e.getMessage());
         }
     }
@@ -272,7 +309,7 @@ public class WorkspaceLoaderTests {
                     .infrastructureNode("B", "infra2") //
                     .build();
 
-            var ws = loader.load(config);
+            var ws = load(config);
             var a = ws.getModel().findDeploymentEnvironmentById("A");
             assertNotNull(a);
             var b = a.findDeploymentNodeById("B");
@@ -286,7 +323,7 @@ public class WorkspaceLoaderTests {
         @Test
         void when_load_given_infrastructureNodeOnWrongParent_thenFail() {
             var loader = loader();
-            var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load( //
+            var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> load( //
                     builder() //
                             .softwareSystem("A") //
                             .infrastructureNode("A", "B") //
@@ -294,12 +331,12 @@ public class WorkspaceLoaderTests {
             ));
             assertEquals("Can't add InfrastructureNode (B) to SoftwareSystem (A)", e.getMessage());
 
-            e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load( //
+            e = Assertions.assertThrows(ElementNotAllowedException.class, () -> load( //
                     builder().softwareSystem("A").container("A", "B").infrastructureNode("B", "C").build() //
             ));
             assertEquals("Can't add InfrastructureNode (C) to Container (B)", e.getMessage());
 
-            e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load( //
+            e = Assertions.assertThrows(ElementNotAllowedException.class, () -> load( //
                     builder().infrastructureNode("A").build() //
             ));
             assertEquals("Can't add InfrastructureNode (A) to Model", e.getMessage());
@@ -315,7 +352,7 @@ public class WorkspaceLoaderTests {
         void when_load_given_softwareSystemInstanceOnRoot_thenFail() {
             var loader = loader();
             var config = builder().softwareSystemInstance("A", "c").build();
-            var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
+            var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> load(config));
             assertEquals("Can't add SoftwareSystemInstance (A) to Model", e.getMessage());
         }
 
@@ -327,7 +364,7 @@ public class WorkspaceLoaderTests {
                     .softwareSystemInstance("A", "B", "c") //
                     .build();
 
-            var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
+            var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> load(config));
             assertEquals("Can't add SoftwareSystemInstance (B) to DeploymentEnvironment (A)", e.getMessage());
         }
 
@@ -342,7 +379,7 @@ public class WorkspaceLoaderTests {
                     .container("SS", "c") //
                     .build();
 
-            var ws = loader.load(config);
+            var ws = load(config);
             var a = ws.getModel().findDeploymentEnvironmentById("A");
             assertNotNull(a);
             var b = a.findDeploymentNodeById("B");
@@ -361,7 +398,7 @@ public class WorkspaceLoaderTests {
                     .softwareSystemInstance("B", "C", null) //
                     .build();
 
-            var e = Assertions.assertThrows(IllegalArgumentException.class, () -> loader.load(config));
+            var e = Assertions.assertThrows(IllegalArgumentException.class, () -> load(config));
             assertEquals("softwareSystemId is missing on SoftwareSystemInstance (C)", e.getMessage());
         }
 
@@ -374,7 +411,7 @@ public class WorkspaceLoaderTests {
                     .softwareSystemInstance("B", "C", "c") //
                     .build();
 
-            var e = Assertions.assertThrows(NoSuchElementException.class, () -> loader.load(config));
+            var e = Assertions.assertThrows(NoSuchElementException.class, () -> load(config));
             assertEquals("SoftwareSystem c doesn't exist. Dependency is unsatisfied for SoftwareSystemInstance (C)", e.getMessage());
         }
 
@@ -388,7 +425,7 @@ public class WorkspaceLoaderTests {
                     .group("ss", "g").softwareSystemInstance("B", "C", "g") //
                     .build();
 
-            var e = Assertions.assertThrows(IllegalArgumentException.class, () -> loader.load(config));
+            var e = Assertions.assertThrows(IllegalArgumentException.class, () -> load(config));
             assertEquals("Dependency is unsatisfied for SoftwareSystemInstance (C). Expected a SoftwareSystem; Actual: Group (g)", e.getMessage());
         }
 
@@ -400,7 +437,7 @@ public class WorkspaceLoaderTests {
         void when_load_given_containerInstanceOnRoot_thenFail() {
             var loader = loader();
             var config = builder().containerInstance("A", "c").build();
-            var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
+            var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> load(config));
             assertEquals("Can't add ContainerInstance (A) to Model", e.getMessage());
         }
 
@@ -412,7 +449,7 @@ public class WorkspaceLoaderTests {
                     .containerInstance("A", "B", "c") //
                     .build();
 
-            var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> loader.load(config));
+            var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> load(config));
             assertEquals("Can't add ContainerInstance (B) to DeploymentEnvironment (A)", e.getMessage());
         }
 
@@ -427,7 +464,7 @@ public class WorkspaceLoaderTests {
                     .container("SS", "c") //
                     .build();
 
-            var ws = loader.load(config);
+            var ws = load(config);
             var a = ws.getModel().findDeploymentEnvironmentById("A");
             assertNotNull(a);
             var b = a.findDeploymentNodeById("B");
@@ -446,7 +483,7 @@ public class WorkspaceLoaderTests {
                     .containerInstance("B", "C", "") //
                     .build();
 
-            var e = Assertions.assertThrows(IllegalArgumentException.class, () -> loader.load(config));
+            var e = Assertions.assertThrows(IllegalArgumentException.class, () -> load(config));
             assertEquals("containerId is missing on ContainerInstance (C)", e.getMessage());
         }
 
@@ -459,7 +496,7 @@ public class WorkspaceLoaderTests {
                     .containerInstance("B", "C", "c") //
                     .build();
 
-            var e = Assertions.assertThrows(NoSuchElementException.class, () -> loader.load(config));
+            var e = Assertions.assertThrows(NoSuchElementException.class, () -> load(config));
             assertEquals("Container c doesn't exist. Dependency is unsatisfied for ContainerInstance (C)", e.getMessage());
         }
 
@@ -473,7 +510,7 @@ public class WorkspaceLoaderTests {
                     .containerInstance("B", "C", "ss") //
                     .build();
 
-            var e = Assertions.assertThrows(IllegalArgumentException.class, () -> loader.load(config));
+            var e = Assertions.assertThrows(IllegalArgumentException.class, () -> load(config));
             assertEquals("Dependency is unsatisfied for ContainerInstance (C). Expected a Container; Actual: SoftwareSystem (ss)", e.getMessage());
         }
     }
@@ -483,14 +520,14 @@ public class WorkspaceLoaderTests {
 
         @Nested
         class RelationTests {
-            WorkspaceLoader loader;
-            WorkspaceLoaderBuilder builder;
+            WorkspaceModelBuilder builder;
 
             static Stream<Arguments> allowedRelations() {
                 return Stream.of(arg("person1", "person1", true, "Relation from Person to self is allowed"), //
                         arg("person1", "person2", true, "Relation from Person to Person is allowed"), //
                         arg("person1", "softwareSystem1", true, "Relation from Person to SoftwareSystem is allowed"), //
                         arg("person1", "container11", true, "Relation from Person to Container is allowed"), //
+                        arg("person1", "component111", true, "Relation from Person to Component is allowed"), //
                         arg("person1", "group1", false, "Relation from Person to Group is NOT allowed"), //
                         arg("person1", "env1", false, "Relation from Person to DeploymentEnvironment is NOT allowed"), //
                         arg("person1", "node11", false, "Relation from Person to DeploymentNode is NOT allowed"), //
@@ -503,6 +540,7 @@ public class WorkspaceLoaderTests {
                         arg("softwareSystem1", "person2", true, "Relation from SoftwareSystem to Person is allowed"), //
                         arg("softwareSystem1", "softwareSystem2", true, "Relation from SoftwareSystem to SoftwareSystem is allowed"), //
                         arg("softwareSystem1", "container11", true, "Relation from SoftwareSystem to Container is allowed"), //
+                        arg("softwareSystem1", "component111", true, "Relation from SoftwareSystem to Component is allowed"), //
                         arg("softwareSystem1", "group1", false, "Relation from SoftwareSystem to Group is NOT allowed"), //
                         arg("softwareSystem1", "env1", false, "Relation from SoftwareSystem to DeploymentEnvironment is NOT allowed"), //
                         arg("softwareSystem1", "node11", false, "Relation from SoftwareSystem to DeploymentNode is NOT allowed"), //
@@ -515,6 +553,7 @@ public class WorkspaceLoaderTests {
                         arg("container21", "person2", true, "Relation from Container to Person is allowed"), //
                         arg("container21", "softwareSystem1", true, "Relation from Container to SoftwareSystem is allowed"), //
                         arg("container21", "container11", true, "Relation from Container to Container is allowed"), //
+                        arg("container21", "component111", true, "Relation from Container to Component is allowed"), //
                         arg("container21", "group1", false, "Relation from Container to Group is NOT allowed"), //
                         arg("container21", "env1", false, "Relation from Container to DeploymentEnvironment is NOT allowed"), //
                         arg("container21", "node11", false, "Relation from Container to DeploymentNode is NOT allowed"), //
@@ -523,10 +562,24 @@ public class WorkspaceLoaderTests {
                         arg("container21", "containerInstance11", false, "Relation from Container to ContainerInstance is NOT allowed"), //
                         //
 
+                        arg("component111", "component111", true, "Relation from Component to self is allowed"), //
+                        arg("component111", "person2", true, "Relation from Component to Person is allowed"), //
+                        arg("component111", "softwareSystem1", true, "Relation from Component to SoftwareSystem is allowed"), //
+                        arg("component111", "container11", true, "Relation from Component to Container is allowed"), //
+                        arg("component111", "component112", true, "Relation from Component to Component is allowed"), //
+                        arg("component111", "group1", false, "Relation from Component to Group is NOT allowed"), //
+                        arg("component111", "env1", false, "Relation from Component to DeploymentEnvironment is NOT allowed"), //
+                        arg("component111", "node11", false, "Relation from Component to DeploymentNode is NOT allowed"), //
+                        arg("component111", "infra11", false, "Relation from Component to InfrastructureNode is NOT allowed"), //
+                        arg("component111", "softwareSystemInstance1", false, "Relation from Component to SoftwareSystemInstance is NOT allowed"), //
+                        arg("component111", "containerInstance11", false, "Relation from Component to ContainerInstance is NOT allowed"), //
+                        //
+
                         arg("env1", "env1", false, "Relation from DeploymentEnvironment to self is NOT allowed"), //
                         arg("env1", "person2", false, "Relation from DeploymentEnvironment to Person is NOT allowed"), //
                         arg("env1", "softwareSystem1", false, "Relation from DeploymentEnvironment to SoftwareSystem is NOT allowed"), //
                         arg("env1", "container11", false, "Relation from DeploymentEnvironment to Container is NOT allowed"), //
+                        arg("env1", "component111", false, "Relation from DeploymentEnvironment to Component is NOT allowed"), //
                         arg("env1", "group1", false, "Relation from DeploymentEnvironment to Group is NOT allowed"), //
                         arg("env1", "env2", false, "Relation from DeploymentEnvironment to DeploymentEnvironment is NOT allowed"), //
                         arg("env1", "node11", false, "Relation from DeploymentEnvironment to DeploymentNode is NOT allowed"), //
@@ -539,6 +592,7 @@ public class WorkspaceLoaderTests {
                         arg("node12", "person2", false, "Relation from DeploymentNode to Person is NOT allowed"), //
                         arg("node12", "softwareSystem1", false, "Relation from DeploymentNode to SoftwareSystem is NOT allowed"), //
                         arg("node12", "container11", false, "Relation from DeploymentNode to Container is NOT allowed"), //
+                        arg("node12", "component111", false, "Relation from DeploymentNode to Component is NOT allowed"), //
                         arg("node12", "group1", false, "Relation from DeploymentNode to Group is NOT allowed"), //
                         arg("node12", "env1", false, "Relation from DeploymentNode to DeploymentEnvironment is NOT allowed"), //
                         arg("node12", "node11", true, "Relation from DeploymentNode to DeploymentNode is allowed"), //
@@ -552,6 +606,7 @@ public class WorkspaceLoaderTests {
                         arg("infra12", "person2", false, "Relation from InfrastructureNode to Person is NOT allowed"), //
                         arg("infra12", "softwareSystem1", false, "Relation from InfrastructureNode to SoftwareSystem is NOT allowed"), //
                         arg("infra12", "container11", false, "Relation from InfrastructureNode to Container is NOT allowed"), //
+                        arg("infra12", "component111", false, "Relation from InfrastructureNode to Component is allowed"), //
                         arg("infra12", "group1", false, "Relation from InfrastructureNode to Group is NOT allowed"), //
                         arg("infra12", "env1", false, "Relation from InfrastructureNode to DeploymentEnvironment is NOT allowed"), //
                         arg("infra12", "node11", true, "Relation from InfrastructureNode to DeploymentNode is allowed"), //
@@ -565,6 +620,7 @@ public class WorkspaceLoaderTests {
                         arg("softwareSystemInstance2", "person2", false, "Relation from SoftwareSystemInstance to Person is NOT allowed"), //
                         arg("softwareSystemInstance2", "softwareSystem1", false, "Relation from SoftwareSystemInstance to SoftwareSystem is NOT allowed"), //
                         arg("softwareSystemInstance2", "container11", false, "Relation from SoftwareSystemInstance to Container is NOT allowed"), //
+                        arg("softwareSystemInstance2", "component111", false, "Relation from SoftwareSystemInstance to Component is NOT allowed"), //
                         arg("softwareSystemInstance2", "group1", false, "Relation from SoftwareSystemInstance to Group is NOT allowed"), //
                         arg("softwareSystemInstance2", "env1", false, "Relation from SoftwareSystemInstance to DeploymentEnvironment is NOT allowed"), //
                         arg("softwareSystemInstance2", "node11", false, "Relation from SoftwareSystemInstance to DeploymentNode is NOT allowed"), //
@@ -577,6 +633,7 @@ public class WorkspaceLoaderTests {
                         arg("containerInstance12", "person2", false, "Relation from ContainerInstance to Person is NOT allowed"), //
                         arg("containerInstance12", "softwareSystem1", false, "Relation from ContainerInstance to SoftwareSystem is NOT allowed"), //
                         arg("containerInstance12", "container11", false, "Relation from ContainerInstance to Container is NOT allowed"), //
+                        arg("containerInstance12", "component111", false, "Relation from ContainerInstance to Component is allowed"), //
                         arg("containerInstance12", "group1", false, "Relation from ContainerInstance to Group is NOT allowed"), //
                         arg("containerInstance12", "env1", false, "Relation from ContainerInstance to DeploymentEnvironment is NOT allowed"), //
                         arg("containerInstance12", "node11", false, "Relation from ContainerInstance to DeploymentNode is NOT allowed"), //
@@ -594,7 +651,6 @@ public class WorkspaceLoaderTests {
 
             @BeforeEach
             void init() {
-                loader = loader();
                 builder = builder() //
                         .person("person1") //
                         .person("person2") //
@@ -609,6 +665,11 @@ public class WorkspaceLoaderTests {
                         .container("softwareSystem1", "container12") //
                         .container("softwareSystem2", "container21") //
                         .container("softwareSystem2", "container22") //
+                        //
+                        .component(ElementRaw.builder().parentId("container11").id("component111")) //
+                        .component(ElementRaw.builder().parentId("container11").id("component112")) //
+                        .component(ElementRaw.builder().parentId("container21").id("component211")) //
+                        .component(ElementRaw.builder().parentId("container21").id("component212")) //
                         //
                         .deploymentEnvironment("env1") //
                         .deploymentEnvironment("env2") //
@@ -640,13 +701,13 @@ public class WorkspaceLoaderTests {
             void allowedRelations(String sourceId, String destinationId, boolean shouldSucceed, String displayName) {
                 builder.relation(sourceId, destinationId);
                 if (shouldSucceed) {
-                    var ws = loader.load(builder.build());
+                    var ws = load(builder.build());
                     var relations = ws.getModel().getRelations().getAll();
                     assertEquals(1, relations.size());
                     assertEquals(sourceId, relations.get(0).getFrom().getId());
                     assertEquals(destinationId, relations.get(0).getTo().getId());
                 } else {
-                    Assertions.assertThrows(RelationNotAllowedException.class, () -> loader.load(builder.build()));
+                    Assertions.assertThrows(RelationNotAllowedException.class, () -> load(builder.build()));
                 }
             }
         }
@@ -659,7 +720,7 @@ public class WorkspaceLoaderTests {
         void given_noDiagram_thenEmptyList() {
             var loader = loader();
             var config = builder().build();
-            var ws = loader.load(config);
+            var ws = load(config);
             assertEquals(0, ws.getDiagrams().getAll().size());
         }
 
@@ -668,7 +729,7 @@ public class WorkspaceLoaderTests {
             var loader = loader();
             var style = StyleTestUtil.randomStyle();
             var config = builder().landscapeDiagram(LandscapeDiagramRaw.builder().name("diagram").style(style)).build();
-            var ws = loader.load(config);
+            var ws = load(config);
             var diagram = ws.getDiagrams().getByName("diagram");
             assertEquals(style, diagram.getStyle());
         }
@@ -681,7 +742,7 @@ public class WorkspaceLoaderTests {
                     .softwareSystem("A") //
                     .systemContextDiagram(SystemContextDiagramRaw.builder().name("diagram").target("A").style(style)) //
                     .build();
-            var ws = loader.load(config);
+            var ws = load(config);
             var diagram = ws.getDiagrams().getByName("diagram");
             assertEquals(style, diagram.getStyle());
         }
@@ -694,7 +755,7 @@ public class WorkspaceLoaderTests {
                     .deploymentEnvironment("env") //
                     .deploymentDiagram(DeploymentDiagramRaw.builder().environment("env").name("diagram").style(style)) //
                     .build();
-            var ws = loader.load(config);
+            var ws = load(config);
             var diagram = ws.getDiagrams().getByName("diagram");
             assertEquals(style, diagram.getStyle());
         }
