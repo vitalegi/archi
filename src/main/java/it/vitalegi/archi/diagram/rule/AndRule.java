@@ -1,6 +1,6 @@
 package it.vitalegi.archi.diagram.rule;
 
-import it.vitalegi.archi.model.diagram.DiagramScope;
+import it.vitalegi.archi.diagram.DiagramScope;
 import it.vitalegi.archi.model.element.Element;
 import it.vitalegi.archi.model.relation.Relation;
 import lombok.EqualsAndHashCode;

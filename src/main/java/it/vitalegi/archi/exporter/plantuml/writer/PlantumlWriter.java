@@ -1,4 +1,4 @@
-package it.vitalegi.archi.exporter.plantuml;
+package it.vitalegi.archi.exporter.plantuml.writer;
 
 import it.vitalegi.archi.exporter.Writer;
 import it.vitalegi.archi.exporter.plantuml.constants.LayoutDirection;

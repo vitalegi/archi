@@ -1,24 +1,13 @@
 package it.vitalegi.archi.exporter.plantuml;
 
-import it.vitalegi.archi.model.element.Element;
-import it.vitalegi.archi.model.element.ElementType;
-import it.vitalegi.archi.model.diagram.SystemContextDiagram;
-import it.vitalegi.archi.diagram.rule.AndRule;
-import it.vitalegi.archi.diagram.rule.RuleEntry;
-import it.vitalegi.archi.diagram.rule.element.AnyDescendantOfElementInScopeRule;
-import it.vitalegi.archi.diagram.rule.element.HasElementTypeRule;
-import it.vitalegi.archi.diagram.rule.element.IsDescendantOfRule;
-import it.vitalegi.archi.diagram.rule.element.IsDirectlyConnectedToElementInScopeRule;
-import it.vitalegi.archi.diagram.rule.relation.AlwaysAllowRelationRule;
-import it.vitalegi.archi.diagram.rule.relation.AnyRelationVertexOutOfScopeRule;
-import it.vitalegi.archi.diagram.rule.relation.IsConnectedToRule;
+import it.vitalegi.archi.diagram.scope.DiagramScopeBuilder;
+import it.vitalegi.archi.diagram.scope.SystemContextScopeBuilder;
 import it.vitalegi.archi.exception.ElementNotFoundException;
+import it.vitalegi.archi.model.Workspace;
+import it.vitalegi.archi.model.diagram.SystemContextDiagram;
 import it.vitalegi.archi.util.StringUtil;
 import it.vitalegi.archi.util.WorkspaceUtil;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.Arrays;
-import java.util.List;
 
 @Slf4j
 public class SystemContextDiagramPlantumlExporter extends AbstractModelDiagramPlantumlExporter<SystemContextDiagram> {
@@ -37,28 +26,7 @@ public class SystemContextDiagramPlantumlExporter extends AbstractModelDiagramPl
     }
 
     @Override
-    protected boolean isAllowed(SystemContextDiagram diagram, Element element) {
-        return WorkspaceUtil.isPerson(element) || WorkspaceUtil.isSoftwareSystem(element) || WorkspaceUtil.isContainer(element) || WorkspaceUtil.isGroup(element);
-    }
-
-    @Override
-    protected List<RuleEntry> getVisibilityRules(SystemContextDiagram diagram) {
-        return Arrays.asList( //
-                // target software system and its containers are in scope
-                RuleEntry.include(new AndRule(
-                        new HasElementTypeRule(ElementType.CONTAINER, ElementType.SOFTWARE_SYSTEM),
-                        new IsDescendantOfRule(diagram.getTarget()) //
-                )), //
-                // directly connected software systems and people are in scope
-                RuleEntry.include(new AndRule(
-                        new HasElementTypeRule(ElementType.PERSON, ElementType.SOFTWARE_SYSTEM),
-                        new IsDirectlyConnectedToElementInScopeRule() //
-                )), //
-                RuleEntry.include(new AlwaysAllowRelationRule()), //
-                RuleEntry.include(new AnyDescendantOfElementInScopeRule()), //
-                RuleEntry.exclude(new AnyRelationVertexOutOfScopeRule()), //
-                // relations to/from target software system should be removed
-                RuleEntry.exclude(new IsConnectedToRule(diagram.getTarget()))
-        );
+    protected DiagramScopeBuilder<SystemContextDiagram> diagramScope(Workspace workspace, SystemContextDiagram diagram) {
+        return new SystemContextScopeBuilder(diagram);
     }
 }

@@ -1,6 +1,8 @@
-package it.vitalegi.archi.exporter.plantuml;
+package it.vitalegi.archi.exporter.plantuml.writer;
 
 import it.vitalegi.archi.exporter.plantuml.constants.Direction;
+import it.vitalegi.archi.model.diagramelement.C4DiagramElement;
+import it.vitalegi.archi.model.diagramelement.C4DiagramRelation;
 import it.vitalegi.archi.model.element.Element;
 import it.vitalegi.archi.model.relation.Relation;
 import it.vitalegi.archi.model.style.ElementTag;
@@ -9,7 +11,6 @@ import it.vitalegi.archi.model.style.RelationTag;
 
 import java.util.Formatter;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class C4PlantumlWriter extends PlantumlWriter {
 
@@ -45,7 +46,7 @@ public class C4PlantumlWriter extends PlantumlWriter {
         println("}");
     }
 
-    public void boundaryStart(Element element) {
+    public void boundaryStart(C4DiagramElement element) {
         boundaryStart(getAlias(element), element.getName(), formatTags(element));
     }
 
@@ -60,6 +61,10 @@ public class C4PlantumlWriter extends PlantumlWriter {
     }
 
     public void container(Element element) {
+        container(getAlias(element), element.getName(), null, element.getDescription(), "", formatTags(element), "", "");
+    }
+
+    public void container(C4DiagramElement element) {
         container(getAlias(element), element.getName(), null, element.getDescription(), "", formatTags(element), "", "");
     }
 
@@ -99,6 +104,10 @@ public class C4PlantumlWriter extends PlantumlWriter {
         addRelation(command, getAlias(relation.getFrom()), getAlias(relation.getTo()), relation.getLabel(), relation.getTechnologies(), relation.getDescription(), relation.getSprite(), formatTags(relation), relation.getLink());
     }
 
+    public void addRelation(C4DiagramRelation relation) {
+        addRelation("Rel", relation.getFromAlias(), relation.getToAlias(), relation.getLabel(), relation.getTechnology(), relation.getDescription(), relation.getSprite(), formatTags(relation), relation.getLink());
+    }
+
     protected void addRelation(String command, String aliasFrom, String aliasTo, String label, String technology, String description, String sprite, String tags, String link) {
         //$from, $to, $label, $techn="", $descr="", $sprite="", $tags="", $link=""
         println(format("%s($from=\"%s\", $to=\"%s\", $label=\"%s\", $techn=\"%s\", $descr=\"%s\", $sprite=\"%s\", $tags=\"%s\", $link=\"%s\")", //
@@ -122,15 +131,25 @@ public class C4PlantumlWriter extends PlantumlWriter {
     }
 
     protected String getAlias(Element element) {
-        var alias = element.getUniqueId();
-        alias = alias.replace('-', '_');
-        alias = alias.replace('.', '_');
-        alias = alias.replace(' ', '_');
-        return alias;
+        return getAlias(element.getUniqueId());
     }
 
+    protected String getAlias(C4DiagramElement element) {
+        return getAlias(element.getId());
+    }
+
+    protected String getAlias(String id) {
+        id = id.replace('-', '_');
+        id = id.replace('.', '_');
+        id = id.replace(' ', '_');
+        return id;
+    }
 
     protected String formatTags(Element element) {
+        return formatTags(element.getTags());
+    }
+
+    protected String formatTags(C4DiagramElement element) {
         return formatTags(element.getTags());
     }
 
@@ -138,10 +157,15 @@ public class C4PlantumlWriter extends PlantumlWriter {
         return formatTags(relation.getTags());
     }
 
+    protected String formatTags(C4DiagramRelation relation) {
+        return formatTags(relation.getTags());
+    }
+
+
     protected String formatTags(List<String> tags) {
         if (tags == null) {
             return null;
         }
-        return tags.stream().collect(Collectors.joining("&"));
+        return String.join("&", tags);
     }
 }

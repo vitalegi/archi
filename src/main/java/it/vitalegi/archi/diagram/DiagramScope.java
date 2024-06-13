@@ -1,10 +1,12 @@
-package it.vitalegi.archi.model.diagram;
+package it.vitalegi.archi.diagram;
 
-import it.vitalegi.archi.model.element.Element;
 import it.vitalegi.archi.model.Entity;
+import it.vitalegi.archi.model.element.Element;
 import it.vitalegi.archi.model.relation.Relation;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DiagramScope {
@@ -39,6 +41,14 @@ public class DiagramScope {
 
     public boolean isInScope(Relation relation) {
         return relations.containsKey(getId(relation));
+    }
+
+    public List<Element> getElements() {
+        return new ArrayList<>(elements.values());
+    }
+
+    public List<Relation> getRelations() {
+        return new ArrayList<>(relations.values());
     }
 
     protected String getId(Entity entity) {

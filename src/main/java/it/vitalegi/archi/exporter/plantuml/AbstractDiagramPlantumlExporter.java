@@ -1,6 +1,7 @@
 package it.vitalegi.archi.exporter.plantuml;
 
 import it.vitalegi.archi.exporter.plantuml.constants.LayoutDirection;
+import it.vitalegi.archi.exporter.plantuml.writer.C4PlantumlWriter;
 import it.vitalegi.archi.model.diagram.Diagram;
 import it.vitalegi.archi.model.style.Style;
 import it.vitalegi.archi.model.style.Tags;
