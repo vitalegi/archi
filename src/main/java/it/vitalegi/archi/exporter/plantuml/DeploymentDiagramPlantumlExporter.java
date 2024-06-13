@@ -8,18 +8,14 @@ import it.vitalegi.archi.exception.ElementNotFoundException;
 import it.vitalegi.archi.exporter.plantuml.writer.C4PlantumlWriter;
 import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.model.diagram.DeploymentDiagram;
-import it.vitalegi.archi.model.element.ContainerInstance;
-import it.vitalegi.archi.model.element.DeploymentNode;
-import it.vitalegi.archi.model.element.Element;
-import it.vitalegi.archi.model.element.SoftwareSystemInstance;
+import it.vitalegi.archi.model.diagramelement.C4DiagramElement;
+import it.vitalegi.archi.model.diagramelement.C4DiagramModel;
 import it.vitalegi.archi.util.StringUtil;
 import it.vitalegi.archi.util.WorkspaceUtil;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.List;
-
 @Slf4j
-public class DeploymentDiagramPlantumlExporter extends AbstractModelDiagramPlantumlExporter<DeploymentDiagram> {
+public class DeploymentDiagramPlantumlExporter extends AbstractDiagramPlantumlExporter<DeploymentDiagram> {
 
     @Override
     public void validate(DeploymentDiagram diagram) {
@@ -61,40 +57,6 @@ public class DeploymentDiagramPlantumlExporter extends AbstractModelDiagramPlant
         writer.include("<C4/C4_Deployment>");
     }
 
-    protected void addElementTreeToPuml(List<Element> elementsInScope, Element element, C4PlantumlWriter writer) {
-        if (!elementsInScope.contains(element)) {
-            return;
-        }
-        if (WorkspaceUtil.isDeploymentNode(element)) {
-            var deploymentNode = (DeploymentNode) element;
-            writer.deploymentNodeStart(element);
-            deploymentNode.getElements().forEach(child -> addElementTreeToPuml(elementsInScope, child, writer));
-            writer.deploymentNodeEnd();
-            return;
-        }
-        if (WorkspaceUtil.isInfrastructureNode(element)) {
-            writer.container(element);
-            return;
-        }
-        if (WorkspaceUtil.isContainerInstance(element)) {
-            writer.deploymentNodeStart(element);
-            var containerInstance = (ContainerInstance) element;
-            var container = containerInstance.getContainer();
-            writer.container(container);
-            writer.deploymentNodeEnd();
-            return;
-        }
-        if (WorkspaceUtil.isSoftwareSystemInstance(element)) {
-            writer.deploymentNodeStart(element);
-            var softwareSystemInstance = (SoftwareSystemInstance) element;
-            var softwareSystem = softwareSystemInstance.getSoftwareSystem();
-            writer.container(softwareSystem);
-            writer.deploymentNodeEnd();
-            return;
-        }
-        throw new RuntimeException("Unable to process " + element.toShortString());
-    }
-
     protected boolean isScopeAll(DeploymentDiagram diagram) {
         return Scope.isScopeAll(diagram.getScope());
     }
@@ -108,5 +70,15 @@ public class DeploymentDiagramPlantumlExporter extends AbstractModelDiagramPlant
         return softwareSystem != null;
     }
 
+    @Override
+    protected void writeAsNode(DeploymentDiagram diagram, C4DiagramModel model, C4DiagramElement element, C4PlantumlWriter writer) {
+        writer.deploymentNodeStart(element);
+        writeChildren(diagram, model, element, writer);
+        writer.deploymentNodeEnd();
+    }
 
+    @Override
+    protected void writeAsLeaf(DeploymentDiagram diagram, C4DiagramModel model, C4DiagramElement element, C4PlantumlWriter writer) {
+        writer.container(element);
+    }
 }

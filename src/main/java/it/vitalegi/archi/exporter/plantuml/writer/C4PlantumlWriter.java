@@ -35,6 +35,9 @@ public class C4PlantumlWriter extends PlantumlWriter {
     public void deploymentNodeStart(Element element) {
         deploymentNodeStart(getAlias(element), element.getName(), null, element.getDescription(), "", formatTags(element), "");
     }
+    public void deploymentNodeStart(C4DiagramElement element) {
+        deploymentNodeStart(getAlias(element), element.getName(), null, element.getDescription(), "", formatTags(element), "");
+    }
 
     protected void deploymentNodeStart(String alias, String label, String type, String description, String sprite, String tags, String link) {
         println(format("Deployment_Node(%s, %s, $type=\"%s\", $descr=\"%s\", $sprite=\"%s\", $tags=\"%s\", $link=\"%s\") {", alias, label, type, description, sprite, tags, link));

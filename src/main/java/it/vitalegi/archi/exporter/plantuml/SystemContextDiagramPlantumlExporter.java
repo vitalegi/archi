@@ -10,7 +10,7 @@ import it.vitalegi.archi.util.WorkspaceUtil;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class SystemContextDiagramPlantumlExporter extends AbstractModelDiagramPlantumlExporter<SystemContextDiagram> {
+public class SystemContextDiagramPlantumlExporter extends AbstractDiagramPlantumlExporter<SystemContextDiagram> {
     @Override
     public void validate(SystemContextDiagram diagram) {
         if (StringUtil.isNullOrEmpty(diagram.getTarget())) {

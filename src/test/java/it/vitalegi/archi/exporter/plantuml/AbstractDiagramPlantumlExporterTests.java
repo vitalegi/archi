@@ -1,5 +1,6 @@
 package it.vitalegi.archi.exporter.plantuml;
 
+import it.vitalegi.archi.diagram.scope.DiagramScopeBuilder;
 import it.vitalegi.archi.model.diagram.Diagram;
 import it.vitalegi.archi.util.StyleTestUtil;
 import it.vitalegi.archi.model.Workspace;
@@ -30,9 +31,10 @@ public class AbstractDiagramPlantumlExporterTests {
             }
 
             @Override
-            public String export(Workspace workspace, Diagram diagram) {
+            protected DiagramScopeBuilder<Diagram> diagramScope(Workspace workspace, Diagram diagram) {
                 return null;
             }
+
         };
     }
 

@@ -21,13 +21,13 @@ public class PlantumlDiagramExporter {
     Workspace workspace;
     Path basePath;
     DiagramFormat[] formats;
-    DiagramToPlantumlConverter exporter;
+    PlantumlExporterVisitor exporter;
 
     public PlantumlDiagramExporter(Workspace workspace, Path basePath, DiagramFormat[] formats) {
         this.workspace = workspace;
         this.basePath = basePath;
         this.formats = formats;
-        exporter = new DiagramToPlantumlConverter(workspace);
+        exporter = new PlantumlExporterVisitor(workspace);
     }
 
     public void export(Diagram diagram) {

@@ -8,7 +8,7 @@ import it.vitalegi.archi.visitor.DiagramVisitor;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class DiagramToPlantumlConverter implements DiagramVisitor<String> {
+public class PlantumlExporterVisitor implements DiagramVisitor<String> {
     Workspace workspace;
 
     @Override

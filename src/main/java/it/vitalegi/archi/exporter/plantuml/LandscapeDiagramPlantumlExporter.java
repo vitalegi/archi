@@ -7,7 +7,7 @@ import it.vitalegi.archi.model.diagram.LandscapeDiagram;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-public class LandscapeDiagramPlantumlExporter extends AbstractModelDiagramPlantumlExporter<LandscapeDiagram> {
+public class LandscapeDiagramPlantumlExporter extends AbstractDiagramPlantumlExporter<LandscapeDiagram> {
 
 
     @Override
