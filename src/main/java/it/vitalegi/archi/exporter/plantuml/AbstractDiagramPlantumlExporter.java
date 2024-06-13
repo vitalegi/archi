@@ -2,15 +2,22 @@ package it.vitalegi.archi.exporter.plantuml;
 
 import it.vitalegi.archi.exporter.plantuml.constants.LayoutDirection;
 import it.vitalegi.archi.exporter.plantuml.writer.C4PlantumlWriter;
+import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.model.diagram.Diagram;
 import it.vitalegi.archi.model.style.Style;
 import it.vitalegi.archi.model.style.Tags;
 import it.vitalegi.archi.util.StringUtil;
-import it.vitalegi.archi.model.Workspace;
 
 import java.util.ArrayList;
 
 public abstract class AbstractDiagramPlantumlExporter<E extends Diagram> {
+
+    protected static Style defaultStyle() {
+        var style = new Style();
+        style.setSkinParams(new ArrayList<>());
+        style.setTags(new Tags());
+        return style;
+    }
 
     public abstract void validate(E diagram);
 
@@ -55,7 +62,6 @@ public abstract class AbstractDiagramPlantumlExporter<E extends Diagram> {
         writer.include("<C4/C4_Container>");
     }
 
-
     protected void writeStyles(Workspace workspace, E diagram, C4PlantumlWriter writer) {
         var style = buildStyle(workspace, diagram);
         style.getTags().getElements().forEach(writer::addElementTag);
@@ -75,13 +81,6 @@ public abstract class AbstractDiagramPlantumlExporter<E extends Diagram> {
         var style1 = workspace.getStyle();
         var style2 = diagram.getStyle();
         return defaultStyle.merge(style1).merge(style2);
-    }
-
-    protected static Style defaultStyle() {
-        var style = new Style();
-        style.setSkinParams(new ArrayList<>());
-        style.setTags(new Tags());
-        return style;
     }
 
 }

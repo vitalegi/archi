@@ -1,5 +1,7 @@
 package it.vitalegi.archi.util;
 
+import it.vitalegi.archi.model.Entity;
+import it.vitalegi.archi.model.Model;
 import it.vitalegi.archi.model.element.Component;
 import it.vitalegi.archi.model.element.Container;
 import it.vitalegi.archi.model.element.ContainerInstance;
@@ -7,14 +9,12 @@ import it.vitalegi.archi.model.element.DeploymentEnvironment;
 import it.vitalegi.archi.model.element.DeploymentNode;
 import it.vitalegi.archi.model.element.Element;
 import it.vitalegi.archi.model.element.ElementType;
-import it.vitalegi.archi.model.Entity;
 import it.vitalegi.archi.model.element.Group;
 import it.vitalegi.archi.model.element.InfrastructureNode;
-import it.vitalegi.archi.model.Model;
 import it.vitalegi.archi.model.element.Person;
-import it.vitalegi.archi.model.relation.Relation;
 import it.vitalegi.archi.model.element.SoftwareSystem;
 import it.vitalegi.archi.model.element.SoftwareSystemInstance;
+import it.vitalegi.archi.model.relation.Relation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -328,6 +328,9 @@ public class WorkspaceUtil {
             case CONTAINER -> {
                 return isContainer(element);
             }
+            case COMPONENT -> {
+                return isComponent(element);
+            }
             case GROUP -> {
                 return isGroup(element);
             }
@@ -350,7 +353,7 @@ public class WorkspaceUtil {
                 return isRelation(element);
             }
         }
-        throw new IllegalArgumentException("Element " + element.toShortString() + " is not supported");
+        throw new IllegalArgumentException("Element " + element.toShortString() + " is not supported, [" + type + "]");
     }
 
     public static Element findElementById(List<? extends Element> elements, String id) {

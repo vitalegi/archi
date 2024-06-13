@@ -4,6 +4,7 @@ public interface Mergeable<E> {
 
     /**
      * Takes another object and create a new instance of self with others' values merged
+     *
      * @param other
      * @return
      */

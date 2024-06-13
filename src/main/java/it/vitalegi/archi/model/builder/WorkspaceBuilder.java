@@ -1,14 +1,14 @@
 package it.vitalegi.archi.model.builder;
 
-import it.vitalegi.archi.model.element.Element;
-import it.vitalegi.archi.model.Model;
-import it.vitalegi.archi.model.relation.Relation;
-import it.vitalegi.archi.model.diagram.Diagrams;
 import it.vitalegi.archi.exception.CycleNotAllowedException;
+import it.vitalegi.archi.model.Model;
+import it.vitalegi.archi.model.Workspace;
+import it.vitalegi.archi.model.diagram.Diagrams;
+import it.vitalegi.archi.model.element.Element;
+import it.vitalegi.archi.model.relation.Relation;
 import it.vitalegi.archi.model.style.Style;
 import it.vitalegi.archi.util.StringUtil;
 import it.vitalegi.archi.util.WorkspaceUtil;
-import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.workspaceloader.DiagramRawMapperVisitor;
 import it.vitalegi.archi.workspaceloader.model.DiagramRaw;
 import it.vitalegi.archi.workspaceloader.model.ElementRaw;

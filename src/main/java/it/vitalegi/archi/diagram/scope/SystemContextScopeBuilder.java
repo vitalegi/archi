@@ -1,14 +1,6 @@
 package it.vitalegi.archi.diagram.scope;
 
-import it.vitalegi.archi.diagram.rule.AndRule;
 import it.vitalegi.archi.diagram.rule.RuleEntry;
-import it.vitalegi.archi.diagram.rule.element.AnyDescendantOfElementInScopeRule;
-import it.vitalegi.archi.diagram.rule.element.HasElementTypeRule;
-import it.vitalegi.archi.diagram.rule.element.IsDescendantOfRule;
-import it.vitalegi.archi.diagram.rule.element.IsDirectlyConnectedToElementInScopeRule;
-import it.vitalegi.archi.diagram.rule.relation.AlwaysAllowRelationRule;
-import it.vitalegi.archi.diagram.rule.relation.AnyRelationVertexOutOfScopeRule;
-import it.vitalegi.archi.diagram.rule.relation.IsConnectedToRule;
 import it.vitalegi.archi.model.diagram.SystemContextDiagram;
 import it.vitalegi.archi.model.element.Element;
 import it.vitalegi.archi.model.element.ElementType;
@@ -16,6 +8,17 @@ import it.vitalegi.archi.util.WorkspaceUtil;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static it.vitalegi.archi.diagram.rule.RuleEntry.allRelations;
+import static it.vitalegi.archi.diagram.rule.RuleEntry.and;
+import static it.vitalegi.archi.diagram.rule.RuleEntry.anyDescendantInScope;
+import static it.vitalegi.archi.diagram.rule.RuleEntry.anyRelationVertexOutOfScope;
+import static it.vitalegi.archi.diagram.rule.RuleEntry.connectedToElementInScope;
+import static it.vitalegi.archi.diagram.rule.RuleEntry.exclude;
+import static it.vitalegi.archi.diagram.rule.RuleEntry.include;
+import static it.vitalegi.archi.diagram.rule.RuleEntry.isConnectedTo;
+import static it.vitalegi.archi.diagram.rule.RuleEntry.isDescendantOf;
+import static it.vitalegi.archi.diagram.rule.RuleEntry.typeIs;
 
 public class SystemContextScopeBuilder extends DiagramScopeBuilder<SystemContextDiagram> {
     public SystemContextScopeBuilder(SystemContextDiagram diagram) {
@@ -31,20 +34,20 @@ public class SystemContextScopeBuilder extends DiagramScopeBuilder<SystemContext
     protected List<RuleEntry> getVisibilityRules() {
         return Arrays.asList( //
                 // target software system and its containers are in scope
-                RuleEntry.include(new AndRule(
-                        new HasElementTypeRule(ElementType.CONTAINER, ElementType.SOFTWARE_SYSTEM),
-                        new IsDescendantOfRule(diagram.getTarget()) //
+                include(and(
+                        typeIs(ElementType.CONTAINER, ElementType.SOFTWARE_SYSTEM),
+                        isDescendantOf(diagram.getTarget()) //
                 )), //
                 // directly connected software systems and people are in scope
-                RuleEntry.include(new AndRule(
-                        new HasElementTypeRule(ElementType.PERSON, ElementType.SOFTWARE_SYSTEM),
-                        new IsDirectlyConnectedToElementInScopeRule() //
+                include(and(
+                        typeIs(ElementType.PERSON, ElementType.SOFTWARE_SYSTEM),
+                        connectedToElementInScope() //
                 )), //
-                RuleEntry.include(new AlwaysAllowRelationRule()), //
-                RuleEntry.include(new AnyDescendantOfElementInScopeRule()), //
-                RuleEntry.exclude(new AnyRelationVertexOutOfScopeRule()), //
+                include(allRelations()), //
+                include(anyDescendantInScope()), //
+                exclude(anyRelationVertexOutOfScope()), //
                 // relations to/from target software system should be removed
-                RuleEntry.exclude(new IsConnectedToRule(diagram.getTarget()))
+                exclude(isConnectedTo(diagram.getTarget()))
         );
     }
 }

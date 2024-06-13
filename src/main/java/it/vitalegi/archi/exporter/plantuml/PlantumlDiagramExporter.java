@@ -1,9 +1,9 @@
 package it.vitalegi.archi.exporter.plantuml;
 
 import it.vitalegi.archi.diagram.DiagramFormat;
+import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.model.diagram.Diagram;
 import it.vitalegi.archi.util.FileUtil;
-import it.vitalegi.archi.model.Workspace;
 import lombok.extern.slf4j.Slf4j;
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;

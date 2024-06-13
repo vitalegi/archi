@@ -10,37 +10,33 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
 @Getter
 @Setter
 @NoArgsConstructor
-public class AndRule extends AbstractVisibilityRule {
+public class NotRule extends AbstractVisibilityRule {
 
-    List<VisibilityRule> rules;
+    VisibilityRule rule;
 
-    public AndRule(List<VisibilityRule> rules) {
-        this.rules = rules;
-    }
-
-    public AndRule(VisibilityRule... rules) {
-        this(new ArrayList<>(List.of(rules)));
+    public NotRule(VisibilityRule rule) {
+        this.rule = rule;
     }
 
     public boolean match(DiagramScope diagramScope, Element element) {
-        return rules.stream().allMatch(rule -> rule.match(diagramScope, element));
+        var result = rule.match(diagramScope, element);
+        log.debug("Negate result for {}, was {}, becomes {}", element.toShortString(), result, !result);
+        return !result;
     }
 
     public boolean match(DiagramScope diagramScope, Relation relation) {
-        return rules.stream().allMatch(rule -> rule.match(diagramScope, relation));
+        var result = rule.match(diagramScope, relation);
+        log.debug("Negate result for {}, was {}, becomes {}", relation.toShortString(), result, !result);
+        return !result;
     }
 
     @Override
     public String toString() {
-        return "(" + rules.stream().map(VisibilityRule::toString).collect(Collectors.joining(" and ")) + ")";
+        return "NOT( " + rule.toString() + ")";
     }
 }

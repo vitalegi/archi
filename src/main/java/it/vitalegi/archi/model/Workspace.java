@@ -1,6 +1,5 @@
 package it.vitalegi.archi.model;
 
-import it.vitalegi.archi.model.Model;
 import it.vitalegi.archi.model.diagram.Diagrams;
 import it.vitalegi.archi.model.style.Style;
 import lombok.Data;

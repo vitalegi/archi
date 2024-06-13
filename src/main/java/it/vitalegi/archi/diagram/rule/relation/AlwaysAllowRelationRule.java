@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @Getter
 @Setter
@@ -23,5 +22,9 @@ public class AlwaysAllowRelationRule extends AbstractVisibilityRule {
 
     public boolean match(DiagramScope diagramScope, Relation relation) {
         return true;
+    }
+    @Override
+    public String toString() {
+        return "is relation";
     }
 }

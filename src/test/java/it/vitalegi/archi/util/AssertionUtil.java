@@ -12,7 +12,7 @@ public class AssertionUtil {
         }
         var mismatches = expected.stream().filter(e -> actual.stream().noneMatch(e::equals)).collect(Collectors.toList());
         if (!mismatches.isEmpty()) {
-            fail(expected, actual, "Mismatches: " + mismatches);
+            fail(sort(expected), sort(actual), "Mismatches: " + mismatches);
         }
     }
 
@@ -22,5 +22,9 @@ public class AssertionUtil {
                 .expected(expected) //
                 .actual(actual) //
                 .buildAndThrow();
+    }
+
+    private static List<?> sort(List<?> list) {
+        return list.stream().sorted().collect(Collectors.toList());
     }
 }

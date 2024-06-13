@@ -29,7 +29,7 @@ public abstract class DiagramScopeBuilder<E extends Diagram> {
         log.debug("Diagram {}, start processing rules", diagram.getName());
         log.debug("Elements in perimeter: {}", elements.stream().map(Element::toShortString).collect(Collectors.toList()));
         for (var rule : rules) {
-            applyRule(rule, scope, elements, relations);
+            scope = applyRule(rule, scope, elements, relations);
         }
         log.debug("Diagram {}, end processing rules", diagram.getName());
         return scope;
@@ -47,42 +47,55 @@ public abstract class DiagramScopeBuilder<E extends Diagram> {
     protected abstract boolean isAllowed(Element element);
 
 
-    protected void applyRule(RuleEntry rule, DiagramScope scope, List<Element> elements, List<Relation> relations) {
+    protected DiagramScope applyRule(RuleEntry rule, DiagramScope scope, List<Element> elements, List<Relation> relations) {
+        log.debug("Apply {}", rule);
+        log.debug("Start scope: {}", scope);
+        var nextScope = scope.duplicate();
         if (rule.getType() == VisibilityRuleType.INCLUSION) {
-            applyRuleInclusion(rule.getRule(), scope, elements, relations);
+            applyRuleInclusion(rule.getRule(), scope, nextScope, elements, relations);
         } else if (rule.getType() == VisibilityRuleType.EXCLUSION) {
-            applyRuleExclusion(rule.getRule(), scope, elements, relations);
+            applyRuleExclusion(rule.getRule(), scope, nextScope, elements, relations);
         } else {
             throw new RuntimeException("Can't process rule, unknown RuleType. Rule: " + rule);
         }
+        log.debug("End scope: {}", nextScope);
+        return nextScope;
     }
 
-    protected void applyRuleInclusion(VisibilityRule rule, DiagramScope scope, List<Element> elements, List<Relation> relations) {
+    protected void applyRuleInclusion(VisibilityRule rule, DiagramScope scope, DiagramScope nextScope, List<Element> elements, List<Relation> relations) {
         for (var element : elements) {
             if (rule.match(scope, element)) {
-                scope.add(element);
+                nextScope.add(element);
                 log.debug("Diagram {}, add {} to scope via {}", diagram.getName(), element.toShortString(), rule);
+            } else {
+                log.debug("Diagram {}, no match for {} on rule include if {}", diagram.getName(), element.toShortString(), rule);
             }
         }
         for (var relation : relations) {
             if (rule.match(scope, relation)) {
-                scope.add(relation);
+                nextScope.add(relation);
                 log.debug("Diagram {}, add {} to scope via {}", diagram.getName(), relation.toShortString(), rule);
+            } else {
+                log.debug("Diagram {}, no match for {} on rule include if {}", diagram.getName(), relation.toShortString(), rule);
             }
         }
     }
 
-    protected void applyRuleExclusion(VisibilityRule rule, DiagramScope scope, List<Element> elements, List<Relation> relations) {
+    protected void applyRuleExclusion(VisibilityRule rule, DiagramScope scope, DiagramScope nextScope, List<Element> elements, List<Relation> relations) {
         for (var element : elements) {
             if (rule.match(scope, element)) {
-                scope.remove(element);
+                nextScope.remove(element);
                 log.debug("Diagram {}, remove {} to scope via {}", diagram.getName(), element.toShortString(), rule);
+            } else {
+                log.debug("Diagram {}, no match for {} on rule exclude if {}", diagram.getName(), element.toShortString(), rule);
             }
         }
         for (var relation : relations) {
             if (rule.match(scope, relation)) {
-                scope.remove(relation);
+                nextScope.remove(relation);
                 log.debug("Diagram {}, remove {} to scope via {}", diagram.getName(), relation.toShortString(), rule);
+            } else {
+                log.debug("Diagram {}, no match for {} on rule exclude if {}", diagram.getName(), relation.toShortString(), rule);
             }
         }
     }

@@ -1,10 +1,10 @@
 package it.vitalegi.archi.exporter.plantuml;
 
+import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.model.diagram.DeploymentDiagram;
 import it.vitalegi.archi.model.diagram.LandscapeDiagram;
 import it.vitalegi.archi.model.diagram.SystemContextDiagram;
 import it.vitalegi.archi.visitor.DiagramVisitor;
-import it.vitalegi.archi.model.Workspace;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

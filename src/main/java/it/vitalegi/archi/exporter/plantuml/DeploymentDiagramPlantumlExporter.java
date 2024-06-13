@@ -1,30 +1,25 @@
 package it.vitalegi.archi.exporter.plantuml;
 
-import it.vitalegi.archi.exporter.plantuml.writer.C4PlantumlWriter;
-import it.vitalegi.archi.model.element.Container;
-import it.vitalegi.archi.model.element.ContainerInstance;
-import it.vitalegi.archi.model.element.DeploymentEnvironment;
-import it.vitalegi.archi.model.element.DeploymentNode;
-import it.vitalegi.archi.model.element.Element;
-import it.vitalegi.archi.model.Entity;
-import it.vitalegi.archi.model.Model;
-import it.vitalegi.archi.model.relation.Relation;
-import it.vitalegi.archi.model.element.SoftwareSystem;
-import it.vitalegi.archi.model.element.SoftwareSystemInstance;
-import it.vitalegi.archi.model.diagram.DeploymentDiagram;
+import it.vitalegi.archi.diagram.scope.DeploymentDiagramAllScopeBuilder;
+import it.vitalegi.archi.diagram.scope.DeploymentDiagramSoftwareSystemScopeBuilder;
+import it.vitalegi.archi.diagram.scope.DiagramScopeBuilder;
 import it.vitalegi.archi.diagram.scope.Scope;
 import it.vitalegi.archi.exception.ElementNotFoundException;
+import it.vitalegi.archi.exporter.plantuml.writer.C4PlantumlWriter;
+import it.vitalegi.archi.model.Workspace;
+import it.vitalegi.archi.model.diagram.DeploymentDiagram;
+import it.vitalegi.archi.model.element.ContainerInstance;
+import it.vitalegi.archi.model.element.DeploymentNode;
+import it.vitalegi.archi.model.element.Element;
+import it.vitalegi.archi.model.element.SoftwareSystemInstance;
 import it.vitalegi.archi.util.StringUtil;
 import it.vitalegi.archi.util.WorkspaceUtil;
-import it.vitalegi.archi.model.Workspace;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
-public class DeploymentDiagramPlantumlExporter extends AbstractDiagramPlantumlExporter<DeploymentDiagram> {
+public class DeploymentDiagramPlantumlExporter extends AbstractModelDiagramPlantumlExporter<DeploymentDiagram> {
 
     @Override
     public void validate(DeploymentDiagram diagram) {
@@ -50,21 +45,12 @@ public class DeploymentDiagramPlantumlExporter extends AbstractDiagramPlantumlEx
     }
 
     @Override
-    public String export(Workspace workspace, DeploymentDiagram diagram) {
-        var writer = new C4PlantumlWriter();
-        writeHeader(workspace, diagram, writer);
-        writeStyles(workspace, diagram, writer);
-
-        var deploymentEnvironment = getDeploymentEnvironment(diagram);
-        var elements = getElementsInScope(diagram);
-        var relations = getRelationsInScope(diagram, elements);
-
-        deploymentEnvironment.getElements().forEach(element -> addElementTreeToPuml(elements, element, writer));
-
-        relations.forEach(writer::addRelation);
-
-        writeFooter(diagram, writer);
-        return writer.build();
+    protected DiagramScopeBuilder<DeploymentDiagram> diagramScope(Workspace workspace, DeploymentDiagram diagram) {
+        if (isScopeAll(diagram)) {
+            return new DeploymentDiagramAllScopeBuilder(diagram);
+        } else {
+            return new DeploymentDiagramSoftwareSystemScopeBuilder(diagram);
+        }
     }
 
     @Override
@@ -109,30 +95,6 @@ public class DeploymentDiagramPlantumlExporter extends AbstractDiagramPlantumlEx
         throw new RuntimeException("Unable to process " + element.toShortString());
     }
 
-    protected List<Element> getElementsInScope(DeploymentDiagram diagram) {
-        var perimeter = getElementsPerimeter(diagram).collect(Collectors.toList());
-        var baseSet = getBaseSet(diagram, perimeter);
-        return getElementsInScope(diagram, perimeter, baseSet);
-    }
-
-    protected Stream<Element> getElementsPerimeter(DeploymentDiagram diagram) {
-        var deploymentEnvironment = getDeploymentEnvironment(diagram);
-        return deploymentEnvironment.getAllChildren().distinct();
-    }
-
-    protected List<Element> getBaseSet(DeploymentDiagram diagram, List<Element> perimeter) {
-        return perimeter.stream().filter(e -> isInBaseScope(diagram, e)).collect(Collectors.toList());
-    }
-
-    protected List<Element> getElementsInScope(DeploymentDiagram diagram, List<Element> perimeter, List<Element> baseSet) {
-        return perimeter.stream().filter(e -> isInScope(diagram, baseSet, e)).collect(Collectors.toList());
-    }
-
-    protected List<Relation> getRelationsInScope(DeploymentDiagram diagram, List<Element> elementsInScope) {
-        log.debug("Elements in scope: {}", elementsInScope.stream().map(Element::toShortString).collect(Collectors.joining(", ")));
-        return diagram.getModel().getRelations().getAll().stream().filter(r -> isInScope(diagram, elementsInScope, r)).collect(Collectors.toList());
-    }
-
     protected boolean isScopeAll(DeploymentDiagram diagram) {
         return Scope.isScopeAll(diagram.getScope());
     }
@@ -146,74 +108,5 @@ public class DeploymentDiagramPlantumlExporter extends AbstractDiagramPlantumlEx
         return softwareSystem != null;
     }
 
-    protected DeploymentEnvironment getDeploymentEnvironment(DeploymentDiagram diagram) {
-        var model = diagram.getModel();
-        return WorkspaceUtil.getDeploymentEnvironment(model.getDeploymentEnvironments(), diagram.getEnvironment());
-    }
-
-    protected boolean isInBaseScope(DeploymentDiagram diagram, Element element) {
-        if (isScopeAll(diagram)) {
-            return WorkspaceUtil.isContainerInstance(element) || WorkspaceUtil.isSoftwareSystemInstance(element) || WorkspaceUtil.isContainer(element) || WorkspaceUtil.isSoftwareSystem(element);
-        }
-        if (isScopeSoftwareSystem(diagram)) {
-            if (WorkspaceUtil.isContainer(element)) {
-                var curr = (Container) element;
-                return Entity.equals(curr.getSoftwareSystem().getId(), diagram.getScope());
-            }
-            if (WorkspaceUtil.isContainerInstance(element)) {
-                var curr = (ContainerInstance) element;
-                var container = curr.getContainer();
-                return Entity.equals(container.getSoftwareSystem().getId(), diagram.getScope());
-            }
-            if (WorkspaceUtil.isSoftwareSystem(element)) {
-                var curr = (SoftwareSystem) element;
-                return Entity.equals(curr.getId(), diagram.getScope());
-            }
-            if (WorkspaceUtil.isSoftwareSystemInstance(element)) {
-                var curr = (SoftwareSystemInstance) element;
-                var softwareSystem = curr.getSoftwareSystem();
-                return Entity.equals(softwareSystem.getId(), diagram.getScope());
-            }
-        }
-        return false;
-    }
-
-
-    protected boolean isInScope(DeploymentDiagram diagram, List<Element> baseScope, Element element) {
-        // if it's already in scope, keep it
-        if (baseScope.contains(element)) {
-            log.debug("Diagram {}, {} is in scope", diagram.getName(), element.toShortString());
-            return true;
-        }
-        // if it is parent of anything in scope, it's in scope
-        var children = element.getAllChildren();
-        var firstMatchedChild = children.filter(baseScope::contains).findFirst().orElse(null);
-        if (firstMatchedChild != null) {
-            log.debug("Diagram {}, {} is in scope because it's parent of {}", diagram.getName(), element.toShortString(), firstMatchedChild.toShortString());
-            return true;
-        }
-        // if there's a direct connection with anything in scope, it's in scope
-        if (baseScope.stream().anyMatch(scope -> hasDistance1(diagram.getModel(), scope, element))) {
-            log.debug("Diagram {}, {} is in scope because it's connected to at least one element in scope", diagram.getName(), element.toShortString());
-            return true;
-        }
-        return false;
-    }
-
-    protected boolean hasDistance1(Model model, Element element1, Element element2) {
-        var relations = model.getRelations().getRelationsBetween(element1, element2);
-        log.debug("Relations between {} and {}: {}", element1.toShortString(), element2.toShortString(), relations.size());
-        return !relations.isEmpty();
-    }
-
-    protected boolean isInScope(DeploymentDiagram diagram, List<Element> elementsInScope, Relation relation) {
-        if (!elementsInScope.contains(relation.getFrom())) {
-            return false;
-        }
-        if (!elementsInScope.contains(relation.getTo())) {
-            return false;
-        }
-        return true;
-    }
 
 }

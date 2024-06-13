@@ -1,7 +1,6 @@
 package it.vitalegi.archi.model.diagram;
 
 import it.vitalegi.archi.model.Model;
-import it.vitalegi.archi.model.diagram.Diagram;
 import it.vitalegi.archi.visitor.DiagramVisitor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

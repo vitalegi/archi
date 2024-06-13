@@ -10,14 +10,13 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
-@ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
 @Getter
 @Setter
@@ -48,4 +47,8 @@ public class HasElementTypeRule extends AbstractVisibilityRule {
         return false;
     }
 
+    @Override
+    public String toString() {
+        return "is " + types.stream().map(ElementType::name).collect(Collectors.joining(", "));
+    }
 }

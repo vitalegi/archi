@@ -1,7 +1,7 @@
 package it.vitalegi.archi.model.relation;
 
-import it.vitalegi.archi.model.element.ContainerInstance;
 import it.vitalegi.archi.model.Entity;
+import it.vitalegi.archi.model.element.ContainerInstance;
 import it.vitalegi.archi.model.element.SoftwareSystem;
 import it.vitalegi.archi.model.element.SoftwareSystemInstance;
 import it.vitalegi.archi.util.WorkspaceUtil;

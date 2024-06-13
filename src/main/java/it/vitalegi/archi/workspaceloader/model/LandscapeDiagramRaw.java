@@ -19,6 +19,7 @@ public class LandscapeDiagramRaw extends DiagramRaw {
     public LandscapeDiagramRaw(String name, String title, Style style) {
         super(name, title, style);
     }
+
     @Override
     public <E> E visit(DiagramRawVisitor<E> visitor) {
         return visitor.visitLandscapeDiagramRaw(this);

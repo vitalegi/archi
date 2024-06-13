@@ -24,6 +24,7 @@ public class Container extends Element {
         }
         return (SoftwareSystem) curr;
     }
+
     @Override
     public <E> E visit(ElementVisitor<E> visitor) {
         return visitor.visitContainer(this);

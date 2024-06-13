@@ -1,15 +1,15 @@
 package it.vitalegi.archi.workspaceloader;
 
+import it.vitalegi.archi.model.Model;
 import it.vitalegi.archi.model.diagram.DeploymentDiagram;
 import it.vitalegi.archi.model.diagram.Diagram;
 import it.vitalegi.archi.model.diagram.LandscapeDiagram;
 import it.vitalegi.archi.model.diagram.SystemContextDiagram;
-import it.vitalegi.archi.model.Model;
+import it.vitalegi.archi.visitor.DiagramRawVisitor;
 import it.vitalegi.archi.workspaceloader.model.DeploymentDiagramRaw;
 import it.vitalegi.archi.workspaceloader.model.DiagramRaw;
 import it.vitalegi.archi.workspaceloader.model.LandscapeDiagramRaw;
 import it.vitalegi.archi.workspaceloader.model.SystemContextDiagramRaw;
-import it.vitalegi.archi.visitor.DiagramRawVisitor;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor

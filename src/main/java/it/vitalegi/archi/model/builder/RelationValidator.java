@@ -1,10 +1,10 @@
 package it.vitalegi.archi.model.builder;
 
+import it.vitalegi.archi.exception.RelationNotAllowedException;
 import it.vitalegi.archi.model.element.DeploymentEnvironment;
 import it.vitalegi.archi.model.element.Element;
 import it.vitalegi.archi.model.element.ElementType;
 import it.vitalegi.archi.model.relation.Relation;
-import it.vitalegi.archi.exception.RelationNotAllowedException;
 import it.vitalegi.archi.util.WorkspaceUtil;
 
 import java.util.Arrays;

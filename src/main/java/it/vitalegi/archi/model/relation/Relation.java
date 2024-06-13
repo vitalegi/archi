@@ -1,9 +1,9 @@
 package it.vitalegi.archi.model.relation;
 
-import it.vitalegi.archi.model.element.Element;
-import it.vitalegi.archi.model.element.ElementType;
 import it.vitalegi.archi.model.Entity;
 import it.vitalegi.archi.model.Model;
+import it.vitalegi.archi.model.element.Element;
+import it.vitalegi.archi.model.element.ElementType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
