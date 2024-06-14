@@ -1,6 +1,5 @@
 package it.vitalegi.archi.exporter.c4.plantuml.builder;
 
-import it.vitalegi.archi.diagram.DiagramScope;
 import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.model.diagram.Diagram;
 import it.vitalegi.archi.model.diagramelement.C4DiagramElement;
@@ -9,58 +8,23 @@ import it.vitalegi.archi.model.diagramelement.C4DiagramRelation;
 import it.vitalegi.archi.model.element.Element;
 import it.vitalegi.archi.model.relation.Relation;
 
-import java.util.List;
 import java.util.stream.Stream;
 
-public class C4ModelBuilder {
+public abstract class C4ModelBuilder {
     AliasGenerator aliasGenerator;
-
     Workspace workspace;
     Diagram diagram;
-    DiagramScope diagramScope;
     C4DiagramModel model;
 
-    public C4ModelBuilder(Workspace workspace, Diagram diagram, DiagramScope diagramScope) {
+    public C4ModelBuilder(Workspace workspace, Diagram diagram) {
         this.workspace = workspace;
         this.diagram = diagram;
-        this.diagramScope = diagramScope;
         aliasGenerator = new AliasGenerator();
         model = new C4DiagramModel();
     }
 
-    public C4DiagramModel build() {
-        var topLevelElements = diagram.getModel().getElements();
-        for (var element : topLevelElements) {
-            buildElement(null, element);
-        }
-        buildRelations(diagram.getModel().getRelations().getAll());
-        return model;
-    }
+    public abstract C4DiagramModel build();
 
-    protected void buildElement(C4DiagramElement parent, Element element) {
-        if (diagramScope.isInScope(element)) {
-            var e = addElement(parent, element);
-            for (var child : element.getElements()) {
-                buildElement(e, child);
-            }
-        } else {
-            for (var child : element.getElements()) {
-                buildElement(parent, child);
-            }
-        }
-    }
-
-    protected void buildRelations(List<Relation> relations) {
-        for (var relation : relations) {
-            buildRelation(relation);
-        }
-    }
-
-    protected void buildRelation(Relation relation) {
-        if (diagramScope.isInScope(relation)) {
-            relation(relation).forEach(model::addRelation);
-        }
-    }
 
     protected C4DiagramElement addElement(C4DiagramElement parent, Element element) {
         var elementFactory = new DiagramElementFactoryVisitor(aliasGenerator);

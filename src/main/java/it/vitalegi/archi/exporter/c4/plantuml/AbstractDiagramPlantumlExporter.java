@@ -2,6 +2,7 @@ package it.vitalegi.archi.exporter.c4.plantuml;
 
 import it.vitalegi.archi.diagram.scope.DiagramScopeBuilder;
 import it.vitalegi.archi.exporter.c4.plantuml.builder.C4ModelBuilder;
+import it.vitalegi.archi.exporter.c4.plantuml.builder.DiagramScopeModelBuilder;
 import it.vitalegi.archi.exporter.c4.plantuml.writer.C4PlantumlWriter;
 import it.vitalegi.archi.exporter.c4.plantuml.constants.LayoutDirection;
 import it.vitalegi.archi.model.Workspace;
@@ -99,7 +100,7 @@ public abstract class AbstractDiagramPlantumlExporter<E extends Diagram> {
     }
     protected C4DiagramModel buildModel(Workspace workspace, E diagram) {
         var scope = diagramScope(workspace, diagram).computeScope();
-        return new C4ModelBuilder(workspace, diagram, scope).build();
+        return new DiagramScopeModelBuilder(workspace, diagram, scope).build();
     }
 
     protected abstract DiagramScopeBuilder<E> diagramScope(Workspace workspace, E diagram);
