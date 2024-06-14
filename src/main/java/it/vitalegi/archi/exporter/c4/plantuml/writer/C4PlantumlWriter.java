@@ -1,6 +1,6 @@
-package it.vitalegi.archi.exporter.plantuml.writer;
+package it.vitalegi.archi.exporter.c4.plantuml.writer;
 
-import it.vitalegi.archi.exporter.plantuml.constants.Direction;
+import it.vitalegi.archi.exporter.c4.plantuml.constants.Direction;
 import it.vitalegi.archi.model.diagramelement.C4DiagramElement;
 import it.vitalegi.archi.model.diagramelement.C4DiagramRelation;
 import it.vitalegi.archi.model.element.Element;

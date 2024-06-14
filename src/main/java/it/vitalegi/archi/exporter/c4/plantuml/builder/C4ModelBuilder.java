@@ -1,4 +1,4 @@
-package it.vitalegi.archi.exporter.plantuml.builder;
+package it.vitalegi.archi.exporter.c4.plantuml.builder;
 
 import it.vitalegi.archi.diagram.DiagramScope;
 import it.vitalegi.archi.model.Workspace;

@@ -1,4 +1,4 @@
-package it.vitalegi.archi.exporter.plantuml.constants;
+package it.vitalegi.archi.exporter.c4.plantuml.constants;
 
 import lombok.Getter;
 

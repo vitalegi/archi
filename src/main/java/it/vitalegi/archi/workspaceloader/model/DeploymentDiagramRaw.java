@@ -1,6 +1,6 @@
 package it.vitalegi.archi.workspaceloader.model;
 
-import it.vitalegi.archi.diagram.scope.Scope;
+import it.vitalegi.archi.exporter.c4.plantuml.DeploymentDiagramPlantumlExporter;
 import it.vitalegi.archi.model.diagram.DiagramOptions;
 import it.vitalegi.archi.model.style.Style;
 import it.vitalegi.archi.visitor.DiagramRawVisitor;
@@ -28,7 +28,7 @@ public class DeploymentDiagramRaw extends DiagramRaw {
     }
 
     public static DeploymentDiagramRawBuilder all(String name, String environment) {
-        return builder().name(name).environment(environment).scope(Scope.ALL);
+        return builder().name(name).environment(environment).scope(DeploymentDiagramPlantumlExporter.ALL);
     }
 
     public static DeploymentDiagramRawBuilder scoped(String name, String environment, String softwareSystemId) {
