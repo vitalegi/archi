@@ -1,5 +1,6 @@
 package it.vitalegi.archi.workspaceloader.model;
 
+import it.vitalegi.archi.model.diagram.DiagramOptions;
 import it.vitalegi.archi.model.style.Style;
 import it.vitalegi.archi.visitor.DiagramRawVisitor;
 import lombok.Builder;
@@ -18,8 +19,8 @@ public class SystemContextDiagramRaw extends DiagramRaw {
     String target;
 
     @Builder
-    public SystemContextDiagramRaw(String name, String title, Style style, String target) {
-        super(name, title, style);
+    public SystemContextDiagramRaw(String name, String title, Style style, DiagramOptions options, String target) {
+        super(name, title, style, options);
         this.target = target;
     }
 

@@ -10,6 +10,7 @@ public abstract class Diagram {
     String name;
     String title;
     Style style;
+    DiagramOptions options;
     Model model;
 
     public Diagram(Model model) {

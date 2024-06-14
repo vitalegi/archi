@@ -3,6 +3,7 @@ package it.vitalegi.archi.workspaceloader;
 import it.vitalegi.archi.model.Model;
 import it.vitalegi.archi.model.diagram.DeploymentDiagram;
 import it.vitalegi.archi.model.diagram.Diagram;
+import it.vitalegi.archi.model.diagram.DiagramOptions;
 import it.vitalegi.archi.model.diagram.LandscapeDiagram;
 import it.vitalegi.archi.model.diagram.SystemContextDiagram;
 import it.vitalegi.archi.visitor.DiagramRawVisitor;
@@ -44,6 +45,10 @@ public class DiagramRawMapperVisitor implements DiagramRawVisitor<Diagram> {
         out.setName(in.getName());
         out.setTitle(in.getTitle());
         out.setStyle(in.getStyle());
+        if (in.getOptions() == null) {
+            out.setOptions(DiagramOptions.defaultOptions());
+        } else {
+            out.setOptions(in.getOptions());
+        }
     }
-
 }

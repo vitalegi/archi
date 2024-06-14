@@ -1,5 +1,6 @@
 package it.vitalegi.archi.workspaceloader.model;
 
+import it.vitalegi.archi.model.diagram.DiagramOptions;
 import it.vitalegi.archi.model.style.Style;
 import it.vitalegi.archi.visitor.DiagramRawVisitor;
 import lombok.Builder;
@@ -16,8 +17,8 @@ import lombok.ToString;
 @NoArgsConstructor
 public class LandscapeDiagramRaw extends DiagramRaw {
     @Builder
-    public LandscapeDiagramRaw(String name, String title, Style style) {
-        super(name, title, style);
+    public LandscapeDiagramRaw(String name, String title, Style style, DiagramOptions options) {
+        super(name, title, style, options);
     }
 
     @Override

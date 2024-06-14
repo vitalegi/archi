@@ -1,6 +1,7 @@
 package it.vitalegi.archi.workspaceloader.model;
 
 import it.vitalegi.archi.diagram.scope.Scope;
+import it.vitalegi.archi.model.diagram.DiagramOptions;
 import it.vitalegi.archi.model.style.Style;
 import it.vitalegi.archi.visitor.DiagramRawVisitor;
 import lombok.Builder;
@@ -20,8 +21,8 @@ public class DeploymentDiagramRaw extends DiagramRaw {
     String environment;
 
     @Builder
-    public DeploymentDiagramRaw(String name, String title, Style style, String scope, String environment) {
-        super(name, title, style);
+    public DeploymentDiagramRaw(String name, String title, Style style, DiagramOptions options, String scope, String environment) {
+        super(name, title, style, options);
         this.scope = scope;
         this.environment = environment;
     }
