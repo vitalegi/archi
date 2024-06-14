@@ -1,4 +1,4 @@
-package it.vitalegi.archi.workspaceloader;
+package it.vitalegi.archi.model.builder;
 
 import it.vitalegi.archi.exception.CycleNotAllowedException;
 import it.vitalegi.archi.exception.ElementNotAllowedException;
@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(MockitoExtension.class)
-public class WorkspaceLoaderTests {
+public class WorkspaceDirectorTests {
 
     static WorkspaceDirector loader() {
         return ModelTestUtil.defaultLoader();
