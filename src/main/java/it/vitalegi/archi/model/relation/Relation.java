@@ -4,6 +4,7 @@ import it.vitalegi.archi.model.Entity;
 import it.vitalegi.archi.model.Model;
 import it.vitalegi.archi.model.element.Element;
 import it.vitalegi.archi.model.element.ElementType;
+import it.vitalegi.archi.util.Cloneable;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -18,7 +19,7 @@ import java.util.Map;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-public class Relation extends Entity {
+public class Relation extends Entity implements Cloneable<Relation> {
     @EqualsAndHashCode.Exclude
     Element from;
     @EqualsAndHashCode.Exclude
@@ -42,6 +43,21 @@ public class Relation extends Entity {
         super(model);
         tags = new ArrayList<>();
         metadata = new HashMap<>();
+    }
+
+    @Override
+    public Relation duplicate() {
+        var out = new Relation(model);
+        out.from = from;
+        out.to = to;
+        out.label = label;
+        out.description = description;
+        out.sprite = sprite;
+        out.link = link;
+        out.tags = new ArrayList<>(tags);
+        out.technologies = technologies;
+        out.metadata = new HashMap<>(metadata);
+        return out;
     }
 
     public ElementType getElementType() {
@@ -70,4 +86,5 @@ public class Relation extends Entity {
         }
         return getClass().getSimpleName() + " " + fromTo;
     }
+
 }

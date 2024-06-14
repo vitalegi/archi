@@ -1,4 +1,4 @@
-package it.vitalegi.archi.exporter.plantuml;
+package it.vitalegi.archi.exporter.c4.plantuml;
 
 import it.vitalegi.archi.diagram.scope.DiagramScopeBuilder;
 import it.vitalegi.archi.exporter.c4.plantuml.AbstractDiagramPlantumlExporter;

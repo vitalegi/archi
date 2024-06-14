@@ -52,6 +52,15 @@ public class Relations {
         return concat;
     }
 
+    public List<Relation> getRelations(Entity entity) {
+        var from = getRelationsFrom(entity);
+        var to = getRelationsTo(entity);
+        var out = new ArrayList<Relation>();
+        out.addAll(from);
+        out.addAll(to);
+        return out;
+    }
+
     public List<Relation> getRelationsFrom(Entity entity) {
         return getRelations(relationsFrom, entity);
     }
@@ -60,11 +69,20 @@ public class Relations {
         return getRelations(relationsTo, entity);
     }
 
-    public List<Relation> getImplicitsRelationsFrom(Entity entity) {
+    public List<Relation> getImplicitRelations(Entity entity) {
+        var from = getImplicitRelationsFrom(entity);
+        var to = getImplicitRelationsTo(entity);
+        var out = new ArrayList<Relation>();
+        out.addAll(from);
+        out.addAll(to);
+        return out;
+    }
+
+    public List<Relation> getImplicitRelationsFrom(Entity entity) {
         return getImplicitRelations(relationsFrom, entity);
     }
 
-    public List<Relation> getImplicitsRelationsTo(Entity entity) {
+    public List<Relation> getImplicitRelationsTo(Entity entity) {
         return getImplicitRelations(relationsTo, entity);
     }
 
@@ -84,6 +102,7 @@ public class Relations {
     }
 
     protected List<Relation> getImplicitRelations(Map<String, List<Relation>> relations, Entity entity) {
+        // TODO move to visitor and implement other cases
         if (WorkspaceUtil.isSoftwareSystem(entity)) {
             var out = new ArrayList<Relation>();
             var target = (SoftwareSystem) entity;
