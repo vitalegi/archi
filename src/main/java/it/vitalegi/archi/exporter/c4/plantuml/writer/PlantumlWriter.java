@@ -1,7 +1,7 @@
-package it.vitalegi.archi.exporter.plantuml.writer;
+package it.vitalegi.archi.exporter.c4.plantuml.writer;
 
 import it.vitalegi.archi.exporter.Writer;
-import it.vitalegi.archi.exporter.plantuml.constants.LayoutDirection;
+import it.vitalegi.archi.exporter.c4.plantuml.constants.LayoutDirection;
 
 public class PlantumlWriter extends Writer {
 

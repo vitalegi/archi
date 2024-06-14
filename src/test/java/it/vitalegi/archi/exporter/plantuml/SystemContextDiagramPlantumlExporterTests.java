@@ -1,6 +1,7 @@
 package it.vitalegi.archi.exporter.plantuml;
 
 import it.vitalegi.archi.exception.ElementNotFoundException;
+import it.vitalegi.archi.exporter.c4.plantuml.SystemContextDiagramPlantumlExporter;
 import it.vitalegi.archi.model.diagram.SystemContextDiagram;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,4 +1,4 @@
-package it.vitalegi.archi.exporter.plantuml;
+package it.vitalegi.archi.exporter.c4.plantuml;
 
 import it.vitalegi.archi.model.diagram.DeploymentDiagram;
 import it.vitalegi.archi.model.diagram.LandscapeDiagram;

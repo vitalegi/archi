@@ -1,6 +1,7 @@
 package it.vitalegi.archi.exporter.plantuml;
 
 import it.vitalegi.archi.diagram.scope.DiagramScopeBuilder;
+import it.vitalegi.archi.exporter.c4.plantuml.AbstractDiagramPlantumlExporter;
 import it.vitalegi.archi.model.diagram.Diagram;
 import it.vitalegi.archi.util.StyleTestUtil;
 import it.vitalegi.archi.model.Workspace;

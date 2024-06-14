@@ -1,5 +1,6 @@
 package it.vitalegi.archi.exporter.plantuml;
 
+import it.vitalegi.archi.exporter.c4.plantuml.LandscapeDiagramPlantumlExporter;
 import it.vitalegi.archi.model.diagram.LandscapeDiagram;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;

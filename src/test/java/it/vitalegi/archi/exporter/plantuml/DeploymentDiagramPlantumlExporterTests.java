@@ -1,10 +1,10 @@
 package it.vitalegi.archi.exporter.plantuml;
 
+import it.vitalegi.archi.exporter.c4.plantuml.DeploymentDiagramPlantumlExporter;
 import it.vitalegi.archi.model.element.Element;
 import it.vitalegi.archi.model.relation.Relation;
 import it.vitalegi.archi.model.diagram.DeploymentDiagram;
 import it.vitalegi.archi.exception.ElementNotFoundException;
-import it.vitalegi.archi.util.WorkspaceUtil;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
@@ -15,10 +15,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static it.vitalegi.archi.util.AssertionUtil.assertArrayEqualsUnsorted;
 import static it.vitalegi.archi.util.WorkspaceTestUtil.b;
 import static it.vitalegi.archi.util.WorkspaceTestUtil.load;
-import static java.util.Arrays.asList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 

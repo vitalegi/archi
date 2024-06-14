@@ -1,11 +1,10 @@
-package it.vitalegi.archi.exporter.plantuml;
+package it.vitalegi.archi.exporter.c4.plantuml;
 
 import it.vitalegi.archi.diagram.scope.DeploymentDiagramAllScopeBuilder;
 import it.vitalegi.archi.diagram.scope.DeploymentDiagramSoftwareSystemScopeBuilder;
 import it.vitalegi.archi.diagram.scope.DiagramScopeBuilder;
-import it.vitalegi.archi.diagram.scope.Scope;
 import it.vitalegi.archi.exception.ElementNotFoundException;
-import it.vitalegi.archi.exporter.plantuml.writer.C4PlantumlWriter;
+import it.vitalegi.archi.exporter.c4.plantuml.writer.C4PlantumlWriter;
 import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.model.diagram.DeploymentDiagram;
 import it.vitalegi.archi.model.diagramelement.C4DiagramElement;
@@ -16,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class DeploymentDiagramPlantumlExporter extends AbstractDiagramPlantumlExporter<DeploymentDiagram> {
+    public static final String ALL = "*";
 
     @Override
     public void validate(DeploymentDiagram diagram) {
@@ -58,7 +58,8 @@ public class DeploymentDiagramPlantumlExporter extends AbstractDiagramPlantumlEx
     }
 
     protected boolean isScopeAll(DeploymentDiagram diagram) {
-        return Scope.isScopeAll(diagram.getScope());
+        var scope = diagram.getScope();
+        return StringUtil.isNullOrEmpty(scope) || ALL.equals(scope.trim());
     }
 
     protected boolean isScopeSoftwareSystem(DeploymentDiagram diagram) {

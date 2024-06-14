@@ -1,9 +1,9 @@
-package it.vitalegi.archi.exporter.plantuml;
+package it.vitalegi.archi.exporter.c4.plantuml;
 
 import it.vitalegi.archi.diagram.scope.DiagramScopeBuilder;
-import it.vitalegi.archi.exporter.plantuml.builder.C4ModelBuilder;
-import it.vitalegi.archi.exporter.plantuml.constants.LayoutDirection;
-import it.vitalegi.archi.exporter.plantuml.writer.C4PlantumlWriter;
+import it.vitalegi.archi.exporter.c4.plantuml.builder.C4ModelBuilder;
+import it.vitalegi.archi.exporter.c4.plantuml.writer.C4PlantumlWriter;
+import it.vitalegi.archi.exporter.c4.plantuml.constants.LayoutDirection;
 import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.model.diagram.Diagram;
 import it.vitalegi.archi.model.diagramelement.C4DiagramElement;

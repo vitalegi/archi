@@ -1,6 +1,6 @@
 package it.vitalegi.archi.model.builder;
 
-import it.vitalegi.archi.exporter.plantuml.PlantumlDiagramValidatorVisitor;
+import it.vitalegi.archi.exporter.c4.plantuml.PlantumlDiagramValidatorVisitor;
 import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.workspaceloader.model.WorkspaceRaw;
 
