@@ -1,7 +1,7 @@
 package it.vitalegi.archi.exporter.c4.plantuml.builder;
 
 import it.vitalegi.archi.model.Workspace;
-import it.vitalegi.archi.model.diagram.Diagram;
+import it.vitalegi.archi.model.diagram.LandscapeDiagram;
 import it.vitalegi.archi.model.diagramelement.C4DiagramElement;
 import it.vitalegi.archi.model.diagramelement.C4DiagramModel;
 import it.vitalegi.archi.model.element.Element;
@@ -20,9 +20,9 @@ import java.util.stream.Collectors;
 public class LandscapeDiagramModelBuilder extends C4ModelBuilder {
     Set<Element> elementsInScope;
 
-    public LandscapeDiagramModelBuilder(Workspace workspace, Diagram diagram) {
+    public LandscapeDiagramModelBuilder(Workspace workspace, LandscapeDiagram diagram) {
         super(workspace, diagram);
-        elementsInScope = new HashSet<Element>();
+        elementsInScope = new HashSet<>();
     }
 
     @Override
