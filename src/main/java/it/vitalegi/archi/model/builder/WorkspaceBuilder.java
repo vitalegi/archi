@@ -5,7 +5,7 @@ import it.vitalegi.archi.model.Model;
 import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.model.diagram.Diagrams;
 import it.vitalegi.archi.model.element.Element;
-import it.vitalegi.archi.model.relation.Relation;
+import it.vitalegi.archi.model.relation.DirectRelation;
 import it.vitalegi.archi.model.style.Style;
 import it.vitalegi.archi.util.StringUtil;
 import it.vitalegi.archi.util.WorkspaceUtil;
@@ -68,7 +68,7 @@ public class WorkspaceBuilder {
         var model = workspace.getModel();
         relations.stream().map(r -> toRelation(r, model)).forEach(r -> {
             relationValidator.checkAllowed(r);
-            model.getRelations().addRelation(r);
+            model.getRelationManager().addRelation(r);
         });
     }
 
@@ -112,8 +112,8 @@ public class WorkspaceBuilder {
         return new ElementPair(source, element);
     }
 
-    protected Relation toRelation(RelationRaw in, Model model) {
-        var out = new Relation(model);
+    protected DirectRelation toRelation(RelationRaw in, Model model) {
+        var out = new DirectRelation(model);
         out.setId(in.getId());
         var from = model.getElementById(in.getFrom());
         if (from == null) {

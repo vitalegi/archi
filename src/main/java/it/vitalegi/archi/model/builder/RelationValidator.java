@@ -4,7 +4,7 @@ import it.vitalegi.archi.exception.RelationNotAllowedException;
 import it.vitalegi.archi.model.element.DeploymentEnvironment;
 import it.vitalegi.archi.model.element.Element;
 import it.vitalegi.archi.model.element.ElementType;
-import it.vitalegi.archi.model.relation.Relation;
+import it.vitalegi.archi.model.relation.DirectRelation;
 import it.vitalegi.archi.util.WorkspaceUtil;
 
 import java.util.Arrays;
@@ -30,7 +30,7 @@ public class RelationValidator {
         FROM_TO_ALLOWED.put(ElementType.GROUP, Collections.emptyList());
     }
 
-    public void checkAllowed(Relation relation) {
+    public void checkAllowed(DirectRelation relation) {
         var from = relation.getFrom();
         var to = relation.getTo();
         if (from == null) {

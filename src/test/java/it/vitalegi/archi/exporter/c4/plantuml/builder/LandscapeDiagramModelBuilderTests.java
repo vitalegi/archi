@@ -2,9 +2,11 @@ package it.vitalegi.archi.exporter.c4.plantuml.builder;
 
 import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.model.diagram.Diagram;
+import it.vitalegi.archi.model.diagram.DiagramOptions;
 import it.vitalegi.archi.model.diagram.LandscapeDiagram;
 import it.vitalegi.archi.model.element.Element;
 import it.vitalegi.archi.util.C4DiagramModelUtil;
+import it.vitalegi.archi.workspaceloader.model.LandscapeDiagramRaw;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -171,6 +173,31 @@ public class LandscapeDiagramModelBuilderTests {
         assertNotNull(model.findByAliasesPath("SoftwareSystem_B"));
         assertEquals(2, model.countElements());
         assertEquals(0, model.countRelations());
+    }
+
+    @Test
+    void given_implicitRelationsEnabled_then_implicitRelationsAreInTheModel() {
+        var ws = load(b() //
+                .softwareSystem("A") //
+                .container("A", "A1") //
+                .softwareSystem("B") //
+
+                .relation("A1", "B") //
+
+                .landscapeDiagram(LandscapeDiagramRaw.builder() //
+                        .name("diagram") //
+                        .options(DiagramOptions.builder().inheritRelations(true).build()) //
+                ) //
+        );
+        var diagram = ws.getDiagrams().getByName("diagram");
+        var actual = builder(ws, diagram).build();
+        var model = new C4DiagramModelUtil(actual);
+
+        assertNotNull(model.findByAliasesPath("SoftwareSystem_A"));
+        assertNotNull(model.findByAliasesPath("SoftwareSystem_B"));
+        assertNotNull(model.findRelations("SoftwareSystem_A", "SoftwareSystem_B"));
+        assertEquals(2, model.countElements());
+        assertEquals(1, model.countRelations());
     }
 
     static LandscapeDiagramModelBuilder builder(Workspace ws, Diagram diagram) {

@@ -4,7 +4,6 @@ import it.vitalegi.archi.exception.CycleNotAllowedException;
 import it.vitalegi.archi.exception.ElementNotAllowedException;
 import it.vitalegi.archi.exception.NonUniqueIdException;
 import it.vitalegi.archi.exception.RelationNotAllowedException;
-import it.vitalegi.archi.model.builder.WorkspaceDirector;
 import it.vitalegi.archi.util.ModelTestUtil;
 import it.vitalegi.archi.util.StyleTestUtil;
 import it.vitalegi.archi.util.WorkspaceModelBuilder;
@@ -516,10 +515,10 @@ public class WorkspaceDirectorTests {
     }
 
     @Nested
-    class Relation {
+    class DirectRelation {
 
         @Nested
-        class RelationTests {
+        class DirectRelationTests {
             WorkspaceModelBuilder builder;
 
             static Stream<Arguments> allowedRelations() {
@@ -702,7 +701,7 @@ public class WorkspaceDirectorTests {
                 builder.relation(sourceId, destinationId);
                 if (shouldSucceed) {
                     var ws = load(builder.build());
-                    var relations = ws.getModel().getRelations().getAll();
+                    var relations = ws.getModel().getRelationManager().getDirect().getAll();
                     assertEquals(1, relations.size());
                     assertEquals(sourceId, relations.get(0).getFrom().getId());
                     assertEquals(destinationId, relations.get(0).getTo().getId());

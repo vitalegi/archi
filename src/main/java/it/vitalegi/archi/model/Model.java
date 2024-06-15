@@ -2,7 +2,7 @@ package it.vitalegi.archi.model;
 
 import it.vitalegi.archi.model.element.Element;
 import it.vitalegi.archi.model.element.ElementType;
-import it.vitalegi.archi.model.relation.Relations;
+import it.vitalegi.archi.model.relation.RelationManager;
 import it.vitalegi.archi.visitor.ElementVisitor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -20,13 +20,13 @@ import java.util.Map;
 @ToString(callSuper = true)
 public class Model extends Element {
     Map<String, Element> elementMap;
-    Relations relations;
+    RelationManager relationManager;
 
     public Model() {
         super(null);
         model = this;
         elementMap = new HashMap<>();
-        relations = new Relations();
+        relationManager = new RelationManager();
     }
 
     public Element getElementById(String id) {

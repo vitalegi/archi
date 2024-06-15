@@ -4,7 +4,7 @@ import it.vitalegi.archi.exporter.c4.plantuml.constants.Direction;
 import it.vitalegi.archi.model.diagramelement.C4DiagramElement;
 import it.vitalegi.archi.model.diagramelement.C4DiagramRelation;
 import it.vitalegi.archi.model.element.Element;
-import it.vitalegi.archi.model.relation.Relation;
+import it.vitalegi.archi.model.relation.DirectRelation;
 import it.vitalegi.archi.model.style.ElementTag;
 import it.vitalegi.archi.model.style.LineStyle;
 import it.vitalegi.archi.model.style.RelationTag;
@@ -95,15 +95,15 @@ public class C4PlantumlWriter extends PlantumlWriter {
         println(format("AddProperty(\"%s\",\"%s\",\"%s\",\"%s\")", col1, col2, col3, col4));
     }
 
-    public void addRelation(Relation relation) {
+    public void addRelation(DirectRelation relation) {
         addRelation("Rel", relation);
     }
 
-    public void addRelation(Direction direction, Relation relation) {
+    public void addRelation(Direction direction, DirectRelation relation) {
         addRelation(direction.getRelationKeyword(), relation);
     }
 
-    public void addRelation(String command, Relation relation) {
+    public void addRelation(String command, DirectRelation relation) {
         addRelation(command, getAlias(relation.getFrom()), getAlias(relation.getTo()), relation.getLabel(), relation.getTechnologies(), relation.getDescription(), relation.getSprite(), formatTags(relation), relation.getLink());
     }
 
@@ -156,7 +156,7 @@ public class C4PlantumlWriter extends PlantumlWriter {
         return formatTags(element.getTags());
     }
 
-    protected String formatTags(Relation relation) {
+    protected String formatTags(DirectRelation relation) {
         return formatTags(relation.getTags());
     }
 

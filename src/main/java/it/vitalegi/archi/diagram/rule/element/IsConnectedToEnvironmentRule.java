@@ -14,7 +14,7 @@ import it.vitalegi.archi.model.element.InfrastructureNode;
 import it.vitalegi.archi.model.element.Person;
 import it.vitalegi.archi.model.element.SoftwareSystem;
 import it.vitalegi.archi.model.element.SoftwareSystemInstance;
-import it.vitalegi.archi.model.relation.Relation;
+import it.vitalegi.archi.model.relation.DirectRelation;
 import it.vitalegi.archi.util.WorkspaceUtil;
 import it.vitalegi.archi.visitor.ElementVisitor;
 import lombok.EqualsAndHashCode;
@@ -44,7 +44,7 @@ public class IsConnectedToEnvironmentRule extends AbstractVisibilityRule impleme
         return false;
     }
 
-    public boolean match(DiagramScope diagramScope, Relation relation) {
+    public boolean match(DiagramScope diagramScope, DirectRelation relation) {
         return false;
     }
 

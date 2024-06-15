@@ -44,10 +44,6 @@ public class C4DiagramModelUtil {
                 .findFirst().orElse(null);
     }
 
-    public boolean matchesId(C4DiagramElement element, String id) {
-        return Objects.equals(element.getId(), id);
-    }
-
     public long countElements() {
         return getAllElements().count();
     }

@@ -3,7 +3,6 @@ package it.vitalegi.archi.diagram.scope;
 import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.model.diagram.DeploymentDiagram;
 import it.vitalegi.archi.model.element.Element;
-import it.vitalegi.archi.model.relation.Relation;
 import it.vitalegi.archi.util.WorkspaceUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +14,7 @@ import java.util.stream.Collectors;
 import static it.vitalegi.archi.util.AssertionUtil.assertArrayEqualsUnsorted;
 import static it.vitalegi.archi.util.WorkspaceTestUtil.b;
 import static it.vitalegi.archi.util.WorkspaceTestUtil.load;
+import static it.vitalegi.archi.util.WorkspaceTestUtil.stringifyRelations;
 import static it.vitalegi.archi.workspaceloader.model.DeploymentDiagramRaw.scoped;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -233,9 +233,5 @@ public class DeploymentDiagramSoftwareSystemScopeBuilderTests {
 
     static List<String> getIds(List<? extends Element> elements) {
         return elements.stream().map(Element::getId).collect(Collectors.toList());
-    }
-
-    static List<String> stringifyRelations(List<? extends Relation> relations) {
-        return relations.stream().map(r -> r.getFrom().toShortString() + " => " + r.getTo().toShortString()).collect(Collectors.toList());
     }
 }
