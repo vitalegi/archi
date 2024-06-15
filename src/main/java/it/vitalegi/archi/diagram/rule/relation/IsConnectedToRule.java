@@ -4,7 +4,7 @@ import it.vitalegi.archi.diagram.DiagramScope;
 import it.vitalegi.archi.diagram.rule.AbstractVisibilityRule;
 import it.vitalegi.archi.model.Entity;
 import it.vitalegi.archi.model.element.Element;
-import it.vitalegi.archi.model.relation.Relation;
+import it.vitalegi.archi.model.relation.DirectRelation;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -25,7 +25,7 @@ public class IsConnectedToRule extends AbstractVisibilityRule {
         return false;
     }
 
-    public boolean match(DiagramScope diagramScope, Relation relation) {
+    public boolean match(DiagramScope diagramScope, DirectRelation relation) {
         if (!diagramScope.isInScope(relation)) {
             return false;
         }

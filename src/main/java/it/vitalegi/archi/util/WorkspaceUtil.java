@@ -14,7 +14,7 @@ import it.vitalegi.archi.model.element.InfrastructureNode;
 import it.vitalegi.archi.model.element.Person;
 import it.vitalegi.archi.model.element.SoftwareSystem;
 import it.vitalegi.archi.model.element.SoftwareSystemInstance;
-import it.vitalegi.archi.model.relation.Relation;
+import it.vitalegi.archi.model.relation.DirectRelation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -314,7 +314,7 @@ public class WorkspaceUtil {
     }
 
     public static boolean isRelation(Entity element) {
-        return element instanceof Relation;
+        return element instanceof DirectRelation;
     }
 
     public static boolean isSameType(Entity element, ElementType type) {

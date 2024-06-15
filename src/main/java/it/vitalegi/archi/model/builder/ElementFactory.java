@@ -38,6 +38,7 @@ public class ElementFactory {
             case SOFTWARE_SYSTEM_INSTANCE -> toSoftwareSystemInstance();
             case INFRASTRUCTURE_NODE -> toInfrastructureNode();
             case RELATION -> throw new IllegalArgumentException("RELATION is not a ");
+            case IMPLICIT_RELATION -> throw new IllegalArgumentException("IMPLICIT_RELATION is not a ");
         };
     }
 

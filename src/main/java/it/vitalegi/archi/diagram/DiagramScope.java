@@ -2,7 +2,7 @@ package it.vitalegi.archi.diagram;
 
 import it.vitalegi.archi.model.Entity;
 import it.vitalegi.archi.model.element.Element;
-import it.vitalegi.archi.model.relation.Relation;
+import it.vitalegi.archi.model.relation.DirectRelation;
 import it.vitalegi.archi.util.Cloneable;
 
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 
 public class DiagramScope implements Cloneable<DiagramScope> {
     Map<String, Element> elements;
-    Map<String, Relation> relations;
+    Map<String, DirectRelation> relations;
 
     public DiagramScope() {
         elements = new HashMap<>();
@@ -32,14 +32,14 @@ public class DiagramScope implements Cloneable<DiagramScope> {
     public String toString() {
         return "DiagramScope: " +
                 "elements=" + elements.values().stream().map(Element::toShortString).collect(Collectors.joining(", ")) +
-                ", relations=" + relations.values().stream().map(Relation::toShortString).collect(Collectors.joining(", "));
+                ", relations=" + relations.values().stream().map(DirectRelation::toShortString).collect(Collectors.joining(", "));
     }
 
     public void add(Element element) {
         elements.put(getId(element), element);
     }
 
-    public void add(Relation relation) {
+    public void add(DirectRelation relation) {
         relations.put(getId(relation), relation);
     }
 
@@ -47,7 +47,7 @@ public class DiagramScope implements Cloneable<DiagramScope> {
         elements.remove(getId(element));
     }
 
-    public void remove(Relation relation) {
+    public void remove(DirectRelation relation) {
         relations.remove(getId(relation));
     }
 
@@ -56,7 +56,7 @@ public class DiagramScope implements Cloneable<DiagramScope> {
         return elements.containsKey(getId(element));
     }
 
-    public boolean isInScope(Relation relation) {
+    public boolean isInScope(DirectRelation relation) {
         return relations.containsKey(getId(relation));
     }
 
@@ -64,7 +64,7 @@ public class DiagramScope implements Cloneable<DiagramScope> {
         return new ArrayList<>(elements.values());
     }
 
-    public List<Relation> getRelations() {
+    public List<DirectRelation> getRelations() {
         return new ArrayList<>(relations.values());
     }
 

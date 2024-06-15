@@ -6,7 +6,7 @@ import it.vitalegi.archi.diagram.rule.VisibilityRule;
 import it.vitalegi.archi.diagram.rule.VisibilityRuleType;
 import it.vitalegi.archi.model.diagram.Diagram;
 import it.vitalegi.archi.model.element.Element;
-import it.vitalegi.archi.model.relation.Relation;
+import it.vitalegi.archi.model.relation.DirectRelation;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -25,7 +25,7 @@ public abstract class DiagramScopeBuilder<E extends Diagram> {
         var rules = getVisibilityRules();
         var scope = new DiagramScope();
         var elements = diagram.getModel().getAllElements().stream().filter(this::isAllowed).collect(Collectors.toList());
-        var relations = diagram.getModel().getRelations().getAll();
+        var relations = diagram.getModel().getRelationManager().getDirect().getAll();
         log.debug("Diagram {}, start processing rules", diagram.getName());
         log.debug("Elements in perimeter: {}", elements.stream().map(Element::toShortString).collect(Collectors.toList()));
         for (var rule : rules) {
@@ -47,7 +47,7 @@ public abstract class DiagramScopeBuilder<E extends Diagram> {
     protected abstract boolean isAllowed(Element element);
 
 
-    protected DiagramScope applyRule(RuleEntry rule, DiagramScope scope, List<Element> elements, List<Relation> relations) {
+    protected DiagramScope applyRule(RuleEntry rule, DiagramScope scope, List<Element> elements, List<DirectRelation> relations) {
         log.debug("Apply {}", rule);
         log.debug("Start scope: {}", scope);
         var nextScope = scope.duplicate();
@@ -62,7 +62,7 @@ public abstract class DiagramScopeBuilder<E extends Diagram> {
         return nextScope;
     }
 
-    protected void applyRuleInclusion(VisibilityRule rule, DiagramScope scope, DiagramScope nextScope, List<Element> elements, List<Relation> relations) {
+    protected void applyRuleInclusion(VisibilityRule rule, DiagramScope scope, DiagramScope nextScope, List<Element> elements, List<DirectRelation> relations) {
         for (var element : elements) {
             if (rule.match(scope, element)) {
                 nextScope.add(element);
@@ -81,7 +81,7 @@ public abstract class DiagramScopeBuilder<E extends Diagram> {
         }
     }
 
-    protected void applyRuleExclusion(VisibilityRule rule, DiagramScope scope, DiagramScope nextScope, List<Element> elements, List<Relation> relations) {
+    protected void applyRuleExclusion(VisibilityRule rule, DiagramScope scope, DiagramScope nextScope, List<Element> elements, List<DirectRelation> relations) {
         for (var element : elements) {
             if (rule.match(scope, element)) {
                 nextScope.remove(element);

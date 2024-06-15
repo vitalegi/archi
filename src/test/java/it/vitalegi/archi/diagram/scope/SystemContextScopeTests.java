@@ -5,7 +5,7 @@ import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.model.diagram.Diagram;
 import it.vitalegi.archi.model.diagram.SystemContextDiagram;
 import it.vitalegi.archi.model.element.Element;
-import it.vitalegi.archi.model.relation.Relation;
+import it.vitalegi.archi.model.relation.DirectRelation;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -166,8 +166,8 @@ public class SystemContextScopeTests {
             var b = getElementById(ws, "B");
             var p = getElementById(ws, "P");
 
-            var r1 = ws.getModel().getRelations().getRelationsBetween(c1, b).get(0);
-            var r2 = ws.getModel().getRelations().getRelationsBetween(p, c1).get(0);
+            var r1 = ws.getModel().getRelationManager().getDirect().getRelationsBetween(c1, b).get(0);
+            var r2 = ws.getModel().getRelationManager().getDirect().getRelationsBetween(p, c1).get(0);
             assertTrue(scope.isInScope(r1));
             assertTrue(scope.isInScope(r2));
         }
@@ -217,7 +217,7 @@ public class SystemContextScopeTests {
             var c1 = getElementById(ws, "C1");
             var c2 = getElementById(ws, "C2");
 
-            var r1 = ws.getModel().getRelations().getRelationsBetween(c1, c2).get(0);
+            var r1 = ws.getModel().getRelationManager().getDirect().getRelationsBetween(c1, c2).get(0);
             assertTrue(scope.isInScope(r1));
         }
     }
@@ -227,10 +227,10 @@ public class SystemContextScopeTests {
         return ws.getModel().getElementById(id);
     }
 
-    static List<Relation> getRelationsBetween(Workspace ws, String a, String b) {
+    static List<DirectRelation> getRelationsBetween(Workspace ws, String a, String b) {
         var e1 = getElementById(ws, a);
         var e2 = getElementById(ws, b);
-        return ws.getModel().getRelations().getRelationsBetween(e1, e2);
+        return ws.getModel().getRelationManager().getDirect().getRelationsBetween(e1, e2);
     }
 
     static boolean hasRelationsBetween(Workspace ws, DiagramScope scope, String a, String b) {

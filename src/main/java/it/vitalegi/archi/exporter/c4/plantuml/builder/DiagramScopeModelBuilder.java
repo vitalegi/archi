@@ -5,12 +5,10 @@ import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.model.diagram.Diagram;
 import it.vitalegi.archi.model.diagramelement.C4DiagramElement;
 import it.vitalegi.archi.model.diagramelement.C4DiagramModel;
-import it.vitalegi.archi.model.diagramelement.C4DiagramRelation;
 import it.vitalegi.archi.model.element.Element;
-import it.vitalegi.archi.model.relation.Relation;
+import it.vitalegi.archi.model.relation.DirectRelation;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 public class DiagramScopeModelBuilder extends C4ModelBuilder {
     DiagramScope diagramScope;
@@ -25,7 +23,7 @@ public class DiagramScopeModelBuilder extends C4ModelBuilder {
         for (var element : topLevelElements) {
             buildElement(null, element);
         }
-        buildRelations(diagram.getModel().getRelations().getAll());
+        buildRelations(diagram.getModel().getRelationManager().getDirect().getAll());
         return model;
     }
 
@@ -42,13 +40,13 @@ public class DiagramScopeModelBuilder extends C4ModelBuilder {
         }
     }
 
-    protected void buildRelations(List<Relation> relations) {
+    protected void buildRelations(List<DirectRelation> relations) {
         for (var relation : relations) {
             buildRelation(relation);
         }
     }
 
-    protected void buildRelation(Relation relation) {
+    protected void buildRelation(DirectRelation relation) {
         if (diagramScope.isInScope(relation)) {
             relation(relation).forEach(model::addRelation);
         }

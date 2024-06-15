@@ -8,6 +8,8 @@ import it.vitalegi.archi.model.element.Element;
 import it.vitalegi.archi.model.element.Group;
 import it.vitalegi.archi.model.element.Person;
 import it.vitalegi.archi.model.element.SoftwareSystem;
+import it.vitalegi.archi.model.relation.DirectRelation;
+import it.vitalegi.archi.model.relation.ImplicitRelation;
 import it.vitalegi.archi.model.relation.Relation;
 import it.vitalegi.archi.util.WorkspaceUtil;
 
@@ -38,7 +40,7 @@ public class LandscapeDiagramModelBuilder extends C4ModelBuilder {
         elements.addAll(softwareSystems);
         elements.addAll(people);
 
-        var relations = new ArrayList<>(getExplicitRelationsInScope(elements));
+        var relations = new ArrayList<Relation>(getExplicitRelationsInScope(elements));
         if (useImplicitRelations()) {
             relations.addAll(getImplicitRelationsInScope(elements));
         }
@@ -47,39 +49,22 @@ public class LandscapeDiagramModelBuilder extends C4ModelBuilder {
         return model;
     }
 
-    protected Set<Relation> getExplicitRelationsInScope(List<Element> elements) {
+    protected Set<DirectRelation> getExplicitRelationsInScope(List<Element> elements) {
         return elements.stream() //
-                .flatMap(e -> workspace.getModel().getRelations().getRelations(e).stream()) //
+                .flatMap(e -> workspace.getModel().getRelationManager().getDirect().getRelations(e).stream()) //
                 .filter(r -> elementsInScope.contains(r.getFrom())) //
                 .filter(r -> elementsInScope.contains(r.getTo())) //
                 .collect(Collectors.toSet());
     }
 
-    // TODO reimplement
-    protected Set<Relation> getImplicitRelationsInScope(List<Element> elements) {
+    protected Set<ImplicitRelation> getImplicitRelationsInScope(List<Element> elements) {
         return elements.stream() //
-                .flatMap(e -> workspace.getModel().getRelations().getImplicitRelations(e).stream()) //
-                .map(this::mapToRelationOfSoftwareSystems) //
+                .flatMap(e -> workspace.getModel().getRelationManager().getImplicit().getRelations(e).stream()) //
                 .filter(r -> elementsInScope.contains(r.getFrom())) //
                 .filter(r -> elementsInScope.contains(r.getTo())) //
                 .collect(Collectors.toSet());
     }
 
-    // TODO reimplement
-    protected Relation mapToRelationOfSoftwareSystems(Relation implicit) {
-        var relation = implicit.duplicate();
-        var from = findParentSoftwareSystem(implicit.getFrom());
-        if (from == null) {
-            return null;
-        }
-        var to = findParentSoftwareSystem(implicit.getTo());
-        if (to == null) {
-            return null;
-        }
-        relation.setFrom(from);
-        relation.setTo(to);
-        return relation;
-    }
 
     protected SoftwareSystem findParentSoftwareSystem(Element child) {
         var path = WorkspaceUtil.getPathFromRoot(child);

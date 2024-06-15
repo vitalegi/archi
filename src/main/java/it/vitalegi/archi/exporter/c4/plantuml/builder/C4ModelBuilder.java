@@ -6,6 +6,7 @@ import it.vitalegi.archi.model.diagramelement.C4DiagramElement;
 import it.vitalegi.archi.model.diagramelement.C4DiagramModel;
 import it.vitalegi.archi.model.diagramelement.C4DiagramRelation;
 import it.vitalegi.archi.model.element.Element;
+import it.vitalegi.archi.model.relation.DirectRelation;
 import it.vitalegi.archi.model.relation.Relation;
 
 import java.util.stream.Stream;
@@ -45,15 +46,7 @@ public abstract class C4ModelBuilder {
     }
 
     protected C4DiagramRelation relation(Relation relation, String fromAlias, String toAlias) {
-        var out = new C4DiagramRelation();
-        out.setFromAlias(fromAlias);
-        out.setToAlias(toAlias);
-        out.setDescription(relation.getDescription());
-        out.setTags(relation.getTags());
-        out.setLink(relation.getLink());
-        out.setLabel(relation.getLabel());
-        out.setSprite(relation.getSprite());
-        out.setTechnology(relation.getTechnologies());
-        return out;
+        var visitor = new C4DiagramRelationFactoryVisitor(fromAlias, toAlias);
+        return relation.visit(visitor);
     }
 }
