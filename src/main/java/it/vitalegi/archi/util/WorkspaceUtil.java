@@ -269,6 +269,13 @@ public class WorkspaceUtil {
         return elements.stream().filter(WorkspaceUtil::isInfrastructureNode).map(e -> ((InfrastructureNode) e)).collect(Collectors.toList());
     }
 
+    public static Container toContainer(Entity element) {
+        if (isContainer(element)) {
+            return (Container) element;
+        }
+        throw new IllegalArgumentException("Element " + element.toShortString() + " is not a container");
+    }
+
     public static boolean isPerson(Entity element) {
         return element instanceof Person;
     }
