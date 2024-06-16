@@ -8,8 +8,6 @@ import it.vitalegi.archi.model.element.Element;
 import it.vitalegi.archi.model.element.Group;
 import it.vitalegi.archi.model.element.Person;
 import it.vitalegi.archi.model.element.SoftwareSystem;
-import it.vitalegi.archi.model.relation.DirectRelation;
-import it.vitalegi.archi.model.relation.ImplicitRelation;
 import it.vitalegi.archi.model.relation.Relation;
 import it.vitalegi.archi.util.WorkspaceUtil;
 
@@ -18,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class LandscapeDiagramModelBuilder extends C4ModelBuilder<LandscapeDiagram> {
     Set<Element> elementsInScope;
@@ -29,40 +28,21 @@ public class LandscapeDiagramModelBuilder extends C4ModelBuilder<LandscapeDiagra
 
     @Override
     public C4DiagramModel build() {
-        var softwareSystems = getAllSoftwareSystemsInScope();
-        elementsInScope.addAll(softwareSystems);
-        var people = getAllPeople();
-        elementsInScope.addAll(people);
-        var ancestorGroups = getAncestorGroups(softwareSystems);
-        elementsInScope.addAll(ancestorGroups);
+        elementsInScope.addAll(getAllSoftwareSystemsInScope());
+        elementsInScope.addAll(getAllPeople());
+        elementsInScope.addAll(getAncestorGroups(elementsInScope));
 
-        var elements = new ArrayList<Element>();
-        elements.addAll(softwareSystems);
-        elements.addAll(people);
-
-        var relations = new ArrayList<Relation>(getExplicitRelationsInScope(elements));
-        if (useImplicitRelations()) {
-            relations.addAll(getImplicitRelationsInScope(elements));
-        }
+        var relations = relationsInScope(elementsInScope);
         buildElements();
         buildRelations(relations);
         return model;
     }
 
-    protected Set<DirectRelation> getExplicitRelationsInScope(List<Element> elements) {
-        return elements.stream() //
-                .flatMap(e -> workspace.getModel().getRelationManager().getDirect().getRelations(e).stream()) //
-                .filter(r -> elementsInScope.contains(r.getFrom())) //
-                .filter(r -> elementsInScope.contains(r.getTo())) //
-                .collect(Collectors.toSet());
-    }
-
-    protected Set<ImplicitRelation> getImplicitRelationsInScope(List<Element> elements) {
-        return elements.stream() //
-                .flatMap(e -> workspace.getModel().getRelationManager().getImplicit().getRelations(e).stream()) //
-                .filter(r -> elementsInScope.contains(r.getFrom())) //
-                .filter(r -> elementsInScope.contains(r.getTo())) //
-                .collect(Collectors.toSet());
+    protected Stream<Relation> relationsInScope(Set<Element> elements) {
+        var relations = getRelationsManager();
+        var from = elements.stream().flatMap(e -> relations.getRelationsTo(e).stream()).filter(r -> elements.contains(r.getFrom()));
+        var to = elements.stream().flatMap(e -> relations.getRelationsFrom(e).stream()).filter(r -> elements.contains(r.getTo()));
+        return Stream.concat(from, to).distinct();
     }
 
 
@@ -79,7 +59,7 @@ public class LandscapeDiagramModelBuilder extends C4ModelBuilder<LandscapeDiagra
         return WorkspaceUtil.getPeople(workspace.getModel().getAllElements());
     }
 
-    protected List<Group> getAncestorGroups(List<? extends Element> elements) {
+    protected List<Group> getAncestorGroups(Set<? extends Element> elements) {
         var groups = new ArrayList<Group>();
         for (var element : elements) {
             var ancestors = WorkspaceUtil.getPathFromRoot(element);
@@ -89,9 +69,6 @@ public class LandscapeDiagramModelBuilder extends C4ModelBuilder<LandscapeDiagra
         return groups.stream().distinct().collect(Collectors.toList());
     }
 
-    protected boolean useImplicitRelations() {
-        return diagram.getOptions().isInheritRelations();
-    }
 
     protected void buildElements() {
         var topLevelElements = diagram.getModel().getElements();
@@ -103,17 +80,15 @@ public class LandscapeDiagramModelBuilder extends C4ModelBuilder<LandscapeDiagra
     protected void buildElement(C4DiagramElement parent, Element element) {
         if (elementsInScope.contains(element)) {
             var e = addElement(parent, element);
-            for (var child : element.getElements()) {
-                buildElement(e, child);
-            }
+            buildElementChildren(e, element);
         } else {
-            for (var child : element.getElements()) {
-                buildElement(parent, child);
-            }
+            buildElementChildren(parent, element);
         }
     }
 
-    protected void buildRelations(List<Relation> relations) {
-        relations.stream().flatMap(super::relation).forEach(model::addRelation);
+    protected void buildElementChildren(C4DiagramElement parent, Element element) {
+        for (var child : element.getElements()) {
+            buildElement(parent, child);
+        }
     }
 }

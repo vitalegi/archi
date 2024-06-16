@@ -7,7 +7,9 @@ import it.vitalegi.archi.model.diagramelement.C4DiagramModel;
 import it.vitalegi.archi.model.diagramelement.C4DiagramRelation;
 import it.vitalegi.archi.model.element.Element;
 import it.vitalegi.archi.model.relation.Relation;
+import it.vitalegi.archi.model.relation.Relations;
 
+import java.util.Comparator;
 import java.util.stream.Stream;
 
 public abstract class C4ModelBuilder<E extends Diagram> {
@@ -47,5 +49,22 @@ public abstract class C4ModelBuilder<E extends Diagram> {
     protected C4DiagramRelation relation(Relation relation, String fromAlias, String toAlias) {
         var visitor = new C4DiagramRelationFactoryVisitor(fromAlias, toAlias);
         return relation.visit(visitor);
+    }
+
+    protected Relations<?> getRelationsManager() {
+        if (useImplicitRelations()) {
+            return diagram.getModel().getRelationManager().getImplicit();
+        }
+        return diagram.getModel().getRelationManager().getDirect();
+    }
+
+    protected boolean useImplicitRelations() {
+        return diagram.getOptions().isInheritRelations();
+    }
+
+    protected void buildRelations(Stream<Relation> relations) {
+        relations.flatMap(this::relation) //
+                .sorted(Comparator.comparing(C4DiagramRelation::getFromAlias).thenComparing(C4DiagramRelation::getToAlias).thenComparing(C4DiagramRelation::getLabel)) //
+                .forEach(model::addRelation);
     }
 }

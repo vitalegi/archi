@@ -18,9 +18,9 @@ Container($alias="Container_reader_frontend", $label="Single Page Application", 
     Container($alias="Container_reader_database", $label="RDBMS", $techn="", $descr="Stores books info", $sprite="", $tags="", $link="", $baseShape="")
     }
 Container($alias="SoftwareSystem_aws_ss", $label="Amazon Web Services", $techn="", $descr="Stores books", $sprite="", $tags="", $link="", $baseShape="")
-Rel($from="Person_sysadmin", $to="Container_reader_database", $label="", $techn="", $descr="Access", $sprite="", $tags="HighlightedRelation", $link="")
 Rel($from="Container_reader_backend", $to="Container_reader_database", $label="", $techn="", $descr="Reads from and writes to", $sprite="", $tags="", $link="")
 Rel($from="Container_reader_frontend", $to="Container_reader_backend", $label="", $techn="", $descr="Uses", $sprite="", $tags="", $link="")
+Rel($from="Person_sysadmin", $to="Container_reader_database", $label="", $techn="", $descr="Access", $sprite="", $tags="HighlightedRelation", $link="")
 Rel($from="Person_user", $to="Container_reader_frontend", $label="Uses", $techn="TCP", $descr="User accesses to the system via frontend app", $sprite="", $tags="", $link="https://google.com")
 hide stereotypes
 @enduml

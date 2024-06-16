@@ -78,23 +78,6 @@ public class SystemContextDiagramModelBuilder extends C4ModelBuilder<SystemConte
                 .distinct();
     }
 
-    protected Relations<?> getRelationsManager() {
-        if (useImplicitRelations()) {
-            return diagram.getModel().getRelationManager().getImplicit();
-        }
-        return diagram.getModel().getRelationManager().getDirect();
-    }
-
-
-    protected SoftwareSystem findParentSoftwareSystem(Element child) {
-        var path = WorkspaceUtil.getPathFromRoot(child);
-        return WorkspaceUtil.getSoftwareSystems(path).stream().findFirst().orElse(null);
-    }
-
-    protected List<SoftwareSystem> getAllSoftwareSystemsInScope() {
-        return WorkspaceUtil.getSoftwareSystems(workspace.getModel().getAllElements());
-    }
-
     protected List<Group> getAncestorGroups(Set<? extends Element> elements) {
         var groups = new ArrayList<Group>();
         for (var element : elements) {
@@ -103,10 +86,6 @@ public class SystemContextDiagramModelBuilder extends C4ModelBuilder<SystemConte
             groups.addAll(ancestorGroups);
         }
         return groups.stream().distinct().collect(Collectors.toList());
-    }
-
-    protected boolean useImplicitRelations() {
-        return diagram.getOptions().isInheritRelations();
     }
 
     protected void buildElements() {
@@ -119,17 +98,15 @@ public class SystemContextDiagramModelBuilder extends C4ModelBuilder<SystemConte
     protected void buildElement(C4DiagramElement parent, Element element) {
         if (elementsInScope.contains(element)) {
             var e = addElement(parent, element);
-            for (var child : element.getElements()) {
-                buildElement(e, child);
-            }
+            buildElementChildren(e, element);
         } else {
-            for (var child : element.getElements()) {
-                buildElement(parent, child);
-            }
+            buildElementChildren(parent, element);
         }
     }
 
-    protected void buildRelations(Stream<Relation> relations) {
-        relations.flatMap(super::relation).forEach(model::addRelation);
+    protected void buildElementChildren(C4DiagramElement parent, Element element) {
+        for (var child : element.getElements()) {
+            buildElement(parent, child);
+        }
     }
 }

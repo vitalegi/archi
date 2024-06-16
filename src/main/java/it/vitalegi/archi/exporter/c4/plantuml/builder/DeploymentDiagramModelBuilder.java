@@ -104,13 +104,6 @@ public class DeploymentDiagramModelBuilder extends C4ModelBuilder<DeploymentDiag
         return Stream.concat(from, to).distinct();
     }
 
-    protected Relations<?> getRelationsManager() {
-        if (useImplicitRelations()) {
-            return diagram.getModel().getRelationManager().getImplicit();
-        }
-        return diagram.getModel().getRelationManager().getDirect();
-    }
-
     protected List<DeploymentNode> getAncestorDeploymentNodes(Set<? extends Element> elements) {
         var target = new ArrayList<DeploymentNode>();
         for (var element : elements) {
@@ -119,10 +112,6 @@ public class DeploymentDiagramModelBuilder extends C4ModelBuilder<DeploymentDiag
             target.addAll(ancestorGroups);
         }
         return target.stream().distinct().collect(Collectors.toList());
-    }
-
-    protected boolean useImplicitRelations() {
-        return diagram.getOptions().isInheritRelations();
     }
 
     protected void buildElements() {
@@ -151,9 +140,5 @@ public class DeploymentDiagramModelBuilder extends C4ModelBuilder<DeploymentDiag
                 buildElement(parent, child);
             }
         }
-    }
-
-    protected void buildRelations(Stream<Relation> relations) {
-        relations.flatMap(super::relation).forEach(model::addRelation);
     }
 }
