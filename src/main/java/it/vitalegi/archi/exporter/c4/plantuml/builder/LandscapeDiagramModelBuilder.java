@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class LandscapeDiagramModelBuilder extends C4ModelBuilder {
+public class LandscapeDiagramModelBuilder extends C4ModelBuilder<LandscapeDiagram> {
     Set<Element> elementsInScope;
 
     public LandscapeDiagramModelBuilder(Workspace workspace, LandscapeDiagram diagram) {

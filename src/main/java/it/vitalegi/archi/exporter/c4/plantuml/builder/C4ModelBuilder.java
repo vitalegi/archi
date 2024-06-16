@@ -11,13 +11,13 @@ import it.vitalegi.archi.model.relation.Relation;
 
 import java.util.stream.Stream;
 
-public abstract class C4ModelBuilder {
+public abstract class C4ModelBuilder<E extends Diagram> {
     AliasGenerator aliasGenerator;
     Workspace workspace;
-    Diagram diagram;
+    E diagram;
     C4DiagramModel model;
 
-    public C4ModelBuilder(Workspace workspace, Diagram diagram) {
+    public C4ModelBuilder(Workspace workspace, E diagram) {
         this.workspace = workspace;
         this.diagram = diagram;
         aliasGenerator = new AliasGenerator();

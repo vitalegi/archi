@@ -10,7 +10,7 @@ import it.vitalegi.archi.model.relation.DirectRelation;
 
 import java.util.List;
 
-public class DiagramScopeModelBuilder extends C4ModelBuilder {
+public class DiagramScopeModelBuilder extends C4ModelBuilder<Diagram> {
     DiagramScope diagramScope;
 
     public DiagramScopeModelBuilder(Workspace workspace, Diagram diagram, DiagramScope diagramScope) {
