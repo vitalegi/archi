@@ -13,7 +13,7 @@ AddElementTag("HighlightedElement", $bgColor="red", $fontColor="black", $borderC
 AddRelTag("HighlightedRelation", $textColor="red", $lineColor="red", $lineStyle="DOTTED", $sprite="", $techn="", $legendText="Awesome relation", $legendSprite="", $lineThickness="2")
 Deployment_Node(DeploymentNode_netlify, Netlify, $type="", $descr="", $sprite="", $tags="", $link="") {
 Deployment_Node(DeploymentNode_app_netlify_app, app.netlify.app, $type="", $descr="", $sprite="", $tags="", $link="") {
-    Deployment_Node(ContainerInstance_auto_677b95b1_a9e1_4d54_a133_b0b6afe38475, , $type="", $descr="", $sprite="", $tags="", $link="") {
+    Deployment_Node(ContainerInstance_auto_7a8d2e9a_6ad4_4466_8d28_f07b441539ed, , $type="", $descr="", $sprite="", $tags="", $link="") {
         Container($alias="Container_reader_frontend", $label="Single Page Application", $techn="", $descr="Allows users to use reader functionalities", $sprite="", $tags="HighlightedElement", $link="", $baseShape="")
             }
         }
@@ -21,12 +21,16 @@ Deployment_Node(DeploymentNode_app_netlify_app, app.netlify.app, $type="", $desc
 Deployment_Node(DeploymentNode_fly_io, fly.io, $type="", $descr="", $sprite="", $tags="", $link="") {
 Deployment_Node(DeploymentNode_app_fly_io, app.fly.io, $type="", $descr="", $sprite="", $tags="", $link="") {
     Deployment_Node(DeploymentNode_Application_Server, Application Server, $type="", $descr="", $sprite="", $tags="", $link="") {
-        Deployment_Node(ContainerInstance_auto_2730e54b_39c7_4272_9df5_92d05494a3cd, , $type="", $descr="", $sprite="", $tags="", $link="") {
+        Deployment_Node(ContainerInstance_auto_ccf1ea3b_cce7_4c80_a5be_d03a11a3ac7f, , $type="", $descr="", $sprite="", $tags="", $link="") {
             Container($alias="Container_reader_backend", $label="Backend", $techn="", $descr="Business Logic of the reader", $sprite="", $tags="", $link="", $baseShape="")
+                }
+            Deployment_Node(ContainerInstance_auto_6e79bfd9_d6ab_432d_8e49_18850d7de05a, , $type="", $descr="", $sprite="", $tags="", $link="") {
+            Container($alias="Container_reader_backend_1", $label="Backend", $techn="", $descr="Business Logic of the reader", $sprite="", $tags="", $link="", $baseShape="")
                 }
             }
         }
     }
 Rel($from="Container_reader_frontend", $to="Container_reader_backend", $label="", $techn="", $descr="Uses", $sprite="", $tags="", $link="")
+Rel($from="Container_reader_frontend", $to="Container_reader_backend_1", $label="", $techn="", $descr="Uses", $sprite="", $tags="", $link="")
 hide stereotypes
 @enduml
