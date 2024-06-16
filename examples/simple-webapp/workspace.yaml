@@ -138,6 +138,8 @@ diagrams:
     environment: live
     name: deployment
     title: Deployment
+    options:
+      direction: LEFT_TO_RIGHT
   - type: LANDSCAPE
     name: landscape
     title: Application Landscape
@@ -149,6 +151,8 @@ diagrams:
       skinParams:
         - key: linetype
           value: polyline
+    options:
+      inheritRelations: true
 
 style:
   skinParams:

@@ -11,6 +11,7 @@ import it.vitalegi.archi.model.style.Tags;
 import it.vitalegi.archi.util.StringUtil;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public abstract class AbstractDiagramPlantumlExporter<E extends Diagram> {
 
@@ -59,8 +60,8 @@ public abstract class AbstractDiagramPlantumlExporter<E extends Diagram> {
     }
 
     protected void writeDirection(E diagram, C4PlantumlWriter writer) {
-        //TODO
-        writer.direction(LayoutDirection.TOP_TO_BOTTOM);
+        var direction = diagram.getOptions().getDirection();
+        writer.direction(Objects.requireNonNullElse(direction, LayoutDirection.TOP_TO_BOTTOM));
     }
 
     protected void writeTitle(E diagram, C4PlantumlWriter writer) {
