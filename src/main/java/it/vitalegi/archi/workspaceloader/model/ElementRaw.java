@@ -23,4 +23,5 @@ public class ElementRaw {
     Map<String, String> metadata;
     String containerId;
     String softwareSystemId;
+    List<ElementRaw> elements;
 }
