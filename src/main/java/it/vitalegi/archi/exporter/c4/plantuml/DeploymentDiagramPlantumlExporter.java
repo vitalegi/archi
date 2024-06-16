@@ -1,9 +1,7 @@
 package it.vitalegi.archi.exporter.c4.plantuml;
 
-import it.vitalegi.archi.diagram.scope.DeploymentDiagramAllScopeBuilder;
-import it.vitalegi.archi.diagram.scope.DeploymentDiagramSoftwareSystemScopeBuilder;
-import it.vitalegi.archi.diagram.scope.DiagramScopeBuilder;
 import it.vitalegi.archi.exception.ElementNotFoundException;
+import it.vitalegi.archi.exporter.c4.plantuml.builder.DeploymentDiagramModelBuilder;
 import it.vitalegi.archi.exporter.c4.plantuml.writer.C4PlantumlWriter;
 import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.model.diagram.DeploymentDiagram;
@@ -15,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class DeploymentDiagramPlantumlExporter extends AbstractDiagramPlantumlExporter<DeploymentDiagram> {
-    public static final String ALL = "*";
 
     @Override
     public void validate(DeploymentDiagram diagram) {
@@ -31,22 +28,18 @@ public class DeploymentDiagramPlantumlExporter extends AbstractDiagramPlantumlEx
     }
 
     protected void doValidateScope(DeploymentDiagram diagram) {
-        if (isScopeAll(diagram)) {
+        if (diagram.isScopeAll()) {
             return;
         }
-        if (isScopeSoftwareSystem(diagram)) {
+        if (diagram.isScopeSoftwareSystem()) {
             return;
         }
         throw new ElementNotFoundException(diagram.getScope(), "Scope " + diagram.getScope() + " on diagram " + diagram.getName() + " is invalid. Check if all objects exist.");
     }
 
     @Override
-    protected DiagramScopeBuilder<DeploymentDiagram> diagramScope(Workspace workspace, DeploymentDiagram diagram) {
-        if (isScopeAll(diagram)) {
-            return new DeploymentDiagramAllScopeBuilder(diagram);
-        } else {
-            return new DeploymentDiagramSoftwareSystemScopeBuilder(diagram);
-        }
+    protected C4DiagramModel buildModel(Workspace workspace, DeploymentDiagram diagram) {
+        return new DeploymentDiagramModelBuilder(workspace, diagram).build();
     }
 
     @Override
@@ -55,20 +48,6 @@ public class DeploymentDiagramPlantumlExporter extends AbstractDiagramPlantumlEx
         writer.include("<C4/C4_Context>");
         writer.include("<C4/C4_Container>");
         writer.include("<C4/C4_Deployment>");
-    }
-
-    protected boolean isScopeAll(DeploymentDiagram diagram) {
-        var scope = diagram.getScope();
-        return StringUtil.isNullOrEmpty(scope) || ALL.equals(scope.trim());
-    }
-
-    protected boolean isScopeSoftwareSystem(DeploymentDiagram diagram) {
-        var scope = diagram.getScope();
-        if (StringUtil.isNullOrEmpty(scope)) {
-            return false;
-        }
-        var softwareSystem = WorkspaceUtil.findSoftwareSystem(diagram.getModel().getAllElements(), scope);
-        return softwareSystem != null;
     }
 
     @Override

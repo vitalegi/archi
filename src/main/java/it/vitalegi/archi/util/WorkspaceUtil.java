@@ -273,7 +273,21 @@ public class WorkspaceUtil {
         if (isContainer(element)) {
             return (Container) element;
         }
-        throw new IllegalArgumentException("Element " + element.toShortString() + " is not a container");
+        throw new IllegalArgumentException("Element " + element.toShortString() + " is not a Container");
+    }
+
+    public static ContainerInstance toContainerInstance(Entity element) {
+        if (isContainerInstance(element)) {
+            return (ContainerInstance) element;
+        }
+        throw new IllegalArgumentException("Element " + element.toShortString() + " is not a ContainerInstance");
+    }
+
+    public static SoftwareSystemInstance toSoftwareSystemInstance(Entity element) {
+        if (isSoftwareSystemInstance(element)) {
+            return (SoftwareSystemInstance) element;
+        }
+        throw new IllegalArgumentException("Element " + element.toShortString() + " is not a SoftwareSystemInstance");
     }
 
     public static boolean isPerson(Entity element) {
