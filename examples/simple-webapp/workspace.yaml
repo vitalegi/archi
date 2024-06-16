@@ -94,6 +94,9 @@ elements:
   - type: CONTAINER_INSTANCE
     parentId: Application Server
     containerId: reader_backend
+  - type: CONTAINER_INSTANCE
+    parentId: Application Server
+    containerId: reader_backend
 
 relations:
   - from: user
