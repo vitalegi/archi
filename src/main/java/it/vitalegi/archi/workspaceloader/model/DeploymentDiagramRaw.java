@@ -1,6 +1,5 @@
 package it.vitalegi.archi.workspaceloader.model;
 
-import it.vitalegi.archi.exporter.c4.plantuml.DeploymentDiagramPlantumlExporter;
 import it.vitalegi.archi.model.diagram.DeploymentDiagram;
 import it.vitalegi.archi.model.diagram.DiagramOptions;
 import it.vitalegi.archi.model.style.Style;

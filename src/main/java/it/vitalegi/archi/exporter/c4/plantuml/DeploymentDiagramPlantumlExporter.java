@@ -8,7 +8,6 @@ import it.vitalegi.archi.model.diagram.DeploymentDiagram;
 import it.vitalegi.archi.model.diagramelement.C4DiagramElement;
 import it.vitalegi.archi.model.diagramelement.C4DiagramModel;
 import it.vitalegi.archi.util.StringUtil;
-import it.vitalegi.archi.util.WorkspaceUtil;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

@@ -35,6 +35,7 @@ public class C4PlantumlWriter extends PlantumlWriter {
     public void deploymentNodeStart(Element element) {
         deploymentNodeStart(getAlias(element), element.getName(), null, element.getDescription(), "", formatTags(element), "");
     }
+
     public void deploymentNodeStart(C4DiagramElement element) {
         deploymentNodeStart(getAlias(element), element.getName(), null, element.getDescription(), "", formatTags(element), "");
     }

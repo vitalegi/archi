@@ -4,10 +4,8 @@ import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.model.diagram.DeploymentDiagram;
 import it.vitalegi.archi.model.diagram.Diagram;
 import it.vitalegi.archi.model.diagram.DiagramOptions;
-import it.vitalegi.archi.model.diagram.SystemContextDiagram;
 import it.vitalegi.archi.util.C4DiagramModelUtil;
 import it.vitalegi.archi.workspaceloader.model.DeploymentDiagramRaw;
-import it.vitalegi.archi.workspaceloader.model.SystemContextDiagramRaw;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -16,7 +14,6 @@ import static it.vitalegi.archi.util.WorkspaceTestUtil.b;
 import static it.vitalegi.archi.util.WorkspaceTestUtil.load;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 
 @ExtendWith(MockitoExtension.class)
 public class DeploymentDiagramModelBuilderTests {

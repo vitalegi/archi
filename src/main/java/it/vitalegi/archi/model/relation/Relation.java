@@ -1,11 +1,7 @@
 package it.vitalegi.archi.model.relation;
 
-import it.vitalegi.archi.model.Entity;
-import it.vitalegi.archi.model.Model;
 import it.vitalegi.archi.model.element.Element;
-import it.vitalegi.archi.util.Cloneable;
 import it.vitalegi.archi.visitor.RelationVisitor;
-import lombok.EqualsAndHashCode;
 
 public interface Relation {
 

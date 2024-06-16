@@ -1,8 +1,7 @@
 package it.vitalegi.archi.util;
 
-import it.vitalegi.archi.model.builder.WorkspaceDirector;
 import it.vitalegi.archi.model.Workspace;
-import it.vitalegi.archi.model.relation.DirectRelation;
+import it.vitalegi.archi.model.builder.WorkspaceDirector;
 import it.vitalegi.archi.model.relation.Relation;
 import it.vitalegi.archi.workspaceloader.model.WorkspaceRaw;
 
