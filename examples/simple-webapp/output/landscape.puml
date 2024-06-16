@@ -14,7 +14,7 @@ Container($alias="Person_user", $label="User", $techn="", $descr="", $sprite="",
 Container($alias="Person_sysadmin", $label="Sysadmin", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="")
 Container($alias="SoftwareSystem_reader_ss", $label="Reader", $techn="", $descr="Allows users to access the reader", $sprite="", $tags="HighlightedElement", $link="", $baseShape="")
 Container($alias="SoftwareSystem_aws_ss", $label="Amazon Web Services", $techn="", $descr="Stores books", $sprite="", $tags="", $link="", $baseShape="")
-Rel($from="SoftwareSystem_reader_ss", $to="SoftwareSystem_aws_ss", $label="", $techn="", $descr="Upload/Download media", $sprite="", $tags="", $link="")
 Rel($from="Person_user", $to="SoftwareSystem_reader_ss", $label="", $techn="", $descr="Uses", $sprite="", $tags="", $link="")
+Rel($from="SoftwareSystem_reader_ss", $to="SoftwareSystem_aws_ss", $label="", $techn="", $descr="Upload/Download media", $sprite="", $tags="", $link="")
 hide stereotypes
 @enduml
