@@ -1,6 +1,5 @@
 package it.vitalegi.archi.exporter.c4.plantuml;
 
-import it.vitalegi.archi.diagram.scope.DiagramScopeBuilder;
 import it.vitalegi.archi.exception.ElementNotFoundException;
 import it.vitalegi.archi.exporter.c4.plantuml.builder.SystemContextDiagramModelBuilder;
 import it.vitalegi.archi.model.Workspace;
@@ -29,10 +28,5 @@ public class SystemContextDiagramPlantumlExporter extends AbstractDiagramPlantum
     @Override
     protected C4DiagramModel buildModel(Workspace workspace, SystemContextDiagram diagram) {
         return new SystemContextDiagramModelBuilder(workspace, diagram).build();
-    }
-
-    @Override
-    protected DiagramScopeBuilder<SystemContextDiagram> diagramScope(Workspace workspace, SystemContextDiagram diagram) {
-        throw new RuntimeException("Method shouldn't be invoked");
     }
 }

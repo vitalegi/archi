@@ -13,7 +13,7 @@ AddElementTag("HighlightedElement", $bgColor="red", $fontColor="black", $borderC
 AddRelTag("HighlightedRelation", $textColor="red", $lineColor="red", $lineStyle="DOTTED", $sprite="", $techn="", $legendText="Awesome relation", $legendSprite="", $lineThickness="2")
 Deployment_Node(DeploymentNode_netlify, Netlify, $type="", $descr="", $sprite="", $tags="", $link="") {
 Deployment_Node(DeploymentNode_app_netlify_app, app.netlify.app, $type="", $descr="", $sprite="", $tags="", $link="") {
-    Deployment_Node(ContainerInstance_auto_b84694d0_a4ce_42e1_886d_0235069dd4c1, , $type="", $descr="", $sprite="", $tags="", $link="") {
+    Deployment_Node(ContainerInstance_auto_677b95b1_a9e1_4d54_a133_b0b6afe38475, , $type="", $descr="", $sprite="", $tags="", $link="") {
         Container($alias="Container_reader_frontend", $label="Single Page Application", $techn="", $descr="Allows users to use reader functionalities", $sprite="", $tags="HighlightedElement", $link="", $baseShape="")
             }
         }
@@ -21,7 +21,7 @@ Deployment_Node(DeploymentNode_app_netlify_app, app.netlify.app, $type="", $desc
 Deployment_Node(DeploymentNode_fly_io, fly.io, $type="", $descr="", $sprite="", $tags="", $link="") {
 Deployment_Node(DeploymentNode_app_fly_io, app.fly.io, $type="", $descr="", $sprite="", $tags="", $link="") {
     Deployment_Node(DeploymentNode_Application_Server, Application Server, $type="", $descr="", $sprite="", $tags="", $link="") {
-        Deployment_Node(ContainerInstance_auto_e9581940_531a_4a2e_8cee_2a501fc6bbab, , $type="", $descr="", $sprite="", $tags="", $link="") {
+        Deployment_Node(ContainerInstance_auto_2730e54b_39c7_4272_9df5_92d05494a3cd, , $type="", $descr="", $sprite="", $tags="", $link="") {
             Container($alias="Container_reader_backend", $label="Backend", $techn="", $descr="Business Logic of the reader", $sprite="", $tags="", $link="", $baseShape="")
                 }
             }

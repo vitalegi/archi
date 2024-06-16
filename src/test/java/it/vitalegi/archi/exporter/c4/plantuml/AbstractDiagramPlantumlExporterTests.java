@@ -1,10 +1,9 @@
 package it.vitalegi.archi.exporter.c4.plantuml;
 
-import it.vitalegi.archi.diagram.scope.DiagramScopeBuilder;
-import it.vitalegi.archi.exporter.c4.plantuml.AbstractDiagramPlantumlExporter;
-import it.vitalegi.archi.model.diagram.Diagram;
-import it.vitalegi.archi.util.StyleTestUtil;
 import it.vitalegi.archi.model.Workspace;
+import it.vitalegi.archi.model.diagram.Diagram;
+import it.vitalegi.archi.model.diagramelement.C4DiagramModel;
+import it.vitalegi.archi.util.StyleTestUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -32,10 +31,9 @@ public class AbstractDiagramPlantumlExporterTests {
             }
 
             @Override
-            protected DiagramScopeBuilder<Diagram> diagramScope(Workspace workspace, Diagram diagram) {
+            protected C4DiagramModel buildModel(Workspace workspace, Diagram diagram) {
                 return null;
             }
-
         };
     }
 

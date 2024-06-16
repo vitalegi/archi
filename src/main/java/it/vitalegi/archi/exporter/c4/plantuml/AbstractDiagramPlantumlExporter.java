@@ -1,10 +1,7 @@
 package it.vitalegi.archi.exporter.c4.plantuml;
 
-import it.vitalegi.archi.diagram.scope.DiagramScopeBuilder;
-import it.vitalegi.archi.exporter.c4.plantuml.builder.C4ModelBuilder;
-import it.vitalegi.archi.exporter.c4.plantuml.builder.DiagramScopeModelBuilder;
-import it.vitalegi.archi.exporter.c4.plantuml.writer.C4PlantumlWriter;
 import it.vitalegi.archi.exporter.c4.plantuml.constants.LayoutDirection;
+import it.vitalegi.archi.exporter.c4.plantuml.writer.C4PlantumlWriter;
 import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.model.diagram.Diagram;
 import it.vitalegi.archi.model.diagramelement.C4DiagramElement;
@@ -98,12 +95,8 @@ public abstract class AbstractDiagramPlantumlExporter<E extends Diagram> {
         var style2 = diagram.getStyle();
         return defaultStyle.merge(style1).merge(style2);
     }
-    protected C4DiagramModel buildModel(Workspace workspace, E diagram) {
-        var scope = diagramScope(workspace, diagram).computeScope();
-        return new DiagramScopeModelBuilder(workspace, diagram, scope).build();
-    }
 
-    protected abstract DiagramScopeBuilder<E> diagramScope(Workspace workspace, E diagram);
+    protected abstract C4DiagramModel buildModel(Workspace workspace, E diagram);
 
     protected void writeElements(E diagram, C4DiagramModel model, C4PlantumlWriter writer) {
         var topLevelElements = model.getTopLevelElements();
