@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.List;
 
 import static it.vitalegi.archi.util.AssertionUtil.assertArrayEqualsUnsorted;
@@ -69,6 +70,47 @@ public class RelationManagerTests {
         assertArrayEqualsUnsorted(List.of("Component (comp1) => SoftwareSystem (B)", "Container (C1) => SoftwareSystem (B)", "SoftwareSystem (A) => SoftwareSystem (B)"), strigifyImplicits(ws, "B"));
         assertArrayEqualsUnsorted(List.of("Component (comp1) => Container (C2)", "Container (C1) => Container (C2)", "SoftwareSystem (A) => Container (C2)"), strigifyImplicits(ws, "C2"));
         assertArrayEqualsUnsorted(List.of("Component (comp1) => Component (comp2)", "Container (C1) => Component (comp2)", "SoftwareSystem (A) => Component (comp2)"), strigifyImplicits(ws, "comp2"));
+    }
+
+
+    @Test
+    void given_addRelation_when_componentsOfSameSoftwareSystem_then_shouldCreateImplicitRelations() {
+        var ws = load(b() //
+                .softwareSystem("A") //
+
+                .container("A", "C1") //
+                .container("A", "C2") //
+
+                .component(ElementRaw.builder().parentId("C1").id("comp1"))
+                .component(ElementRaw.builder().parentId("C2").id("comp2")) //
+        );
+        var relations = ws.getModel().getRelationManager();
+        relations.addRelation(relation(ws, "comp1", "comp2"));
+        assertEquals(1, relations.getDirect().getAll().size());
+        assertArrayEqualsUnsorted(Collections.emptyList(), strigifyImplicits(ws, "A"));
+        assertArrayEqualsUnsorted(List.of("Container (C1) => Container (C2)", "Container (C1) => Component (comp2)"), strigifyImplicits(ws, "C1"));
+        assertArrayEqualsUnsorted(List.of("Container (C1) => Container (C2)", "Component (comp1) => Container (C2)"), strigifyImplicits(ws, "C2"));
+        assertArrayEqualsUnsorted(List.of("Component (comp1) => Component (comp2)", "Component (comp1) => Container (C2)"), strigifyImplicits(ws, "comp1"));
+        assertArrayEqualsUnsorted(List.of("Component (comp1) => Component (comp2)", "Container (C1) => Component (comp2)"), strigifyImplicits(ws, "comp2"));
+    }
+
+    @Test
+    void given_addRelation_when_componentsOfSameContainer_then_shouldCreateImplicitRelations() {
+        var ws = load(b() //
+                .softwareSystem("A") //
+
+                .container("A", "C1") //
+
+                .component(ElementRaw.builder().parentId("C1").id("comp1"))
+                .component(ElementRaw.builder().parentId("C1").id("comp2")) //
+        );
+        var relations = ws.getModel().getRelationManager();
+        relations.addRelation(relation(ws, "comp1", "comp2"));
+        assertEquals(1, relations.getDirect().getAll().size());
+        assertArrayEqualsUnsorted(Collections.emptyList(), strigifyImplicits(ws, "A"));
+        assertArrayEqualsUnsorted(Collections.emptyList(), strigifyImplicits(ws, "C1"));
+        assertArrayEqualsUnsorted(List.of("Component (comp1) => Component (comp2)"), strigifyImplicits(ws, "comp1"));
+        assertArrayEqualsUnsorted(List.of("Component (comp1) => Component (comp2)"), strigifyImplicits(ws, "comp2"));
     }
 
     static List<String> strigifyImplicits(Workspace ws, String id) {

@@ -33,8 +33,9 @@ public class LandscapeDiagramModelBuilder extends C4ModelBuilder<LandscapeDiagra
         elementsInScope.addAll(getAncestorGroups(elementsInScope));
 
         var relations = relationsInScope(elementsInScope);
+        var list = relations.toList();
         buildElements();
-        buildRelations(relations);
+        buildRelations(list.stream());
         return model;
     }
 

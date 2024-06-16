@@ -2,6 +2,7 @@ package it.vitalegi.archi.model.relation;
 
 import it.vitalegi.archi.model.Entity;
 import it.vitalegi.archi.model.element.ContainerInstance;
+import it.vitalegi.archi.model.element.Element;
 import it.vitalegi.archi.model.element.SoftwareSystemInstance;
 import it.vitalegi.archi.util.WorkspaceUtil;
 
@@ -97,7 +98,19 @@ public class ImplicitRelations implements Relations<ImplicitRelation> {
         var fromImplicit = relation.getFrom().visit(implicitBuilderVisitor);
         var toImplicit = relation.getTo().visit(implicitBuilderVisitor);
         return fromImplicit.stream().flatMap(from -> toImplicit.stream() //
+                .filter(to -> !isAncestor(to, from)) //
+                .filter(to -> !isAncestor(from, to)) //
                 .map(to -> new ImplicitRelation(relation.getModel(), relation, from, to)));
+    }
+
+    protected boolean isAncestor(Element element, Element possibleAncestor) {
+        if (element.equals(possibleAncestor)) {
+            return true;
+        }
+        if (element.getParent()  == null) {
+            return false;
+        }
+        return isAncestor(element.getParent(), possibleAncestor);
     }
 
     protected String getId(Entity entity) {
