@@ -6,7 +6,6 @@ import it.vitalegi.archi.model.diagramelement.C4DiagramElement;
 import it.vitalegi.archi.model.diagramelement.C4DiagramModel;
 import it.vitalegi.archi.model.diagramelement.C4DiagramRelation;
 import it.vitalegi.archi.model.element.Element;
-import it.vitalegi.archi.model.relation.DirectRelation;
 import it.vitalegi.archi.model.relation.Relation;
 
 import java.util.stream.Stream;

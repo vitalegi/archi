@@ -15,7 +15,6 @@ import static it.vitalegi.archi.util.WorkspaceTestUtil.b;
 import static it.vitalegi.archi.util.WorkspaceTestUtil.load;
 import static it.vitalegi.archi.util.WorkspaceTestUtil.stringifyRelations;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @ExtendWith(MockitoExtension.class)
 public class RelationManagerTests {

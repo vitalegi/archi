@@ -7,7 +7,6 @@ import it.vitalegi.archi.model.diagramelement.C4DiagramRelation;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class C4DiagramModelUtil {

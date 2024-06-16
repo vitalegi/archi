@@ -1,17 +1,13 @@
 package it.vitalegi.archi.exporter.c4.plantuml.builder;
 
 import it.vitalegi.archi.model.Workspace;
-import it.vitalegi.archi.model.diagram.LandscapeDiagram;
 import it.vitalegi.archi.model.diagram.SystemContextDiagram;
 import it.vitalegi.archi.model.diagramelement.C4DiagramElement;
 import it.vitalegi.archi.model.diagramelement.C4DiagramModel;
 import it.vitalegi.archi.model.element.Container;
 import it.vitalegi.archi.model.element.Element;
 import it.vitalegi.archi.model.element.Group;
-import it.vitalegi.archi.model.element.Person;
 import it.vitalegi.archi.model.element.SoftwareSystem;
-import it.vitalegi.archi.model.relation.DirectRelation;
-import it.vitalegi.archi.model.relation.ImplicitRelation;
 import it.vitalegi.archi.model.relation.Relation;
 import it.vitalegi.archi.model.relation.Relations;
 import it.vitalegi.archi.util.WorkspaceUtil;

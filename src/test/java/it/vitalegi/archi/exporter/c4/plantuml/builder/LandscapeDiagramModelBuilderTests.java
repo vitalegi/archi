@@ -4,10 +4,8 @@ import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.model.diagram.Diagram;
 import it.vitalegi.archi.model.diagram.DiagramOptions;
 import it.vitalegi.archi.model.diagram.LandscapeDiagram;
-import it.vitalegi.archi.model.element.Element;
 import it.vitalegi.archi.util.C4DiagramModelUtil;
 import it.vitalegi.archi.workspaceloader.model.LandscapeDiagramRaw;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -16,7 +14,6 @@ import static it.vitalegi.archi.util.WorkspaceTestUtil.b;
 import static it.vitalegi.archi.util.WorkspaceTestUtil.load;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(MockitoExtension.class)
 public class LandscapeDiagramModelBuilderTests {
