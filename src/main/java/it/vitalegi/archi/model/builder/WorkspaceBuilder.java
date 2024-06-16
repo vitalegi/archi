@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Getter
 @Slf4j
@@ -41,7 +42,7 @@ public class WorkspaceBuilder {
         log.debug("Load model");
         var model = workspace.getModel();
         try {
-            var pairs = new ArrayList<>(elements.stream().map(e -> toPair(model, e)).collect(Collectors.toList()));
+            var pairs = new ArrayList<>(elements.stream().flatMap(e -> toPair(model, e)).collect(Collectors.toList()));
             while (!pairs.isEmpty()) {
                 log.debug("New cycle");
                 boolean anyProcessed = false;
@@ -106,10 +107,22 @@ public class WorkspaceBuilder {
         return true;
     }
 
-    protected ElementPair toPair(Model model, ElementRaw source) {
+    protected Stream<ElementPair> toPair(Model model, ElementRaw source) {
         var factory = new ElementFactory(model, source);
         var element = factory.build();
-        return new ElementPair(source, element);
+
+        var out = new ArrayList<ElementPair>();
+        out.add(new ElementPair(source, element));
+        if (source.getElements() != null && !source.getElements().isEmpty()) {
+            if (StringUtil.isNullOrEmpty(element.getId())) {
+                element.setId(element.getUniqueId());
+            }
+            for (var e : source.getElements()) {
+                e.setParentId(element.getId());
+                out.addAll(toPair(model, e).toList());
+            }
+        }
+        return out.stream();
     }
 
     protected DirectRelation toRelation(RelationRaw in, Model model) {
