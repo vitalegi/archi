@@ -15,6 +15,7 @@ public class C4DiagramElement {
     List<String> tags;
     List<String> technologies;
     List<C4DiagramElementProperty> properties;
+    String shape;
 
     public C4DiagramElement() {
         children = new ArrayList<>();

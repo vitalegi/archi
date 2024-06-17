@@ -13,7 +13,7 @@ public class Writer {
         sb.append(str);
     }
 
-    protected void println(String str) {
+    public void println(String str) {
         sb.append(str).append("\n");
         printTab();
     }

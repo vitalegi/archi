@@ -1,5 +1,6 @@
 package it.vitalegi.archi.exporter.c4.plantuml.builder;
 
+import it.vitalegi.archi.exporter.c4.plantuml.writer.PlantumlShapeElementVisitor;
 import it.vitalegi.archi.model.Model;
 import it.vitalegi.archi.model.diagramelement.C4DiagramElement;
 import it.vitalegi.archi.model.diagramelement.C4DiagramElementProperty;
@@ -92,6 +93,9 @@ public class DiagramElementFactoryVisitor implements ElementVisitor<C4DiagramEle
         out.setTags(element.getTags());
         out.setTechnologies(element.getTechnologies());
         out.setProperties(properties(element));
+
+        var shape = new PlantumlShapeElementVisitor();
+        out.setShape(element.visit(shape));
         return out;
     }
 

@@ -1,5 +1,6 @@
 @startuml
 set separator none
+!ENABLE_ALL_PLANT_ELEMENTS = 1
 skinparam nodesep 10
 skinparam ranksep 150
 skinparam linetype polyline
@@ -10,14 +11,14 @@ title Reader: System Context
 !include <C4/C4_Container>
 AddElementTag("HighlightedElement", $bgColor="red", $fontColor="black", $borderColor="orange", $shadowing="true", $shape="RoundedBox", $sprite="", $techn="Awesome technologies", $legendText="Awesome element", $legendSprite="", $borderStyle="DOTTED", $borderThickness="5")
 AddRelTag("HighlightedRelation", $textColor="red", $lineColor="red", $lineStyle="DOTTED", $sprite="", $techn="", $legendText="Awesome relation", $legendSprite="", $lineThickness="2")
-Container($alias="Person_user", $label="User", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="")
-Container($alias="Person_sysadmin", $label="Sysadmin", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="")
+Container($alias="Person_user", $label="User", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="actor")
+Container($alias="Person_sysadmin", $label="Sysadmin", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="actor")
 Boundary(SoftwareSystem_reader_ss, "Reader", $tags="HighlightedElement") {
-Container($alias="Container_reader_frontend", $label="Single Page Application", $techn="Vue 3", $descr="Allows users to use reader functionalities", $sprite="", $tags="HighlightedElement", $link="", $baseShape="")
-    Container($alias="Container_reader_backend", $label="Backend", $techn="Spring Boot 3, Java 21", $descr="Business Logic of the reader", $sprite="", $tags="", $link="", $baseShape="")
-    Container($alias="Container_reader_database", $label="RDBMS", $techn="Postgres", $descr="Stores books info", $sprite="", $tags="", $link="", $baseShape="")
+Container($alias="Container_reader_frontend", $label="Single Page Application", $techn="Vue 3", $descr="Allows users to use reader functionalities", $sprite="", $tags="HighlightedElement", $link="", $baseShape="rectangle")
+    Container($alias="Container_reader_backend", $label="Backend", $techn="Spring Boot 3, Java 21", $descr="Business Logic of the reader", $sprite="", $tags="", $link="", $baseShape="rectangle")
+    Container($alias="Container_reader_database", $label="RDBMS", $techn="Postgres", $descr="Stores books info", $sprite="", $tags="", $link="", $baseShape="rectangle")
     }
-Container($alias="SoftwareSystem_aws_ss", $label="Amazon Web Services", $techn="", $descr="Stores books", $sprite="", $tags="", $link="", $baseShape="")
+Container($alias="SoftwareSystem_aws_ss", $label="Amazon Web Services", $techn="", $descr="Stores books", $sprite="", $tags="", $link="", $baseShape="rectangle")
 Rel($from="Container_reader_backend", $to="Container_reader_database", $label="", $techn="Postgres Protocol/SSL", $descr="Reads from and writes to", $sprite="", $tags="", $link="")
 Rel($from="Container_reader_backend", $to="SoftwareSystem_aws_ss", $label="", $techn="", $descr="Upload books", $sprite="", $tags="", $link="")
 Rel($from="Container_reader_frontend", $to="Container_reader_backend", $label="", $techn="", $descr="Uses", $sprite="", $tags="", $link="")

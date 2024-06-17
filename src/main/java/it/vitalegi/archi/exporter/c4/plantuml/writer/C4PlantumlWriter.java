@@ -64,12 +64,8 @@ public class C4PlantumlWriter extends PlantumlWriter {
         println("}");
     }
 
-    public void container(Element element) {
-        container(getAlias(element), element.getName(), formatTechnologies(element), element.getDescription(), "", formatTags(element), "", "");
-    }
-
     public void container(C4DiagramElement element) {
-        container(getAlias(element), element.getName(), formatTechnologies(element), element.getDescription(), "", formatTags(element), "", "");
+        container(getAlias(element), element.getName(), formatTechnologies(element), element.getDescription(), "", formatTags(element), "", element.getShape());
     }
 
     protected void container(String alias, String label, String technology, String description, String sprite, String tags, String link, String shape) {

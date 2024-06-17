@@ -57,6 +57,7 @@ public abstract class AbstractDiagramPlantumlExporter<E extends Diagram> {
 
     protected void writeProperties(E diagram, C4PlantumlWriter writer) {
         writer.set("separator", "none");
+        writer.println("!ENABLE_ALL_PLANT_ELEMENTS = 1");
     }
 
     protected void writeDirection(E diagram, C4PlantumlWriter writer) {
