@@ -37,7 +37,7 @@ public class DirectRelation extends Entity implements Cloneable<DirectRelation>,
     @EqualsAndHashCode.Exclude
     List<String> tags;
     @EqualsAndHashCode.Exclude
-    String technologies;
+    List<String> technologies;
     @EqualsAndHashCode.Exclude
     Map<String, String> metadata;
 
@@ -48,7 +48,7 @@ public class DirectRelation extends Entity implements Cloneable<DirectRelation>,
     }
 
     @Builder
-    public DirectRelation(Model model, Element from, Element to, String label, String description, String sprite, String link, List<String> tags, String technologies, Map<String, String> metadata) {
+    public DirectRelation(Model model, Element from, Element to, String label, String description, String sprite, String link, List<String> tags, List<String> technologies, Map<String, String> metadata) {
         super(model);
         this.from = from;
         this.to = to;

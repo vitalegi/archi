@@ -33,6 +33,12 @@ public class WorkspaceModelBuilder {
         return this;
     }
 
+    public WorkspaceModelBuilder element(ElementRaw.ElementRawBuilder builder) {
+        workspace.getElements().add(builder.build());
+        return this;
+    }
+
+
     public WorkspaceModelBuilder softwareSystem(String id) {
         return softwareSystem(null, id);
     }
@@ -155,6 +161,11 @@ public class WorkspaceModelBuilder {
 
     public WorkspaceModelBuilder relation(String from, String to) {
         workspace.getRelations().add(relation(from, to, null, null, null));
+        return this;
+    }
+
+    public WorkspaceModelBuilder relation(RelationRaw.RelationRawBuilder builder) {
+        workspace.getRelations().add(builder.build());
         return this;
     }
 

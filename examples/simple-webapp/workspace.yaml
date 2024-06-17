@@ -17,22 +17,23 @@ elements:
         id: reader_frontend
         name: Single Page Application
         description: Allows users to use reader functionalities
-        metadata:
-          technology: "Vue 3"
+        technologies:
+        - "Vue 3"
         tags:
           - HighlightedElement
       - type: CONTAINER
         id: reader_backend
         name: Backend
         description: Business Logic of the reader
-        metadata:
-          technology: "Spring Boot 3, Java 21"
+        technologies:
+        - Spring Boot 3
+        - Java 21
       - type: CONTAINER
         id: reader_database
         name: RDBMS
         description: Stores books info
-        metadata:
-          technology: "Postgres"
+        technologies:
+        - Postgres
   - type: SOFTWARE_SYSTEM
     id: aws_ss
     name: Amazon Web Services
@@ -90,7 +91,8 @@ relations:
     description: User accesses to the system via frontend app
     label: Uses
     link: https://google.com
-    technologies: TCP
+    technologies:
+    - TCP
   - from: sysadmin
     to: reader_database
     description: Access
@@ -102,8 +104,8 @@ relations:
   - from: reader_backend
     to: reader_database
     description: Reads from and writes to
-    metadata:
-      technology: Postgres Protocol/SSL
+    technologies:
+    - Postgres Protocol/SSL
   - from: reader_backend
     to: aws_s3_bucket_reader
     description: Upload books

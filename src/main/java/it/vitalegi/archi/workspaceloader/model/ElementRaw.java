@@ -20,8 +20,13 @@ public class ElementRaw {
     String name;
     String description;
     List<String> tags;
+    List<String> technologies;
     Map<String, String> metadata;
     String containerId;
     String softwareSystemId;
     List<ElementRaw> elements;
+
+    public static ElementRaw.ElementRawBuilder softwareSystem() {
+        return builder().type(ElementType.SOFTWARE_SYSTEM);
+    }
 }

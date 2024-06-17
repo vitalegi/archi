@@ -13,9 +13,9 @@ public class C4DiagramRelation {
     String fromAlias;
     String toAlias;
     String label;
-    String technology;
     String description;
     String sprite;
+    List<String> technologies;
     List<String> tags;
     String link;
 }

@@ -13,6 +13,7 @@ public class C4DiagramElement {
     String name;
     String description;
     List<String> tags;
+    List<String> technologies;
     List<C4DiagramElementProperty> properties;
 
     public C4DiagramElement() {
