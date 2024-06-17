@@ -1,11 +1,11 @@
 package it.vitalegi.archi.workspaceloader.model;
 
+import it.vitalegi.archi.model.element.PropertyEntries;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.Map;
 
 @NoArgsConstructor
 @Data
@@ -19,10 +19,10 @@ public class RelationRaw {
     String link;
     List<String> technologies;
     List<String> tags;
-    Map<String, String> metadata;
+    PropertyEntries properties;
 
     @Builder
-    public RelationRaw(String id, String from, String to, String description, String label, String sprite, String link, List<String> technologies, List<String> tags, Map<String, String> metadata) {
+    public RelationRaw(String id, String from, String to, String description, String label, String sprite, String link, List<String> technologies, List<String> tags, PropertyEntries properties) {
         this.id = id;
         this.from = from;
         this.to = to;
@@ -32,6 +32,6 @@ public class RelationRaw {
         this.link = link;
         this.technologies = technologies;
         this.tags = tags;
-        this.metadata = metadata;
+        this.properties = properties;
     }
 }

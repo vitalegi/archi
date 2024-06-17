@@ -9,9 +9,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -25,12 +23,11 @@ public abstract class Element extends Entity {
     String description;
     List<String> tags;
     List<String> technologies;
-    Map<String, String> metadata;
+    PropertyEntries properties;
 
     public Element(Model model) {
         super(model);
         tags = new ArrayList<>();
-        metadata = new HashMap<>();
         elements = new ArrayList<>();
     }
 
@@ -42,7 +39,7 @@ public abstract class Element extends Entity {
 
     @Override
     public String toString() {
-        return "Element{" + "parent=" + (parent != null ? parent.toShortString() : "null") + ", name='" + name + '\'' + ", description='" + description + '\'' + ", tags=" + tags + ", metadata=" + metadata + '}';
+        return "Element{" + "parent=" + (parent != null ? parent.toShortString() : "null") + ", name='" + name + '\'' + ", description='" + description + '\'' + ", tags=" + tags + ", properties=" + properties + '}';
     }
 
 

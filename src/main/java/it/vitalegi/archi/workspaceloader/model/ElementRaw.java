@@ -1,5 +1,6 @@
 package it.vitalegi.archi.workspaceloader.model;
 
+import it.vitalegi.archi.model.element.PropertyEntries;
 import it.vitalegi.archi.model.element.ElementType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,7 +22,7 @@ public class ElementRaw {
     String description;
     List<String> tags;
     List<String> technologies;
-    Map<String, String> metadata;
+    PropertyEntries properties;
     String containerId;
     String softwareSystemId;
     List<ElementRaw> elements;

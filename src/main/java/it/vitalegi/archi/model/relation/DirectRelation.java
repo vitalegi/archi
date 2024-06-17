@@ -4,6 +4,7 @@ import it.vitalegi.archi.model.Entity;
 import it.vitalegi.archi.model.Model;
 import it.vitalegi.archi.model.element.Element;
 import it.vitalegi.archi.model.element.ElementType;
+import it.vitalegi.archi.model.element.PropertyEntries;
 import it.vitalegi.archi.util.Cloneable;
 import it.vitalegi.archi.visitor.RelationVisitor;
 import lombok.Builder;
@@ -13,9 +14,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 @Getter
@@ -39,16 +38,15 @@ public class DirectRelation extends Entity implements Cloneable<DirectRelation>,
     @EqualsAndHashCode.Exclude
     List<String> technologies;
     @EqualsAndHashCode.Exclude
-    Map<String, String> metadata;
+    PropertyEntries properties;
 
     public DirectRelation(Model model) {
         super(model);
         tags = new ArrayList<>();
-        metadata = new HashMap<>();
     }
 
     @Builder
-    public DirectRelation(Model model, Element from, Element to, String label, String description, String sprite, String link, List<String> tags, List<String> technologies, Map<String, String> metadata) {
+    public DirectRelation(Model model, Element from, Element to, String label, String description, String sprite, String link, List<String> tags, List<String> technologies, PropertyEntries properties) {
         super(model);
         this.from = from;
         this.to = to;
@@ -58,7 +56,7 @@ public class DirectRelation extends Entity implements Cloneable<DirectRelation>,
         this.link = link;
         this.tags = tags;
         this.technologies = technologies;
-        this.metadata = metadata;
+        this.properties = properties;
     }
 
     @Override
@@ -76,7 +74,9 @@ public class DirectRelation extends Entity implements Cloneable<DirectRelation>,
         out.link = link;
         out.tags = new ArrayList<>(tags);
         out.technologies = technologies;
-        out.metadata = new HashMap<>(metadata);
+        if (properties != null) {
+            out.properties = properties.duplicate();
+        }
         return out;
     }
 
@@ -86,17 +86,7 @@ public class DirectRelation extends Entity implements Cloneable<DirectRelation>,
 
     @Override
     public String toString() {
-        return "Relation{" +
-                "from=" + (from != null ? from.toShortString() : "null") +
-                ", to=" + (to != null ? to.toShortString() : "null") +
-                ", description='" + description + '\'' +
-                ", label='" + label + '\'' +
-                ", sprite=" + sprite +
-                ", link=" + link +
-                ", tags=" + tags +
-                ", technologies='" + technologies + '\'' +
-                ", metadata=" + metadata +
-                '}';
+        return "Relation{" + "from=" + (from != null ? from.toShortString() : "null") + ", to=" + (to != null ? to.toShortString() : "null") + ", description='" + description + '\'' + ", label='" + label + '\'' + ", sprite=" + sprite + ", link=" + link + ", tags=" + tags + ", technologies='" + technologies + '\'' + ", properties=" + properties + '}';
     }
 
     public String toShortString() {

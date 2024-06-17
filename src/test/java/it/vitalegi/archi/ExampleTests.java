@@ -13,11 +13,17 @@ import java.nio.file.Path;
 @ExtendWith(MockitoExtension.class)
 public class ExampleTests {
 
-    //@Disabled
     @Test
     void simpleWebapp() {
-        FileSystemWorkspaceLoader loader = new FileSystemWorkspaceLoader();
-        var baseDir = Path.of("examples", "simple-webapp");
+        build(Path.of("examples", "simple-webapp"));
+    }
+
+    @Test
+    void properties() {
+        build(Path.of("examples", "properties"));
+    }
+
+    void build(Path baseDir) {
         var out = baseDir.resolve("output");
 
         var fsLoader = new FileSystemWorkspaceLoader();

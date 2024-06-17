@@ -1,6 +1,7 @@
 package it.vitalegi.archi.util;
 
 import it.vitalegi.archi.model.element.ElementType;
+import it.vitalegi.archi.model.element.PropertyEntries;
 import it.vitalegi.archi.model.style.Style;
 import it.vitalegi.archi.workspaceloader.model.DeploymentDiagramRaw;
 import it.vitalegi.archi.workspaceloader.model.ElementRaw;
@@ -10,7 +11,6 @@ import it.vitalegi.archi.workspaceloader.model.SystemContextDiagramRaw;
 import it.vitalegi.archi.workspaceloader.model.WorkspaceRaw;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public class WorkspaceModelBuilder {
@@ -140,8 +140,8 @@ public class WorkspaceModelBuilder {
         return workspace;
     }
 
-    protected ElementRaw containerInstance(ElementType type, String parentId, String id, String name, String description, List<String> tags, Map<String, String> metadata, String containerId) {
-        var out = element(type, parentId, id, name, description, tags, metadata);
+    protected ElementRaw containerInstance(ElementType type, String parentId, String id, String name, String description, List<String> tags, PropertyEntries properties, String containerId) {
+        var out = element(type, parentId, id, name, description, tags, properties);
         out.setContainerId(containerId);
         return out;
     }
@@ -169,8 +169,8 @@ public class WorkspaceModelBuilder {
         return this;
     }
 
-    protected ElementRaw softwareSystemInstance(ElementType type, String parentId, String id, String name, String description, List<String> tags, Map<String, String> metadata, String softwareSystemId) {
-        var out = element(type, parentId, id, name, description, tags, metadata);
+    protected ElementRaw softwareSystemInstance(ElementType type, String parentId, String id, String name, String description, List<String> tags, PropertyEntries properties, String softwareSystemId) {
+        var out = element(type, parentId, id, name, description, tags, properties);
         out.setSoftwareSystemId(softwareSystemId);
         return out;
     }
@@ -234,7 +234,7 @@ public class WorkspaceModelBuilder {
         return this;
     }
 
-    protected ElementRaw element(ElementType type, String parentId, String id, String name, String description, List<String> tags, Map<String, String> metadata) {
+    protected ElementRaw element(ElementType type, String parentId, String id, String name, String description, List<String> tags, PropertyEntries properties) {
         var out = new ElementRaw();
         out.setType(type);
         out.setParentId(parentId);
@@ -242,17 +242,17 @@ public class WorkspaceModelBuilder {
         out.setName(name);
         out.setDescription(description);
         out.setTags(tags);
-        out.setMetadata(metadata);
+        out.setProperties(properties);
         return out;
     }
 
-    protected RelationRaw relation(String from, String to, String description, List<String> tags, Map<String, String> metadata) {
+    protected RelationRaw relation(String from, String to, String description, List<String> tags, PropertyEntries properties) {
         var out = new RelationRaw();
         out.setFrom(from);
         out.setTo(to);
         out.setDescription(description);
         out.setTags(tags);
-        out.setMetadata(metadata);
+        out.setProperties(properties);
         return out;
     }
 }
