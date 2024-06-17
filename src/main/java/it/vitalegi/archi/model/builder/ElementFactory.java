@@ -113,7 +113,7 @@ public class ElementFactory {
         out.setDescription(in.getDescription());
         out.setTags(in.getTags());
         out.setTechnologies(in.getTechnologies());
-        out.setMetadata(in.getMetadata());
+        out.setProperties(in.getProperties());
         out.setUniqueId(WorkspaceUtil.createUniqueId(out));
     }
 }

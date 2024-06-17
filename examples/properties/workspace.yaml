@@ -1,0 +1,30 @@
+elements:
+  - type: SOFTWARE_SYSTEM
+    id: A
+    name: First software system
+    description: Lorem ipsum
+    properties:
+      property1: 'This is the first property'
+      Property 2: 'This is the second property'
+  - type: SOFTWARE_SYSTEM
+    id: B
+    name: Second software system
+    description: Lorem ipsum
+    properties:
+      property4: 'This is the forth property'
+      property3: 'This is the third property'
+relations:
+  - from: A
+    to: B
+    description: User accesses to the system via frontend app
+    label: Uses
+    link: https://google.com
+    properties:
+      a: A
+      c: C
+      b: B
+      a1: 1
+diagrams:
+  - type: LANDSCAPE
+    name: landscape
+    title: Application Landscape

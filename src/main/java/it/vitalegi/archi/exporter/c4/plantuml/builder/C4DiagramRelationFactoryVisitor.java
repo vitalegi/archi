@@ -42,7 +42,7 @@ public class C4DiagramRelationFactoryVisitor implements RelationVisitor<C4Diagra
         target.setLink(relation.getLink());
         target.setSprite(relation.getSprite());
         target.setTechnologies(relation.getTechnologies());
-        target.setProperties(ModelPropertyUtil.properties(relation.getMetadata()));
+        target.setProperties(ModelPropertyUtil.properties(relation.getProperties()));
     }
 
 }

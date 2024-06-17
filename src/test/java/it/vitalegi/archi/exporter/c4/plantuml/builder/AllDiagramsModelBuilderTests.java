@@ -6,6 +6,8 @@ import it.vitalegi.archi.model.diagram.DiagramOptions;
 import it.vitalegi.archi.model.diagram.LandscapeDiagram;
 import it.vitalegi.archi.model.diagram.SystemContextDiagram;
 import it.vitalegi.archi.model.diagramelement.C4DiagramElementProperty;
+import it.vitalegi.archi.model.element.PropertyEntries;
+import it.vitalegi.archi.model.element.PropertyEntry;
 import it.vitalegi.archi.util.C4DiagramModelUtil;
 import it.vitalegi.archi.visitor.DiagramVisitor;
 import it.vitalegi.archi.workspaceloader.model.DeploymentDiagramRaw;
@@ -209,19 +211,19 @@ public class AllDiagramsModelBuilderTests {
         @BeforeEach
         void init() {
             var options = DiagramOptions.builder().hideRelationsText(true).build();
-            var props = new HashMap<String, String>();
-            props.put("key1", "value1");
-            props.put("key2", "value2");
+            var props = new PropertyEntries();
+            props.getProperties().add(new PropertyEntry("key1", "value1"));
+            props.getProperties().add(new PropertyEntry("key2", "value2"));
             ws = load(b() //
-                    .element(ElementRaw.softwareSystem().id("A").metadata(props)) //
-                    .element(ElementRaw.container().parentId("A").id("C1").metadata(props)) //
+                    .element(ElementRaw.softwareSystem().id("A").properties(props)) //
+                    .element(ElementRaw.container().parentId("A").id("C1").properties(props)) //
 
-                    .element(ElementRaw.softwareSystem().id("B").metadata(props)) //
-                    .element(ElementRaw.container().parentId("B").id("C2").metadata(props)) //
+                    .element(ElementRaw.softwareSystem().id("B").properties(props)) //
+                    .element(ElementRaw.container().parentId("B").id("C2").properties(props)) //
 
-                    .relation(RelationRaw.builder().from("A").to("B").metadata(props)) //
-                    .relation(RelationRaw.builder().from("C1").to("C2").metadata(props)) //
-                    .relation(RelationRaw.builder().from("C1").to("B").metadata(props)) //
+                    .relation(RelationRaw.builder().from("A").to("B").properties(props)) //
+                    .relation(RelationRaw.builder().from("C1").to("C2").properties(props)) //
+                    .relation(RelationRaw.builder().from("C1").to("B").properties(props)) //
 
                     .deploymentEnvironment("env") //
                     .deploymentNode("env", "node") //

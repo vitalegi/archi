@@ -140,7 +140,7 @@ public class WorkspaceBuilder {
         out.setTo(to);
         out.setDescription(in.getDescription());
         out.setTags(in.getTags());
-        out.setMetadata(in.getMetadata());
+        out.setProperties(in.getProperties());
         out.setLabel(in.getLabel());
         out.setSprite(in.getSprite());
         out.setLink(in.getLink());

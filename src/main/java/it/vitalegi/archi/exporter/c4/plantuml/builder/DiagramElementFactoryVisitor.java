@@ -4,7 +4,6 @@ import it.vitalegi.archi.exporter.c4.plantuml.writer.PlantumlShapeElementVisitor
 import it.vitalegi.archi.model.Model;
 import it.vitalegi.archi.model.diagram.Diagram;
 import it.vitalegi.archi.model.diagramelement.C4DiagramElement;
-import it.vitalegi.archi.model.diagramelement.C4DiagramElementProperty;
 import it.vitalegi.archi.model.element.Component;
 import it.vitalegi.archi.model.element.Container;
 import it.vitalegi.archi.model.element.ContainerInstance;
@@ -19,10 +18,6 @@ import it.vitalegi.archi.model.element.SoftwareSystemInstance;
 import it.vitalegi.archi.util.ModelPropertyUtil;
 import it.vitalegi.archi.visitor.ElementVisitor;
 import lombok.AllArgsConstructor;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public class DiagramElementFactoryVisitor implements ElementVisitor<C4DiagramElement> {
@@ -93,7 +88,7 @@ public class DiagramElementFactoryVisitor implements ElementVisitor<C4DiagramEle
         out.setDescription(element.getDescription());
         out.setTags(element.getTags());
         out.setTechnologies(element.getTechnologies());
-        out.setProperties(ModelPropertyUtil.properties(element.getMetadata()));
+        out.setProperties(ModelPropertyUtil.properties(element.getProperties()));
 
         var shape = new PlantumlShapeElementVisitor();
         out.setShape(element.visit(shape));

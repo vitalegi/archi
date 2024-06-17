@@ -38,7 +38,7 @@ elements:
     id: aws_ss
     name: Amazon Web Services
     description: Stores books
-    metadata:
+    properties:
       vendor: AWS
     elements:
       - type: CONTAINER
@@ -57,7 +57,7 @@ elements:
           - type: DEPLOYMENT_NODE
             id: app.netlify.app
             name: app.netlify.app
-            metadata:
+            properties:
               domain: app.netlify.app
               protocol: https
               port: 443
@@ -73,7 +73,7 @@ elements:
           - type: DEPLOYMENT_NODE
             id: app.fly.io
             name: app.fly.io
-            metadata:
+            properties:
               port: 443
               scale: 0..1
               vendor: fly.io
@@ -81,7 +81,7 @@ elements:
               - type: DEPLOYMENT_NODE
                 id: Application Server
                 name: Application Server
-                metadata:
+                properties:
                   machine: shared-1x-cpu
                   memory: 512MB
                   java version: 21
