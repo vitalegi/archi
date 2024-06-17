@@ -29,4 +29,8 @@ public class ElementRaw {
     public static ElementRaw.ElementRawBuilder softwareSystem() {
         return builder().type(ElementType.SOFTWARE_SYSTEM);
     }
+
+    public static ElementRaw.ElementRawBuilder container() {
+        return builder().type(ElementType.CONTAINER);
+    }
 }

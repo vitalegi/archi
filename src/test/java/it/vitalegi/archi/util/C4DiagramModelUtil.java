@@ -66,4 +66,7 @@ public class C4DiagramModelUtil {
                 .toList();
     }
 
+    public List<C4DiagramRelation> findAllRelations() {
+        return model.getRelations();
+    }
 }

@@ -131,6 +131,11 @@ diagrams:
   - type: LANDSCAPE
     name: landscape
     title: Application Landscape
+  - type: LANDSCAPE
+    name: landscape_no_relations_text
+    title: Application Landscape - without text
+    options:
+      hideRelationsText: true
   - type: SYSTEM_CONTEXT
     target: reader_ss
     name: reader_system_context
