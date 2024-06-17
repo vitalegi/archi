@@ -44,10 +44,10 @@ java -cp archi.jar $mainClass $arg1 $arg2 ...
 ### Run application
 
 ```
-mvn clean compile exec:java "-Dexec.args=sample.dsl sample/md/images/" "-Dexec.mainClass=it.vitalegi.archi.App"
+mvn clean compile exec:java "-Dexec.args=path/to/workspace/directory/ output/" "-Dexec.mainClass=it.vitalegi.archi.App"
 ```
 
-Will read configuration from file `sample.dsl` and export the images in `sample/images` folder.
+Will scan directory `path/to/workspace/directory/` and load the configuration from each `.yaml` file found. The output will be available in `./output/` directory.
 
 Both values can be replaced with absolute/relative paths.
 

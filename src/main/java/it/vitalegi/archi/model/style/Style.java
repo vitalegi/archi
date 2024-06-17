@@ -25,6 +25,19 @@ public class Style implements MergeableCloneable<Style> {
 
     }
 
+    public static Style merge(Style style1, Style style2) {
+        if (style1 == null && style2 == null) {
+            return null;
+        }
+        if (style1 != null && style2 != null) {
+            return style1.merge(style2);
+        }
+        if (style1 != null) {
+            return style1;
+        }
+        return style2;
+    }
+
     @Override
     public Style merge(Style other) {
         var out = new Style();
