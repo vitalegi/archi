@@ -65,11 +65,11 @@ public class C4PlantumlWriter extends PlantumlWriter {
     }
 
     public void container(Element element) {
-        container(getAlias(element), element.getName(), null, element.getDescription(), "", formatTags(element), "", "");
+        container(getAlias(element), element.getName(), formatTechnologies(element), element.getDescription(), "", formatTags(element), "", "");
     }
 
     public void container(C4DiagramElement element) {
-        container(getAlias(element), element.getName(), null, element.getDescription(), "", formatTags(element), "", "");
+        container(getAlias(element), element.getName(), formatTechnologies(element), element.getDescription(), "", formatTags(element), "", "");
     }
 
     protected void container(String alias, String label, String technology, String description, String sprite, String tags, String link, String shape) {
@@ -105,11 +105,11 @@ public class C4PlantumlWriter extends PlantumlWriter {
     }
 
     public void addRelation(String command, DirectRelation relation) {
-        addRelation(command, getAlias(relation.getFrom()), getAlias(relation.getTo()), relation.getLabel(), relation.getTechnologies(), relation.getDescription(), relation.getSprite(), formatTags(relation), relation.getLink());
+        addRelation(command, getAlias(relation.getFrom()), getAlias(relation.getTo()), relation.getLabel(), formatTechnologies(relation), relation.getDescription(), relation.getSprite(), formatTags(relation), relation.getLink());
     }
 
     public void addRelation(C4DiagramRelation relation) {
-        addRelation("Rel", relation.getFromAlias(), relation.getToAlias(), relation.getLabel(), relation.getTechnology(), relation.getDescription(), relation.getSprite(), formatTags(relation), relation.getLink());
+        addRelation("Rel", relation.getFromAlias(), relation.getToAlias(), relation.getLabel(), formatTechnologies(relation), relation.getDescription(), relation.getSprite(), formatTags(relation), relation.getLink());
     }
 
     protected void addRelation(String command, String aliasFrom, String aliasTo, String label, String technology, String description, String sprite, String tags, String link) {
@@ -165,11 +165,34 @@ public class C4PlantumlWriter extends PlantumlWriter {
         return formatTags(relation.getTags());
     }
 
-
     protected String formatTags(List<String> tags) {
         if (tags == null) {
             return null;
         }
         return String.join("&", tags);
+    }
+
+    protected String formatTechnologies(Element element) {
+        return formatTechnologies(element.getTechnologies());
+    }
+
+    protected String formatTechnologies(C4DiagramElement element) {
+        return formatTechnologies(element.getTechnologies());
+    }
+
+    protected String formatTechnologies(DirectRelation relation) {
+        return formatTechnologies(relation.getTechnologies());
+    }
+
+    protected String formatTechnologies(C4DiagramRelation relation) {
+        return formatTechnologies(relation.getTechnologies());
+    }
+
+
+    protected String formatTechnologies(List<String> technologies) {
+        if (technologies == null) {
+            return null;
+        }
+        return String.join(", ", technologies);
     }
 }

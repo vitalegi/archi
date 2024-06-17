@@ -112,6 +112,7 @@ public class ElementFactory {
         out.setName(in.getName());
         out.setDescription(in.getDescription());
         out.setTags(in.getTags());
+        out.setTechnologies(in.getTechnologies());
         out.setMetadata(in.getMetadata());
         out.setUniqueId(WorkspaceUtil.createUniqueId(out));
     }

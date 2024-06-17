@@ -11,6 +11,7 @@ import it.vitalegi.archi.util.WorkspaceUtil;
 import it.vitalegi.archi.workspaceloader.model.DeploymentDiagramRaw;
 import it.vitalegi.archi.workspaceloader.model.ElementRaw;
 import it.vitalegi.archi.workspaceloader.model.LandscapeDiagramRaw;
+import it.vitalegi.archi.workspaceloader.model.RelationRaw;
 import it.vitalegi.archi.workspaceloader.model.SystemContextDiagramRaw;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +24,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
@@ -91,6 +93,33 @@ public class WorkspaceDirectorTests {
 
         var e = Assertions.assertThrows(CycleNotAllowedException.class, () -> load(config));
         assertEquals("Unresolved dependencies. Known: C, D, null. Unresolved: A: B; B: A; E: A; null: A", e.getMessage());
+    }
+
+
+    @Test
+    void when_load_given_elementWithTechnologies_then_technologiesArePreserved() {
+        var config = builder() //
+                .element(ElementRaw.softwareSystem().id("A").technologies(Arrays.asList("T1", "T2"))) //
+                .build();
+
+        var ws = load(config);
+        var a = ws.getModel().getElementById("A");
+        assertEquals(Arrays.asList("T1", "T2"), a.getTechnologies());
+    }
+
+    @Test
+    void when_load_given_relationWithTechnologies_then_technologiesArePreserved() {
+        var config = builder() //
+                .element(ElementRaw.softwareSystem().id("A")) //
+                .element(ElementRaw.softwareSystem().id("B")) //
+                .relation(RelationRaw.builder().from("A").to("B").technologies(Arrays.asList("T1", "T2"))) //
+                .build();
+
+        var ws = load(config);
+        var a = ws.getModel().getElementById("A");
+        var relations = ws.getModel().getRelationManager().getDirect().getAll();
+        assertEquals(1, relations.size());
+        assertEquals(Arrays.asList("T1", "T2"), relations.get(0).getTechnologies());
     }
 
     protected WorkspaceModelBuilder builder() {

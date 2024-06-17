@@ -90,6 +90,7 @@ public class DiagramElementFactoryVisitor implements ElementVisitor<C4DiagramEle
         out.setName(element.getName());
         out.setDescription(element.getDescription());
         out.setTags(element.getTags());
+        out.setTechnologies(element.getTechnologies());
         out.setProperties(properties(element));
         return out;
     }

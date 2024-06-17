@@ -39,7 +39,7 @@ public class C4DiagramRelationFactoryVisitor implements RelationVisitor<C4Diagra
         target.setLink(relation.getLink());
         target.setLabel(relation.getLabel());
         target.setSprite(relation.getSprite());
-        target.setTechnology(relation.getTechnologies());
+        target.setTechnologies(relation.getTechnologies());
     }
 
 }

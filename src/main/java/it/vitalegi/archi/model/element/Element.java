@@ -24,6 +24,7 @@ public abstract class Element extends Entity {
     String name;
     String description;
     List<String> tags;
+    List<String> technologies;
     Map<String, String> metadata;
 
     public Element(Model model) {
