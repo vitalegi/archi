@@ -4,6 +4,7 @@ import it.vitalegi.archi.model.diagram.Diagram;
 import it.vitalegi.archi.model.diagramelement.C4DiagramRelation;
 import it.vitalegi.archi.model.relation.DirectRelation;
 import it.vitalegi.archi.model.relation.ImplicitRelation;
+import it.vitalegi.archi.util.ModelPropertyUtil;
 import it.vitalegi.archi.visitor.RelationVisitor;
 import lombok.AllArgsConstructor;
 
@@ -41,6 +42,7 @@ public class C4DiagramRelationFactoryVisitor implements RelationVisitor<C4Diagra
         target.setLink(relation.getLink());
         target.setSprite(relation.getSprite());
         target.setTechnologies(relation.getTechnologies());
+        target.setProperties(ModelPropertyUtil.properties(relation.getMetadata()));
     }
 
 }

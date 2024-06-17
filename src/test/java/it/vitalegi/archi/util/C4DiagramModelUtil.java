@@ -16,6 +16,9 @@ public class C4DiagramModelUtil {
         this.model = model;
     }
 
+    public C4DiagramElement findByAlias(String alias) {
+        return getAllElements().filter(e -> alias.equals(e.getId())).findFirst().orElse(null);
+    }
 
     public C4DiagramElement findByAliasesPath(String... aliases) {
         if (aliases.length == 0) {

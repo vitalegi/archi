@@ -1,17 +1,19 @@
 package it.vitalegi.archi.exporter.c4.plantuml.writer;
 
-import it.vitalegi.archi.exporter.c4.plantuml.constants.Direction;
 import it.vitalegi.archi.model.diagramelement.C4DiagramElement;
+import it.vitalegi.archi.model.diagramelement.C4DiagramElementProperty;
 import it.vitalegi.archi.model.diagramelement.C4DiagramRelation;
 import it.vitalegi.archi.model.element.Element;
 import it.vitalegi.archi.model.relation.DirectRelation;
 import it.vitalegi.archi.model.style.ElementTag;
 import it.vitalegi.archi.model.style.LineStyle;
 import it.vitalegi.archi.model.style.RelationTag;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Formatter;
 import java.util.List;
 
+@Slf4j
 public class C4PlantumlWriter extends PlantumlWriter {
 
     public void addElementTag(ElementTag tag) {
@@ -32,16 +34,13 @@ public class C4PlantumlWriter extends PlantumlWriter {
                 alias, textColor, lineColor, lineStyle != null ? lineStyle : null, sprite, techn, legendText, legendSprite, lineThickness));
     }
 
-    public void deploymentNodeStart(Element element) {
-        deploymentNodeStart(getAlias(element), element.getName(), null, element.getDescription(), "", formatTags(element), "");
-    }
-
     public void deploymentNodeStart(C4DiagramElement element) {
-        deploymentNodeStart(getAlias(element), element.getName(), null, element.getDescription(), "", formatTags(element), "");
+        deploymentNodeStart(getAlias(element), element.getName(), null, element.getDescription(), "", formatTags(element), "", element.getProperties());
     }
 
-    protected void deploymentNodeStart(String alias, String label, String type, String description, String sprite, String tags, String link) {
+    protected void deploymentNodeStart(String alias, String label, String type, String description, String sprite, String tags, String link, List<C4DiagramElementProperty> properties) {
         println(format("Deployment_Node(%s, %s, $type=\"%s\", $descr=\"%s\", $sprite=\"%s\", $tags=\"%s\", $link=\"%s\") {", alias, label, type, description, sprite, tags, link));
+        addProperties(properties);
         increaseTab();
     }
 
@@ -52,6 +51,7 @@ public class C4PlantumlWriter extends PlantumlWriter {
 
     public void boundaryStart(C4DiagramElement element) {
         boundaryStart(getAlias(element), element.getName(), formatTags(element));
+        addProperties(element);
     }
 
     protected void boundaryStart(String alias, String label, String tags) {
@@ -65,11 +65,20 @@ public class C4PlantumlWriter extends PlantumlWriter {
     }
 
     public void container(C4DiagramElement element) {
-        container(getAlias(element), element.getName(), formatTechnologies(element), element.getDescription(), "", formatTags(element), "", element.getShape());
+        container(getAlias(element), element.getName(), formatTechnologies(element), element.getDescription(), "", formatTags(element), "", element.getShape(), element.getProperties());
     }
 
-    protected void container(String alias, String label, String technology, String description, String sprite, String tags, String link, String shape) {
-        println(format("Container($alias=\"%s\", $label=\"%s\", $techn=\"%s\", $descr=\"%s\", $sprite=\"%s\", $tags=\"%s\", $link=\"%s\", $baseShape=\"%s\")", alias, label, technology, description, sprite, tags, link, shape));
+    protected void container(String alias, String label, String technology, String description, String sprite, String tags, String link, String shape, List<C4DiagramElementProperty> properties) {
+        print(format("Container($alias=\"%s\", $label=\"%s\", $techn=\"%s\", $descr=\"%s\", $sprite=\"%s\", $tags=\"%s\", $link=\"%s\", $baseShape=\"%s\")", alias, label, technology, description, sprite, tags, link, shape));
+        if (!properties.isEmpty()) {
+            increaseTab();
+            println(" {");
+            addProperties(properties);
+            decreaseTab();
+            println("}");
+        } else {
+            println("");
+        }
     }
 
     public void withoutPropertyHeader() {
@@ -84,20 +93,8 @@ public class C4PlantumlWriter extends PlantumlWriter {
         println(format("AddProperty(\"%s\",\"%s\")", col1, col2));
     }
 
-    public void addProperty(String col1, String col2, String col3) {
-        println(format("AddProperty(\"%s\",\"%s\",\"%s\")", col1, col2, col3));
-    }
-
-    public void addProperty(String col1, String col2, String col3, String col4) {
-        println(format("AddProperty(\"%s\",\"%s\",\"%s\",\"%s\")", col1, col2, col3, col4));
-    }
-
     public void addRelation(DirectRelation relation) {
         addRelation("Rel", relation);
-    }
-
-    public void addRelation(Direction direction, DirectRelation relation) {
-        addRelation(direction.getRelationKeyword(), relation);
     }
 
     public void addRelation(String command, DirectRelation relation) {
@@ -109,9 +106,22 @@ public class C4PlantumlWriter extends PlantumlWriter {
     }
 
     protected void addRelation(String command, String aliasFrom, String aliasTo, String label, String technology, String description, String sprite, String tags, String link) {
-        //$from, $to, $label, $techn="", $descr="", $sprite="", $tags="", $link=""
         println(format("%s($from=\"%s\", $to=\"%s\", $label=\"%s\", $techn=\"%s\", $descr=\"%s\", $sprite=\"%s\", $tags=\"%s\", $link=\"%s\")", //
                 command, aliasFrom, aliasTo, label, technology, description, sprite, tags, link));
+    }
+
+    public void addProperties(C4DiagramElement element) {
+        addProperties(element.getProperties());
+    }
+
+    protected void addProperties(List<C4DiagramElementProperty> properties) {
+        if (properties == null || properties.isEmpty()) {
+            return;
+        }
+        println("WithoutPropertyHeader()");
+        for (var property : properties) {
+            addProperty(property.getCol1(), property.getCol2());
+        }
     }
 
     public void hideStereotypes() {
