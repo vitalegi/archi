@@ -16,6 +16,7 @@ import it.vitalegi.archi.model.element.InfrastructureNode;
 import it.vitalegi.archi.model.element.Person;
 import it.vitalegi.archi.model.element.SoftwareSystem;
 import it.vitalegi.archi.model.element.SoftwareSystemInstance;
+import it.vitalegi.archi.util.ModelPropertyUtil;
 import it.vitalegi.archi.visitor.ElementVisitor;
 import lombok.AllArgsConstructor;
 
@@ -92,17 +93,10 @@ public class DiagramElementFactoryVisitor implements ElementVisitor<C4DiagramEle
         out.setDescription(element.getDescription());
         out.setTags(element.getTags());
         out.setTechnologies(element.getTechnologies());
-        out.setProperties(properties(element));
+        out.setProperties(ModelPropertyUtil.properties(element.getMetadata()));
 
         var shape = new PlantumlShapeElementVisitor();
         out.setShape(element.visit(shape));
         return out;
-    }
-
-    protected List<C4DiagramElementProperty> properties(Element element) {
-        if (element.getMetadata() == null) {
-            return Collections.emptyList();
-        }
-        return element.getMetadata().entrySet().stream().map(e -> new C4DiagramElementProperty(e.getKey(), e.getValue())).collect(Collectors.toList());
     }
 }

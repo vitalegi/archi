@@ -18,7 +18,10 @@ Container($alias="Container_reader_frontend", $label="Single Page Application", 
     Container($alias="Container_reader_backend", $label="Backend", $techn="Spring Boot 3, Java 21", $descr="Business Logic of the reader", $sprite="", $tags="", $link="", $baseShape="rectangle")
     Container($alias="Container_reader_database", $label="RDBMS", $techn="Postgres", $descr="Stores books info", $sprite="", $tags="", $link="", $baseShape="rectangle")
     }
-Container($alias="SoftwareSystem_aws_ss", $label="Amazon Web Services", $techn="", $descr="Stores books", $sprite="", $tags="", $link="", $baseShape="rectangle")
+Container($alias="SoftwareSystem_aws_ss", $label="Amazon Web Services", $techn="", $descr="Stores books", $sprite="", $tags="", $link="", $baseShape="rectangle") {
+    WithoutPropertyHeader()
+    AddProperty("vendor","AWS")
+    }
 Rel($from="Container_reader_backend", $to="Container_reader_database", $label="", $techn="Postgres Protocol/SSL", $descr="Reads from and writes to", $sprite="", $tags="", $link="")
 Rel($from="Container_reader_backend", $to="SoftwareSystem_aws_ss", $label="", $techn="", $descr="Upload books", $sprite="", $tags="", $link="")
 Rel($from="Container_reader_frontend", $to="Container_reader_backend", $label="", $techn="", $descr="Uses", $sprite="", $tags="", $link="")

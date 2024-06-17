@@ -38,6 +38,8 @@ elements:
     id: aws_ss
     name: Amazon Web Services
     description: Stores books
+    metadata:
+      vendor: AWS
     elements:
       - type: CONTAINER
         id: aws_s3_bucket_reader
@@ -56,7 +58,10 @@ elements:
             id: app.netlify.app
             name: app.netlify.app
             metadata:
+              domain: app.netlify.app
+              protocol: https
               port: 443
+              vendor: netlify.app
             elements:
               - type: INFRASTRUCTURE_NODE
                 name: Reverse Proxy
@@ -71,6 +76,7 @@ elements:
             metadata:
               port: 443
               scale: 0..1
+              vendor: fly.io
             elements:
               - type: DEPLOYMENT_NODE
                 id: Application Server

@@ -18,4 +18,5 @@ public class C4DiagramRelation {
     List<String> technologies;
     List<String> tags;
     String link;
+    List<C4DiagramElementProperty> properties;
 }
