@@ -22,7 +22,7 @@ public class ExampleTests {
 
         var fsLoader = new FileSystemWorkspaceLoader();
         var factory = new WorkspaceDirector();
-        factory.makeWorkspace(fsLoader.load(baseDir.resolve("workspace.yaml")));
+        factory.makeWorkspace(fsLoader.load(baseDir));
         var workspace = factory.build();
         var exporter = new PlantumlDiagramExporter(workspace, out, DiagramFormat.values());
         workspace.getDiagrams().getAll().forEach(exporter::export);

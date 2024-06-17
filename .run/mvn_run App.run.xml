@@ -14,10 +14,11 @@
               <option value="clean" />
               <option value="compile" />
               <option value="exec:java" />
-              <option value="-Dexec.args=examples/simple-webapp/workspace.yaml examples/simple-webapp/results" />
+              <option value="-Dexec.args=examples/simple-webapp examples/simple-webapp/output" />
               <option value="-Dexec.mainClass=it.vitalegi.archi.App" />
             </list>
           </option>
+          <option name="multimoduleDir" />
           <option name="pomFileName" />
           <option name="profilesMap">
             <map />
