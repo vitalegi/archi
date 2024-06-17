@@ -1,0 +1,21 @@
+@startuml
+set separator none
+!ENABLE_ALL_PLANT_ELEMENTS = 1
+skinparam linetype ortho
+skinparam nodesep 10
+skinparam ranksep 150
+top to bottom direction
+title Application Landscape - without text
+!include <C4/C4>
+!include <C4/C4_Context>
+!include <C4/C4_Container>
+AddElementTag("HighlightedElement", $bgColor="red", $fontColor="black", $borderColor="orange", $shadowing="true", $shape="RoundedBox", $sprite="", $techn="Awesome technologies", $legendText="Awesome element", $legendSprite="", $borderStyle="DOTTED", $borderThickness="5")
+AddRelTag("HighlightedRelation", $textColor="red", $lineColor="red", $lineStyle="DOTTED", $sprite="", $techn="", $legendText="Awesome relation", $legendSprite="", $lineThickness="2")
+Container($alias="Person_user", $label="User", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="actor")
+Container($alias="Person_sysadmin", $label="Sysadmin", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="actor")
+Container($alias="SoftwareSystem_reader_ss", $label="Reader", $techn="", $descr="Allows users to access the reader", $sprite="", $tags="HighlightedElement", $link="", $baseShape="rectangle")
+Container($alias="SoftwareSystem_aws_ss", $label="Amazon Web Services", $techn="", $descr="Stores books", $sprite="", $tags="", $link="", $baseShape="rectangle")
+Rel($from="Person_user", $to="SoftwareSystem_reader_ss", $label="", $techn="", $descr="", $sprite="", $tags="", $link="")
+Rel($from="SoftwareSystem_reader_ss", $to="SoftwareSystem_aws_ss", $label="", $techn="", $descr="", $sprite="", $tags="", $link="")
+hide stereotypes
+@enduml

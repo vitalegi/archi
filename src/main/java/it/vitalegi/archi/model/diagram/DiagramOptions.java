@@ -10,13 +10,15 @@ import lombok.NoArgsConstructor;
 public class DiagramOptions {
     LayoutDirection direction;
     boolean inheritRelations;
+    boolean hideRelationsText;
 
     @Builder
-    public DiagramOptions(boolean inheritRelations) {
+    public DiagramOptions(boolean inheritRelations, boolean hideRelationsText) {
         this.inheritRelations = inheritRelations;
+        this.hideRelationsText = hideRelationsText;
     }
 
     public static DiagramOptions defaultOptions() {
-        return builder().inheritRelations(false).build();
+        return builder().inheritRelations(false).hideRelationsText(false).build();
     }
 }

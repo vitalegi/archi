@@ -2,6 +2,7 @@ package it.vitalegi.archi.exporter.c4.plantuml.builder;
 
 import it.vitalegi.archi.exporter.c4.plantuml.writer.PlantumlShapeElementVisitor;
 import it.vitalegi.archi.model.Model;
+import it.vitalegi.archi.model.diagram.Diagram;
 import it.vitalegi.archi.model.diagramelement.C4DiagramElement;
 import it.vitalegi.archi.model.diagramelement.C4DiagramElementProperty;
 import it.vitalegi.archi.model.element.Component;
@@ -16,18 +17,17 @@ import it.vitalegi.archi.model.element.Person;
 import it.vitalegi.archi.model.element.SoftwareSystem;
 import it.vitalegi.archi.model.element.SoftwareSystemInstance;
 import it.vitalegi.archi.visitor.ElementVisitor;
+import lombok.AllArgsConstructor;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@AllArgsConstructor
 public class DiagramElementFactoryVisitor implements ElementVisitor<C4DiagramElement> {
 
     AliasGenerator aliasGenerator;
-
-    public DiagramElementFactoryVisitor(AliasGenerator aliasGenerator) {
-        this.aliasGenerator = aliasGenerator;
-    }
+    Diagram diagram;
 
     @Override
     public C4DiagramElement visitComponent(Component component) {

@@ -34,7 +34,7 @@ public abstract class C4ModelBuilder<E extends Diagram> {
 
 
     protected C4DiagramElement addElement(C4DiagramElement parent, Element element) {
-        var elementFactory = new DiagramElementFactoryVisitor(aliasGenerator);
+        var elementFactory = new DiagramElementFactoryVisitor(aliasGenerator, diagram);
         var e = element.visit(elementFactory);
         if (parent != null) {
             model.addElement(parent.getId(), e);
@@ -52,7 +52,7 @@ public abstract class C4ModelBuilder<E extends Diagram> {
     }
 
     protected C4DiagramRelation relation(Relation relation, String fromAlias, String toAlias) {
-        var visitor = new C4DiagramRelationFactoryVisitor(fromAlias, toAlias);
+        var visitor = new C4DiagramRelationFactoryVisitor(diagram, fromAlias, toAlias);
         return relation.visit(visitor);
     }
 
