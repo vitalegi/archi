@@ -5,6 +5,8 @@ import it.vitalegi.archi.exception.RelationNotAllowedException;
 import it.vitalegi.archi.model.Model;
 import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.model.diagram.Diagrams;
+import it.vitalegi.archi.model.diagram.options.DiagramOptions;
+import it.vitalegi.archi.model.diagram.options.HiddenRelations;
 import it.vitalegi.archi.model.element.Element;
 import it.vitalegi.archi.model.flow.Flow;
 import it.vitalegi.archi.model.flow.FlowStep;
@@ -91,12 +93,19 @@ public class WorkspaceBuilder {
                 .forEach(diagram -> workspace.getDiagrams().add(diagram));
     }
 
-    protected void buildGlobalStyle(Style style) {
+    public void buildGlobalStyle(Style style) {
         log.debug("Load global styles");
         if (style != null) {
             workspace.setStyle(style.duplicate());
         } else {
             workspace.setStyle(Style.builder().build());
+        }
+    }
+
+    public void buildGlobalOptions(DiagramOptions options) {
+        log.debug("Load global options");
+        if (options != null) {
+            workspace.setOptions(options.duplicate());
         }
     }
 
@@ -219,6 +228,40 @@ public class WorkspaceBuilder {
         out.setTechnologies(in.getTechnologies());
         out.setUniqueId(WorkspaceUtil.createUniqueId(out));
         return out;
+    }
+
+    public void validateDiagramOptions(DiagramOptions options) {
+        if (options == null) {
+            return;
+        }
+        validateHiddenRelations(options.getHiddenRelations());
+    }
+
+    public void validateHiddenRelations(List<HiddenRelations> hiddenRelations) {
+        if (hiddenRelations == null) {
+            return;
+        }
+        for (var hiddenRelation : hiddenRelations) {
+            validateHiddenRelation(hiddenRelation);
+        }
+    }
+
+    public void validateHiddenRelation(HiddenRelations hiddenRelation) {
+        if (hiddenRelation == null) {
+            throw new IllegalArgumentException("Hidden relation is null");
+        }
+        if (hiddenRelation.getId() == null) {
+            throw new IllegalArgumentException("Hidden relation must have [id]");
+        }
+        if (hiddenRelation.getElements() == null || hiddenRelation.getElements().isEmpty()) {
+            throw new IllegalArgumentException("Hidden relation must have the list of elements");
+        }
+        for (var elementId : hiddenRelation.getElements()) {
+            var element = workspace.getModel().getElementById(elementId);
+            if (element == null) {
+                throw new IllegalArgumentException("Cannot find element " + elementId + ", required by hidden relation " + hiddenRelation.getId());
+            }
+        }
     }
 
     @AllArgsConstructor

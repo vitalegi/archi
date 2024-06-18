@@ -2,6 +2,7 @@ package it.vitalegi.archi.exporter.c4.plantuml.builder;
 
 import it.vitalegi.archi.model.diagram.Diagram;
 import it.vitalegi.archi.model.diagramelement.C4DiagramRelation;
+import it.vitalegi.archi.model.diagramelement.RelationType;
 import it.vitalegi.archi.model.relation.DirectRelation;
 import it.vitalegi.archi.model.relation.ImplicitRelation;
 import it.vitalegi.archi.util.ModelPropertyUtil;
@@ -38,6 +39,7 @@ public class C4DiagramRelationFactoryVisitor implements RelationVisitor<C4Diagra
             target.setLabel(relation.getLabel());
             target.setDescription(relation.getDescription());
         }
+        target.setRelationType(RelationType.NORMAL);
         target.setTags(relation.getTags());
         target.setLink(relation.getLink());
         target.setSprite(relation.getSprite());

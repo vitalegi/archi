@@ -44,6 +44,7 @@ public class SystemContextDiagramModelBuilder extends C4ModelBuilder<SystemConte
         var relations = relationsInScope(elementsInScope);
         buildElements();
         buildRelations(relations);
+        buildHiddenRelations(elementsInScope);
         return model;
     }
 

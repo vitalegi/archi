@@ -3,7 +3,7 @@ package it.vitalegi.archi.exporter.c4.plantuml.builder;
 import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.model.diagram.DeploymentDiagram;
 import it.vitalegi.archi.model.diagram.Diagram;
-import it.vitalegi.archi.model.diagram.DiagramOptions;
+import it.vitalegi.archi.model.diagram.options.DiagramOptions;
 import it.vitalegi.archi.util.C4DiagramModelUtil;
 import it.vitalegi.archi.workspaceloader.model.DeploymentDiagramRaw;
 import org.junit.jupiter.api.Test;

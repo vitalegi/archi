@@ -1,0 +1,62 @@
+@startuml
+set separator none
+!ENABLE_ALL_PLANT_ELEMENTS = 1
+skinparam linetype ortho
+skinparam nodesep 10
+skinparam ranksep 150
+left to right direction
+title Deployment
+!include <C4/C4>
+!include <C4/C4_Context>
+!include <C4/C4_Container>
+!include <C4/C4_Deployment>
+Deployment_Node(DeploymentNode_node, Grouped, $type="", $descr="", $sprite="", $tags="", $link="") {
+Deployment_Node(ContainerInstance_container_instance_1, , $type="", $descr="", $sprite="", $tags="", $link="") {
+    Container($alias="Container_container_1", $label="Application 1", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="rectangle")
+        }
+    Deployment_Node(ContainerInstance_container_instance_2, , $type="", $descr="", $sprite="", $tags="", $link="") {
+    Container($alias="Container_container_2", $label="Application 2", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="rectangle")
+        }
+    Deployment_Node(ContainerInstance_container_instance_3, , $type="", $descr="", $sprite="", $tags="", $link="") {
+    Container($alias="Container_container_3", $label="Application 3", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="rectangle")
+        }
+    Deployment_Node(ContainerInstance_container_instance_4, , $type="", $descr="", $sprite="", $tags="", $link="") {
+    Container($alias="Container_container_4", $label="Application 4", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="rectangle")
+        }
+    Deployment_Node(ContainerInstance_container_instance_5, , $type="", $descr="", $sprite="", $tags="", $link="") {
+    Container($alias="Container_container_5", $label="Application 5", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="rectangle")
+        }
+    Deployment_Node(ContainerInstance_container_instance_6, , $type="", $descr="", $sprite="", $tags="", $link="") {
+    Container($alias="Container_container_6", $label="Application 6", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="rectangle")
+        }
+    Deployment_Node(ContainerInstance_container_instance_7_1, , $type="", $descr="", $sprite="", $tags="", $link="") {
+    Container($alias="Container_container_7", $label="Application 7", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="rectangle")
+        }
+    Deployment_Node(ContainerInstance_container_instance_7_2, , $type="", $descr="", $sprite="", $tags="", $link="") {
+    Container($alias="Container_container_7_1", $label="Application 7", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="rectangle")
+        }
+    Deployment_Node(ContainerInstance_container_instance_8, , $type="", $descr="", $sprite="", $tags="", $link="") {
+    Container($alias="Container_container_8", $label="Application 8", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="rectangle")
+        }
+    Deployment_Node(ContainerInstance_container_instance_9, , $type="", $descr="", $sprite="", $tags="", $link="") {
+    Container($alias="Container_container_9", $label="Application 9", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="rectangle")
+        }
+    Deployment_Node(ContainerInstance_container_instance_10, , $type="", $descr="", $sprite="", $tags="", $link="") {
+    Container($alias="Container_container_10", $label="Application 10", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="rectangle")
+        }
+    Deployment_Node(ContainerInstance_container_instance_11, , $type="", $descr="", $sprite="", $tags="", $link="") {
+    Container($alias="Container_container_11", $label="Application 11", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="rectangle")
+        }
+    Deployment_Node(ContainerInstance_container_instance_12, , $type="", $descr="", $sprite="", $tags="", $link="") {
+    Container($alias="Container_container_12", $label="Application 12", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="rectangle")
+        }
+    }
+Container_container_1 -[hidden]-> Container_container_2
+Container_container_2 -[hidden]-> Container_container_3
+Container_container_4 -[hidden]-> Container_container_5
+Container_container_5 -[hidden]-> Container_container_6
+Container_container_8 -[hidden]-> Container_container_9
+Container_container_10 -[hidden]-> Container_container_11
+Container_container_11 -[hidden]-> Container_container_12
+hide stereotypes
+@enduml

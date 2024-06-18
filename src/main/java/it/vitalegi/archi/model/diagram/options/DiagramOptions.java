@@ -1,20 +1,42 @@
-package it.vitalegi.archi.model.diagram;
+package it.vitalegi.archi.model.diagram.options;
 
 import it.vitalegi.archi.exporter.c4.plantuml.constants.LayoutDirection;
+import it.vitalegi.archi.util.ListUtil;
 import it.vitalegi.archi.util.MergeableCloneable;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 @Data
-@NoArgsConstructor
 public class DiagramOptions implements MergeableCloneable<DiagramOptions> {
     LayoutDirection direction;
     boolean inheritRelations;
     boolean hideRelationsText;
+    List<HiddenRelations> hiddenRelations;
+
+    public static DiagramOptions merge(DiagramOptions option1, DiagramOptions option2) {
+        if (option1 == null && option2 == null) {
+            return null;
+        }
+        if (option1 != null && option2 != null) {
+            return option1.merge(option2);
+        }
+        if (option1 != null) {
+            return option1;
+        }
+        return option2;
+    }
+
+    public DiagramOptions() {
+        hiddenRelations = new ArrayList<>();
+    }
 
     @Builder
     public DiagramOptions(boolean inheritRelations, boolean hideRelationsText) {
+        this();
         this.inheritRelations = inheritRelations;
         this.hideRelationsText = hideRelationsText;
     }
@@ -26,9 +48,10 @@ public class DiagramOptions implements MergeableCloneable<DiagramOptions> {
     @Override
     public DiagramOptions duplicate() {
         var out = new DiagramOptions();
-        out.direction = direction;
-        out.inheritRelations = inheritRelations;
-        out.hideRelationsText = hideRelationsText;
+        out.direction = this.direction;
+        out.inheritRelations = this.inheritRelations;
+        out.hideRelationsText = this.hideRelationsText;
+        out.hiddenRelations = ListUtil.duplicate(this.hiddenRelations);
         return out;
     }
 
@@ -43,6 +66,7 @@ public class DiagramOptions implements MergeableCloneable<DiagramOptions> {
         }
         out.inheritRelations = other.inheritRelations;
         out.hideRelationsText = other.hideRelationsText;
+        out.hiddenRelations = ListUtil.merge(this.hiddenRelations, other.hiddenRelations, Comparator.comparing(HiddenRelations::getId));
         return out;
     }
 }

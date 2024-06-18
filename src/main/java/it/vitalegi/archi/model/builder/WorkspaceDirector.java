@@ -18,6 +18,7 @@ public class WorkspaceDirector {
         workspaceBuilder.buildRelations(in.getRelations());
         workspaceBuilder.buildFlows(in.getFlows());
         workspaceBuilder.buildGlobalStyle(in.getStyle());
+        workspaceBuilder.buildGlobalOptions(in.getOptions());
         workspaceBuilder.buildDiagrams(in.getDiagrams());
 
         var workspace = workspaceBuilder.getWorkspace();
@@ -25,6 +26,8 @@ public class WorkspaceDirector {
         var diagramValidator = new PlantumlDiagramValidatorVisitor();
         workspace.getDiagrams().getAll().forEach(diagram -> diagram.visit(diagramValidator));
         workspace.getStyle().validate();
+        workspaceBuilder.validateDiagramOptions(workspace.getOptions());
+        workspace.getDiagrams().getAll().forEach(diagram -> workspaceBuilder.validateDiagramOptions(diagram.getOptions()));
         return this;
     }
 
