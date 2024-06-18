@@ -2,6 +2,7 @@ package it.vitalegi.archi.model;
 
 import it.vitalegi.archi.model.element.Element;
 import it.vitalegi.archi.model.element.ElementType;
+import it.vitalegi.archi.model.flow.Flow;
 import it.vitalegi.archi.model.relation.RelationManager;
 import it.vitalegi.archi.visitor.ElementVisitor;
 import lombok.EqualsAndHashCode;
@@ -21,12 +22,14 @@ import java.util.Map;
 public class Model extends Element {
     Map<String, Element> elementMap;
     RelationManager relationManager;
+    List<Flow> flows;
 
     public Model() {
         super(null);
         model = this;
         elementMap = new HashMap<>();
         relationManager = new RelationManager();
+        flows = new ArrayList<>();
     }
 
     public Element getElementById(String id) {
