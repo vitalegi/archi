@@ -7,9 +7,9 @@ public interface Relation {
 
     Element getFrom();
 
-    Element getTo();
-
     void setFrom(Element element);
+
+    Element getTo();
 
     void setTo(Element element);
 

@@ -12,7 +12,6 @@ import it.vitalegi.archi.model.element.Element;
 import it.vitalegi.archi.model.element.SoftwareSystem;
 import it.vitalegi.archi.model.element.SoftwareSystemInstance;
 import it.vitalegi.archi.model.relation.Relation;
-import it.vitalegi.archi.model.relation.Relations;
 import it.vitalegi.archi.util.WorkspaceUtil;
 
 import java.util.ArrayList;

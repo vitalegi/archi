@@ -1,14 +1,13 @@
 package it.vitalegi.archi.workspaceloader.model;
 
-import it.vitalegi.archi.model.element.PropertyEntries;
 import it.vitalegi.archi.model.element.ElementType;
+import it.vitalegi.archi.model.element.PropertyEntries;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
-import java.util.Map;
 
 @Data
 @Builder

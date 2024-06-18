@@ -19,6 +19,20 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
 public class RelationManagerTests {
+    static List<String> strigifyImplicits(Workspace ws, String id) {
+        var relations = ws.getModel().getRelationManager().getImplicit();
+        var e = getElementById(ws, id);
+        return stringifyRelations(relations.getRelations(e));
+    }
+
+    static DirectRelation relation(Workspace ws, String from, String to) {
+        return DirectRelation.builder().from(getElementById(ws, from)).to(getElementById(ws, to)).build();
+    }
+
+    static Element getElementById(Workspace ws, String id) {
+        return ws.getModel().getElementById(id);
+    }
+
     @Test
     void given_addRelation_then_relationShouldBeRetrievable() {
         var ws = load(b() //
@@ -72,7 +86,6 @@ public class RelationManagerTests {
         assertArrayEqualsUnsorted(List.of("Component (comp1) => Component (comp2)", "Container (C1) => Component (comp2)", "SoftwareSystem (A) => Component (comp2)"), strigifyImplicits(ws, "comp2"));
     }
 
-
     @Test
     void given_addRelation_when_componentsOfSameSoftwareSystem_then_shouldCreateImplicitRelations() {
         var ws = load(b() //
@@ -111,19 +124,5 @@ public class RelationManagerTests {
         assertArrayEqualsUnsorted(Collections.emptyList(), strigifyImplicits(ws, "C1"));
         assertArrayEqualsUnsorted(List.of("Component (comp1) => Component (comp2)"), strigifyImplicits(ws, "comp1"));
         assertArrayEqualsUnsorted(List.of("Component (comp1) => Component (comp2)"), strigifyImplicits(ws, "comp2"));
-    }
-
-    static List<String> strigifyImplicits(Workspace ws, String id) {
-        var relations = ws.getModel().getRelationManager().getImplicit();
-        var e = getElementById(ws, id);
-        return stringifyRelations(relations.getRelations(e));
-    }
-
-    static DirectRelation relation(Workspace ws, String from, String to) {
-        return DirectRelation.builder().from(getElementById(ws, from)).to(getElementById(ws, to)).build();
-    }
-
-    static Element getElementById(Workspace ws, String id) {
-        return ws.getModel().getElementById(id);
     }
 }
