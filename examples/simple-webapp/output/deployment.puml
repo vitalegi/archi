@@ -13,32 +13,32 @@ title Deployment
 AddElementTag("HighlightedElement", $bgColor="red", $fontColor="black", $borderColor="orange", $shadowing="true", $shape="RoundedBox", $sprite="", $techn="Awesome technologies", $legendText="Awesome element", $legendSprite="", $borderStyle="DOTTED", $borderThickness="5")
 AddRelTag("HighlightedRelation", $textColor="red", $lineColor="red", $lineStyle="DOTTED", $sprite="", $techn="", $legendText="Awesome relation", $legendSprite="", $lineThickness="2")
 Deployment_Node(DeploymentNode_netlify, Netlify, $type="", $descr="", $sprite="", $tags="", $link="") {
-Deployment_Node(DeploymentNode_app_netlify_app, app.netlify.app, $type="", $descr="", $sprite="", $tags="", $link="") {
-    WithoutPropertyHeader()
+WithoutPropertyHeader()
     AddProperty("domain","app.netlify.app")
     AddProperty("protocol","https")
     AddProperty("port","443")
     AddProperty("vendor","netlify.app")
-    Deployment_Node(ContainerInstance_auto_7740e8d1_a1ec_4744_89a9_9b31ae83ba7a, , $type="", $descr="", $sprite="", $tags="", $link="") {
+    Deployment_Node(DeploymentNode_app_netlify_app, app.netlify.app, $type="", $descr="", $sprite="", $tags="", $link="") {
+    Deployment_Node(ContainerInstance_auto_cab5e5b8_5266_41f3_a16e_bcdba7264eeb, , $type="", $descr="", $sprite="", $tags="", $link="") {
         Container($alias="Container_reader_frontend", $label="Single Page Application", $techn="Vue 3", $descr="Allows users to use reader functionalities", $sprite="", $tags="HighlightedElement", $link="", $baseShape="rectangle")
             }
         }
     }
-Deployment_Node(DeploymentNode_auto_72397d10_fa48_4667_a7b9_2e972b36bc66, fly.io, $type="", $descr="", $sprite="", $tags="", $link="") {
-Deployment_Node(DeploymentNode_app_fly_io, app.fly.io, $type="", $descr="", $sprite="", $tags="", $link="") {
-    WithoutPropertyHeader()
+Deployment_Node(DeploymentNode_auto_c45f4b79_7bbd_4179_8b6a_ca22ff1580f6, fly.io, $type="", $descr="", $sprite="", $tags="", $link="") {
+WithoutPropertyHeader()
     AddProperty("port","443")
     AddProperty("scale","0..1")
     AddProperty("vendor","fly.io")
-    Deployment_Node(DeploymentNode_Application_Server, Application Server, $type="", $descr="", $sprite="", $tags="", $link="") {
-        WithoutPropertyHeader()
+    Deployment_Node(DeploymentNode_app_fly_io, app.fly.io, $type="", $descr="", $sprite="", $tags="", $link="") {
+    WithoutPropertyHeader()
         AddProperty("machine","shared-1x-cpu")
         AddProperty("memory","512MB")
         AddProperty("java version","21")
-        Deployment_Node(ContainerInstance_auto_146c70b2_bc32_4ba2_8c95_912a82dcd631, , $type="", $descr="", $sprite="", $tags="", $link="") {
+        Deployment_Node(DeploymentNode_Application_Server, Application Server, $type="", $descr="", $sprite="", $tags="", $link="") {
+        Deployment_Node(ContainerInstance_auto_368d4693_f18f_44bb_b85e_24feea0d1d23, , $type="", $descr="", $sprite="", $tags="", $link="") {
             Container($alias="Container_reader_backend", $label="Backend", $techn="Spring Boot 3, Java 21", $descr="Business Logic of the reader", $sprite="", $tags="", $link="", $baseShape="rectangle")
                 }
-            Deployment_Node(ContainerInstance_auto_da003778_40aa_45ed_b996_1e3a6fc6807a, , $type="", $descr="", $sprite="", $tags="", $link="") {
+            Deployment_Node(ContainerInstance_auto_4bf57879_4748_4bf6_968e_dd78c178e2a7, , $type="", $descr="", $sprite="", $tags="", $link="") {
             Container($alias="Container_reader_backend_1", $label="Backend", $techn="Spring Boot 3, Java 21", $descr="Business Logic of the reader", $sprite="", $tags="", $link="", $baseShape="rectangle")
                 }
             }

@@ -4,15 +4,15 @@ elements:
     name: First software system
     description: Lorem ipsum
     properties:
-      property1: 'This is the first property'
-      Property 2: 'This is the second property'
+      property1: 'This should appear first'
+      Property 2: 'This should appear last'
   - type: SOFTWARE_SYSTEM
     id: B
     name: Second software system
     description: Lorem ipsum
     properties:
-      property4: 'This is the forth property'
-      property3: 'This is the third property'
+      property4: 'This should appear first'
+      property3: 'This should appear last'
 relations:
   - from: A
     to: B
@@ -20,10 +20,10 @@ relations:
     label: Uses
     link: https://google.com
     properties:
-      a: A
-      c: C
-      b: B
-      a1: 1
+      a: 1
+      c: 2
+      b: 3
+      a1: 4
 diagrams:
   - type: LANDSCAPE
     name: landscape
