@@ -19,12 +19,12 @@ Deployment_Node(DeploymentNode_app_netlify_app, app.netlify.app, $type="", $desc
     AddProperty("protocol","https")
     AddProperty("port","443")
     AddProperty("vendor","netlify.app")
-    Deployment_Node(ContainerInstance_auto_1675de47_92e3_4235_8691_176c443c1b48, , $type="", $descr="", $sprite="", $tags="", $link="") {
+    Deployment_Node(ContainerInstance_auto_7740e8d1_a1ec_4744_89a9_9b31ae83ba7a, , $type="", $descr="", $sprite="", $tags="", $link="") {
         Container($alias="Container_reader_frontend", $label="Single Page Application", $techn="Vue 3", $descr="Allows users to use reader functionalities", $sprite="", $tags="HighlightedElement", $link="", $baseShape="rectangle")
             }
         }
     }
-Deployment_Node(DeploymentNode_auto_5fa98e7b_2137_44e7_8b0c_04044caa50e7, fly.io, $type="", $descr="", $sprite="", $tags="", $link="") {
+Deployment_Node(DeploymentNode_auto_72397d10_fa48_4667_a7b9_2e972b36bc66, fly.io, $type="", $descr="", $sprite="", $tags="", $link="") {
 Deployment_Node(DeploymentNode_app_fly_io, app.fly.io, $type="", $descr="", $sprite="", $tags="", $link="") {
     WithoutPropertyHeader()
     AddProperty("port","443")
@@ -35,10 +35,10 @@ Deployment_Node(DeploymentNode_app_fly_io, app.fly.io, $type="", $descr="", $spr
         AddProperty("machine","shared-1x-cpu")
         AddProperty("memory","512MB")
         AddProperty("java version","21")
-        Deployment_Node(ContainerInstance_auto_6804603b_9124_42a0_b46a_d6e47a5aa3b4, , $type="", $descr="", $sprite="", $tags="", $link="") {
+        Deployment_Node(ContainerInstance_auto_146c70b2_bc32_4ba2_8c95_912a82dcd631, , $type="", $descr="", $sprite="", $tags="", $link="") {
             Container($alias="Container_reader_backend", $label="Backend", $techn="Spring Boot 3, Java 21", $descr="Business Logic of the reader", $sprite="", $tags="", $link="", $baseShape="rectangle")
                 }
-            Deployment_Node(ContainerInstance_auto_7a13d5ab_120c_42b8_b3e9_71bb6e3ad21f, , $type="", $descr="", $sprite="", $tags="", $link="") {
+            Deployment_Node(ContainerInstance_auto_da003778_40aa_45ed_b996_1e3a6fc6807a, , $type="", $descr="", $sprite="", $tags="", $link="") {
             Container($alias="Container_reader_backend_1", $label="Backend", $techn="Spring Boot 3, Java 21", $descr="Business Logic of the reader", $sprite="", $tags="", $link="", $baseShape="rectangle")
                 }
             }

@@ -23,14 +23,26 @@ public class FileSystemWorkspaceLoader {
     protected WorkspaceRaw merge(WorkspaceRaw w1, WorkspaceRaw w2) {
         var out = new WorkspaceRaw();
 
-        out.getElements().addAll(w1.getElements());
-        out.getElements().addAll(w2.getElements());
+        if (w1.getElements() != null) {
+            out.getElements().addAll(w1.getElements());
+        }
+        if (w2.getElements() != null) {
+            out.getElements().addAll(w2.getElements());
+        }
 
-        out.getDiagrams().addAll(w1.getDiagrams());
-        out.getDiagrams().addAll(w2.getDiagrams());
+        if (w1.getDiagrams() != null) {
+            out.getDiagrams().addAll(w1.getDiagrams());
+        }
+        if (w2.getDiagrams() != null) {
+            out.getDiagrams().addAll(w2.getDiagrams());
+        }
 
-        out.getRelations().addAll(w1.getRelations());
-        out.getRelations().addAll(w2.getRelations());
+        if (w1.getRelations() != null) {
+            out.getRelations().addAll(w1.getRelations());
+        }
+        if (w2.getRelations() != null) {
+            out.getRelations().addAll(w2.getRelations());
+        }
 
         out.setStyle(Style.merge(w1.getStyle(), w2.getStyle()));
 
