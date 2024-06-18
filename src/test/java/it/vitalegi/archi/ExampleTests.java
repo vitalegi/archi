@@ -19,13 +19,16 @@ public class ExampleTests {
     void properties() {
         var root = Path.of("examples", "properties");
         App.execute(root, root.resolve("output"));
-
     }
 
     @Test
     void flows() {
         var root = Path.of("examples", "flows");
         App.execute(root, root.resolve("output"));
-
+    }
+    @Test
+    void hiddenRelations() {
+        var root = Path.of("examples", "hidden-relations");
+        App.execute(root, root.resolve("output"));
     }
 }

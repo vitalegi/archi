@@ -2,21 +2,26 @@ package it.vitalegi.archi.exporter.c4.plantuml.builder;
 
 import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.model.diagram.Diagram;
+import it.vitalegi.archi.model.diagram.options.HiddenRelations;
 import it.vitalegi.archi.model.diagramelement.C4DiagramElement;
 import it.vitalegi.archi.model.diagramelement.C4DiagramModel;
 import it.vitalegi.archi.model.diagramelement.C4DiagramRelation;
+import it.vitalegi.archi.model.diagramelement.RelationType;
 import it.vitalegi.archi.model.element.Element;
 import it.vitalegi.archi.model.relation.DirectRelation;
 import it.vitalegi.archi.model.relation.ImplicitRelation;
 import it.vitalegi.archi.model.relation.Relation;
 import it.vitalegi.archi.model.relation.Relations;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Slf4j
 public abstract class C4ModelBuilder<E extends Diagram> {
     AliasGenerator aliasGenerator;
     Workspace workspace;
@@ -85,7 +90,7 @@ public abstract class C4ModelBuilder<E extends Diagram> {
         return map.values().stream().flatMap(this::_removeDuplicatedInheritedRelations);
     }
 
-    protected Stream<Relation> _removeDuplicatedInheritedRelations(List<Relation> relations) {
+    private Stream<Relation> _removeDuplicatedInheritedRelations(List<Relation> relations) {
         if (relations.isEmpty()) {
             return Stream.empty();
         }
@@ -98,5 +103,50 @@ public abstract class C4ModelBuilder<E extends Diagram> {
             return Stream.of(implicitRelations.get(0));
         }
         throw new RuntimeException("Cannot process " + relations);
+    }
+
+    protected void buildHiddenRelations(Set<Element> elementsInScope) {
+        var hiddenRelations = diagram.getOptionsAggregated().getHiddenRelations();
+        if (hiddenRelations == null) {
+            return;
+        }
+        hiddenRelations.stream().flatMap(r -> buildHiddenRelations(r, elementsInScope)).forEach(model::addRelation);
+    }
+
+    protected Stream<C4DiagramRelation> buildHiddenRelations(HiddenRelations hiddenRelations, Set<Element> elementsInScope) {
+        var idsInScope = elementsInScope.stream().map(Element::getId).toList();
+        var toBeConnected = hiddenRelations.getElements().stream().filter(idsInScope::contains).toList();
+        if (toBeConnected.size() < 2) {
+            return Stream.empty();
+        }
+        var out = new ArrayList<C4DiagramRelation>();
+        var it = toBeConnected.iterator();
+        var first = it.next();
+        while (it.hasNext()) {
+            var second = it.next();
+            out.addAll(hiddenRelations(first, second).toList());
+            first = second;
+        }
+        return out.stream();
+    }
+
+    protected Stream<C4DiagramRelation> hiddenRelations(String from, String to) {
+        var fromElement = workspace.getModel().getElementById(from);
+        var toElement = workspace.getModel().getElementById(to);
+        var fromAliases = aliasGenerator.getConnectedAliases(fromElement);
+        var toAliases = aliasGenerator.getConnectedAliases(toElement);
+        if (fromAliases.size() != 1 || toAliases.size() != 1) {
+            log.info("Diagram {}, building hidden relations from {} and {}, found {} and {} aliases. Don't add hidden relations.", diagram.getName(), from, to, fromAliases.size(), toAliases.size());
+            return Stream.empty();
+        }
+        return Stream.of(hiddenRelation(fromAliases.get(0), toAliases.get(0)));
+    }
+
+    protected C4DiagramRelation hiddenRelation(String aliasFrom, String aliasTo) {
+        var relation = new C4DiagramRelation();
+        relation.setFromAlias(aliasFrom);
+        relation.setToAlias(aliasTo);
+        relation.setRelationType(RelationType.HIDDEN);
+        return relation;
     }
 }

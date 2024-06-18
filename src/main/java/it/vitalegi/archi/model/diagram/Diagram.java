@@ -1,6 +1,7 @@
 package it.vitalegi.archi.model.diagram;
 
 import it.vitalegi.archi.model.Model;
+import it.vitalegi.archi.model.diagram.options.DiagramOptions;
 import it.vitalegi.archi.model.style.Style;
 import it.vitalegi.archi.visitor.DiagramVisitor;
 import lombok.Data;

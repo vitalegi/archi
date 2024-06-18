@@ -2,6 +2,7 @@ package it.vitalegi.archi.workspaceloader;
 
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import it.vitalegi.archi.model.diagram.options.DiagramOptions;
 import it.vitalegi.archi.model.style.Style;
 import it.vitalegi.archi.workspaceloader.model.WorkspaceRaw;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,7 @@ public class FileSystemWorkspaceLoader {
         addAll(out.getFlows(), w2.getFlows());
 
         out.setStyle(Style.merge(w1.getStyle(), w2.getStyle()));
+        out.setOptions(DiagramOptions.merge(w1.getOptions(), w2.getOptions()));
 
         return out;
     }

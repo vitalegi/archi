@@ -1,0 +1,154 @@
+options:
+  hiddenRelations:
+    - id: group1
+      elements:
+        - container_1
+        - container_2
+        - container_3
+    - id: group2
+      elements:
+        - container_4
+        - container_5
+        - container_6
+    - id: group3
+      elements:
+        - container_7
+        - container_8
+        - container_9
+    - id: group4
+      elements:
+        - container_10
+        - container_11
+        - container_12
+    - id: group5
+      elements:
+        - container_13
+        - container_14
+        - container_15
+
+elements:
+  - type: SOFTWARE_SYSTEM
+    id: software_system_1
+    name: Reader
+    elements:
+      - type: CONTAINER
+        id: container_1
+        name: Application 1
+      - type: CONTAINER
+        id: container_2
+        name: Application 2
+      - type: CONTAINER
+        id: container_3
+        name: Application 3
+      - type: CONTAINER
+        id: container_4
+        name: Application 4
+      - type: CONTAINER
+        id: container_5
+        name: Application 5
+      - type: CONTAINER
+        id: container_6
+        name: Application 6
+      - type: CONTAINER
+        id: container_7
+        name: Application 7
+      - type: CONTAINER
+        id: container_8
+        name: Application 8
+      - type: CONTAINER
+        id: container_9
+        name: Application 9
+      - type: CONTAINER
+        id: container_10
+        name: Application 10
+      - type: CONTAINER
+        id: container_11
+        name: Application 11
+      - type: CONTAINER
+        id: container_12
+        name: Application 12
+      - type: CONTAINER
+        id: container_13
+        name: Application 13
+      - type: CONTAINER
+        id: container_14
+        name: Application 14
+      - type: CONTAINER
+        id: container_15
+        name: Application 15
+
+  - type: DEPLOYMENT_ENVIRONMENT
+    id: live
+    name: Live
+    elements:
+      - type: DEPLOYMENT_NODE
+        id: node
+        name: Grouped
+        elements:
+        - type: CONTAINER_INSTANCE
+          id: container_instance_1
+          containerId: container_1
+        - type: CONTAINER_INSTANCE
+          id: container_instance_2
+          containerId: container_2
+        - type: CONTAINER_INSTANCE
+          id: container_instance_3
+          containerId: container_3
+
+        - type: CONTAINER_INSTANCE
+          id: container_instance_4
+          containerId: container_4
+        - type: CONTAINER_INSTANCE
+          id: container_instance_5
+          containerId: container_5
+        - type: CONTAINER_INSTANCE
+          id: container_instance_6
+          containerId: container_6
+
+        - type: CONTAINER_INSTANCE
+          id: container_instance_7_1
+          containerId: container_7
+        - type: CONTAINER_INSTANCE
+          id: container_instance_7_2
+          containerId: container_7
+
+        - type: CONTAINER_INSTANCE
+          id: container_instance_8
+          containerId: container_8
+        - type: CONTAINER_INSTANCE
+          id: container_instance_9
+          containerId: container_9
+
+
+        - type: CONTAINER_INSTANCE
+          id: container_instance_10
+          containerId: container_10
+        - type: CONTAINER_INSTANCE
+          id: container_instance_11
+          containerId: container_11
+        - type: CONTAINER_INSTANCE
+          id: container_instance_12
+          containerId: container_12
+diagrams:
+  - type: DEPLOYMENT
+    scope: '*'
+    environment: live
+    name: deployment
+    title: Deployment
+    options:
+      direction: LEFT_TO_RIGHT
+  - type: LANDSCAPE
+    name: landscape
+    title: Application Landscape
+  - type: SYSTEM_CONTEXT
+    target: software_system_1
+    name: software_system_1_context
+
+style:
+  skinParams:
+    - key: linetype
+      value: ortho
+    - key: nodesep
+      value: 10
+    - key: ranksep
+      value: 150

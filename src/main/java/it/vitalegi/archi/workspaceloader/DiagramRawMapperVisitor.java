@@ -3,7 +3,7 @@ package it.vitalegi.archi.workspaceloader;
 import it.vitalegi.archi.model.Model;
 import it.vitalegi.archi.model.diagram.DeploymentDiagram;
 import it.vitalegi.archi.model.diagram.Diagram;
-import it.vitalegi.archi.model.diagram.DiagramOptions;
+import it.vitalegi.archi.model.diagram.options.DiagramOptions;
 import it.vitalegi.archi.model.diagram.LandscapeDiagram;
 import it.vitalegi.archi.model.diagram.SystemContextDiagram;
 import it.vitalegi.archi.visitor.DiagramRawVisitor;

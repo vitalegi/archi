@@ -10,6 +10,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class C4DiagramRelation {
+    RelationType relationType;
     String fromAlias;
     String toAlias;
     String label;

@@ -43,8 +43,10 @@ public class DeploymentDiagramModelBuilder extends C4ModelBuilder<DeploymentDiag
         elementsInScope.addAll(ancestors);
 
         var relations = relationsInScope(elementsInScope);
+
         buildElements();
         buildRelations(relations);
+        buildHiddenRelations(elementsInScope);
         return model;
     }
 

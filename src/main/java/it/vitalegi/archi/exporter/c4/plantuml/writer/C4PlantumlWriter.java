@@ -3,6 +3,7 @@ package it.vitalegi.archi.exporter.c4.plantuml.writer;
 import it.vitalegi.archi.model.diagramelement.C4DiagramElement;
 import it.vitalegi.archi.model.diagramelement.C4DiagramElementProperty;
 import it.vitalegi.archi.model.diagramelement.C4DiagramRelation;
+import it.vitalegi.archi.model.diagramelement.RelationType;
 import it.vitalegi.archi.model.element.Element;
 import it.vitalegi.archi.model.relation.DirectRelation;
 import it.vitalegi.archi.model.style.ElementTag;
@@ -90,17 +91,25 @@ public class C4PlantumlWriter extends PlantumlWriter {
     }
 
     public void addRelation(String command, DirectRelation relation) {
-        addRelation(command, getAlias(relation.getFrom()), getAlias(relation.getTo()), relation.getLabel(), formatTechnologies(relation), relation.getDescription(), relation.getSprite(), formatTags(relation), relation.getLink());
+        addRelationNormal(command, getAlias(relation.getFrom()), getAlias(relation.getTo()), relation.getLabel(), formatTechnologies(relation), relation.getDescription(), relation.getSprite(), formatTags(relation), relation.getLink());
     }
 
     public void addRelation(C4DiagramRelation relation) {
         addProperties(relation.getProperties());
-        addRelation("Rel", relation.getFromAlias(), relation.getToAlias(), relation.getLabel(), formatTechnologies(relation), relation.getDescription(), relation.getSprite(), formatTags(relation), relation.getLink());
+        if (relation.getRelationType() == RelationType.NORMAL) {
+            addRelationNormal("Rel", relation.getFromAlias(), relation.getToAlias(), relation.getLabel(), formatTechnologies(relation), relation.getDescription(), relation.getSprite(), formatTags(relation), relation.getLink());
+        } else {
+            addRelationHidden(relation.getFromAlias(), relation.getToAlias());
+        }
     }
 
-    protected void addRelation(String command, String aliasFrom, String aliasTo, String label, String technology, String description, String sprite, String tags, String link) {
+    protected void addRelationNormal(String command, String aliasFrom, String aliasTo, String label, String technology, String description, String sprite, String tags, String link) {
         println(format("%s($from=\"%s\", $to=\"%s\", $label=\"%s\", $techn=\"%s\", $descr=\"%s\", $sprite=\"%s\", $tags=\"%s\", $link=\"%s\")", //
                 command, aliasFrom, aliasTo, label, technology, description, sprite, tags, link));
+    }
+
+    protected void addRelationHidden(String aliasFrom, String aliasTo) {
+        println(format("%s -[hidden]-> %s", aliasFrom, aliasTo));
     }
 
     public void addProperties(C4DiagramElement element) {

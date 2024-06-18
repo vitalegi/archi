@@ -2,7 +2,7 @@ package it.vitalegi.archi.workspaceloader;
 
 import it.vitalegi.archi.model.Model;
 import it.vitalegi.archi.model.Workspace;
-import it.vitalegi.archi.model.diagram.DiagramOptions;
+import it.vitalegi.archi.model.diagram.options.DiagramOptions;
 import it.vitalegi.archi.workspaceloader.model.LandscapeDiagramRaw;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

@@ -1,0 +1,39 @@
+@startuml
+set separator none
+!ENABLE_ALL_PLANT_ELEMENTS = 1
+skinparam linetype ortho
+skinparam nodesep 10
+skinparam ranksep 150
+top to bottom direction
+!include <C4/C4>
+!include <C4/C4_Context>
+!include <C4/C4_Container>
+Boundary(SoftwareSystem_software_system_1, "Reader", $tags="") {
+Container($alias="Container_container_1", $label="Application 1", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="rectangle")
+    Container($alias="Container_container_2", $label="Application 2", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="rectangle")
+    Container($alias="Container_container_3", $label="Application 3", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="rectangle")
+    Container($alias="Container_container_4", $label="Application 4", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="rectangle")
+    Container($alias="Container_container_5", $label="Application 5", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="rectangle")
+    Container($alias="Container_container_6", $label="Application 6", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="rectangle")
+    Container($alias="Container_container_7", $label="Application 7", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="rectangle")
+    Container($alias="Container_container_8", $label="Application 8", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="rectangle")
+    Container($alias="Container_container_9", $label="Application 9", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="rectangle")
+    Container($alias="Container_container_10", $label="Application 10", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="rectangle")
+    Container($alias="Container_container_11", $label="Application 11", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="rectangle")
+    Container($alias="Container_container_12", $label="Application 12", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="rectangle")
+    Container($alias="Container_container_13", $label="Application 13", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="rectangle")
+    Container($alias="Container_container_14", $label="Application 14", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="rectangle")
+    Container($alias="Container_container_15", $label="Application 15", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="rectangle")
+    }
+Container_container_1 -[hidden]-> Container_container_2
+Container_container_2 -[hidden]-> Container_container_3
+Container_container_4 -[hidden]-> Container_container_5
+Container_container_5 -[hidden]-> Container_container_6
+Container_container_7 -[hidden]-> Container_container_8
+Container_container_8 -[hidden]-> Container_container_9
+Container_container_10 -[hidden]-> Container_container_11
+Container_container_11 -[hidden]-> Container_container_12
+Container_container_13 -[hidden]-> Container_container_14
+Container_container_14 -[hidden]-> Container_container_15
+hide stereotypes
+@enduml
