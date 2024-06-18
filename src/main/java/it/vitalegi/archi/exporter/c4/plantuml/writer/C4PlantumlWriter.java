@@ -39,8 +39,8 @@ public class C4PlantumlWriter extends PlantumlWriter {
     }
 
     protected void deploymentNodeStart(String alias, String label, String type, String description, String sprite, String tags, String link, List<C4DiagramElementProperty> properties) {
-        println(format("Deployment_Node(%s, %s, $type=\"%s\", $descr=\"%s\", $sprite=\"%s\", $tags=\"%s\", $link=\"%s\") {", alias, label, type, description, sprite, tags, link));
         addProperties(properties);
+        println(format("Deployment_Node(%s, %s, $type=\"%s\", $descr=\"%s\", $sprite=\"%s\", $tags=\"%s\", $link=\"%s\") {", alias, label, type, description, sprite, tags, link));
         increaseTab();
     }
 
@@ -50,8 +50,8 @@ public class C4PlantumlWriter extends PlantumlWriter {
     }
 
     public void boundaryStart(C4DiagramElement element) {
-        boundaryStart(getAlias(element), element.getName(), formatTags(element));
         addProperties(element);
+        boundaryStart(getAlias(element), element.getName(), formatTags(element));
     }
 
     protected void boundaryStart(String alias, String label, String tags) {
@@ -69,16 +69,8 @@ public class C4PlantumlWriter extends PlantumlWriter {
     }
 
     protected void container(String alias, String label, String technology, String description, String sprite, String tags, String link, String shape, List<C4DiagramElementProperty> properties) {
-        print(format("Container($alias=\"%s\", $label=\"%s\", $techn=\"%s\", $descr=\"%s\", $sprite=\"%s\", $tags=\"%s\", $link=\"%s\", $baseShape=\"%s\")", alias, label, technology, description, sprite, tags, link, shape));
-        if (!properties.isEmpty()) {
-            increaseTab();
-            println(" {");
-            addProperties(properties);
-            decreaseTab();
-            println("}");
-        } else {
-            println("");
-        }
+        addProperties(properties);
+        println(format("Container($alias=\"%s\", $label=\"%s\", $techn=\"%s\", $descr=\"%s\", $sprite=\"%s\", $tags=\"%s\", $link=\"%s\", $baseShape=\"%s\")", alias, label, technology, description, sprite, tags, link, shape));
     }
 
     public void withoutPropertyHeader() {
@@ -102,6 +94,7 @@ public class C4PlantumlWriter extends PlantumlWriter {
     }
 
     public void addRelation(C4DiagramRelation relation) {
+        addProperties(relation.getProperties());
         addRelation("Rel", relation.getFromAlias(), relation.getToAlias(), relation.getLabel(), formatTechnologies(relation), relation.getDescription(), relation.getSprite(), formatTags(relation), relation.getLink());
     }
 

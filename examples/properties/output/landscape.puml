@@ -6,16 +6,19 @@ title Application Landscape
 !include <C4/C4>
 !include <C4/C4_Context>
 !include <C4/C4_Container>
-Container($alias="SoftwareSystem_A", $label="First software system", $techn="", $descr="Lorem ipsum", $sprite="", $tags="", $link="", $baseShape="rectangle") {
-    WithoutPropertyHeader()
-    AddProperty("property1","This is the first property")
-    AddProperty("Property 2","This is the second property")
-    }
-Container($alias="SoftwareSystem_B", $label="Second software system", $techn="", $descr="Lorem ipsum", $sprite="", $tags="", $link="", $baseShape="rectangle") {
-    WithoutPropertyHeader()
-    AddProperty("property4","This is the forth property")
-    AddProperty("property3","This is the third property")
-    }
+WithoutPropertyHeader()
+AddProperty("property1","This should appear first")
+AddProperty("Property 2","This should appear last")
+Container($alias="SoftwareSystem_A", $label="First software system", $techn="", $descr="Lorem ipsum", $sprite="", $tags="", $link="", $baseShape="rectangle")
+WithoutPropertyHeader()
+AddProperty("property4","This should appear first")
+AddProperty("property3","This should appear last")
+Container($alias="SoftwareSystem_B", $label="Second software system", $techn="", $descr="Lorem ipsum", $sprite="", $tags="", $link="", $baseShape="rectangle")
+WithoutPropertyHeader()
+AddProperty("a","1")
+AddProperty("c","2")
+AddProperty("b","3")
+AddProperty("a1","4")
 Rel($from="SoftwareSystem_A", $to="SoftwareSystem_B", $label="Uses", $techn="", $descr="User accesses to the system via frontend app", $sprite="", $tags="", $link="https://google.com")
 hide stereotypes
 @enduml
