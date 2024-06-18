@@ -107,7 +107,7 @@ public class ImplicitRelations implements Relations<ImplicitRelation> {
         if (element.equals(possibleAncestor)) {
             return true;
         }
-        if (element.getParent()  == null) {
+        if (element.getParent() == null) {
             return false;
         }
         return isAncestor(element.getParent(), possibleAncestor);

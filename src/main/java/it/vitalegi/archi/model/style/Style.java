@@ -21,10 +21,6 @@ public class Style implements MergeableCloneable<Style> {
     List<SkinParam> skinParams;
     Tags tags;
 
-    public void validate() {
-
-    }
-
     public static Style merge(Style style1, Style style2) {
         if (style1 == null && style2 == null) {
             return null;
@@ -36,6 +32,10 @@ public class Style implements MergeableCloneable<Style> {
             return style1;
         }
         return style2;
+    }
+
+    public void validate() {
+
     }
 
     @Override

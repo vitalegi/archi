@@ -23,7 +23,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import static it.vitalegi.archi.util.WorkspaceTestUtil.b;
 import static it.vitalegi.archi.util.WorkspaceTestUtil.load;
@@ -34,6 +33,24 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 @ExtendWith(MockitoExtension.class)
 public class AllDiagramsModelBuilderTests {
+
+    static C4DiagramModelUtil deploymentDiagram(Workspace ws, DeploymentDiagram diagram) {
+        var builder = new DeploymentDiagramModelBuilder(ws, diagram);
+        var actual = builder.build();
+        return new C4DiagramModelUtil(actual);
+    }
+
+    static C4DiagramModelUtil landscapeDiagram(Workspace ws, LandscapeDiagram diagram) {
+        var builder = new LandscapeDiagramModelBuilder(ws, diagram);
+        var actual = builder.build();
+        return new C4DiagramModelUtil(actual);
+    }
+
+    static C4DiagramModelUtil systemContextDiagram(Workspace ws, SystemContextDiagram diagram) {
+        var builder = new SystemContextDiagramModelBuilder(ws, diagram);
+        var actual = builder.build();
+        return new C4DiagramModelUtil(actual);
+    }
 
     @DisplayName("GIVEN inherited relations and direct relation between same elements THEN only direct relation is in the model")
     @Nested
@@ -201,7 +218,6 @@ public class AllDiagramsModelBuilderTests {
         }
     }
 
-
     @DisplayName("GIVEN elements and relations with properties THEN properties are in the model")
     @Nested
     class ElementsAndRelationsWithProperties implements DiagramVisitor<Void> {
@@ -286,23 +302,5 @@ public class AllDiagramsModelBuilderTests {
                 assertEquals(expected, relation.getProperties(), "Relation " + relation + " doesn't have correct properties");
             }
         }
-    }
-
-    static C4DiagramModelUtil deploymentDiagram(Workspace ws, DeploymentDiagram diagram) {
-        var builder = new DeploymentDiagramModelBuilder(ws, diagram);
-        var actual = builder.build();
-        return new C4DiagramModelUtil(actual);
-    }
-
-    static C4DiagramModelUtil landscapeDiagram(Workspace ws, LandscapeDiagram diagram) {
-        var builder = new LandscapeDiagramModelBuilder(ws, diagram);
-        var actual = builder.build();
-        return new C4DiagramModelUtil(actual);
-    }
-
-    static C4DiagramModelUtil systemContextDiagram(Workspace ws, SystemContextDiagram diagram) {
-        var builder = new SystemContextDiagramModelBuilder(ws, diagram);
-        var actual = builder.build();
-        return new C4DiagramModelUtil(actual);
     }
 }

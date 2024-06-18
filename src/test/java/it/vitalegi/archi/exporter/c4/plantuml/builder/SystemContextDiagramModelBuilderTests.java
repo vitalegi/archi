@@ -19,6 +19,10 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @ExtendWith(MockitoExtension.class)
 public class SystemContextDiagramModelBuilderTests {
 
+    static SystemContextDiagramModelBuilder builder(Workspace ws, Diagram diagram) {
+        return new SystemContextDiagramModelBuilder(ws, (SystemContextDiagram) diagram);
+    }
+
     @Test
     void given_defaultConfiguration_NoContainers_then_TargetSoftwareSystemShouldBeInTheModel() {
         var ws = load(b() //
@@ -190,7 +194,6 @@ public class SystemContextDiagramModelBuilderTests {
         assertEquals(2, model.countRelations());
     }
 
-
     @Test
     void then_AllRelationsToAndFromTargetSoftwareSystemShouldNotBeInTheModel() {
         var ws = load(b() //
@@ -254,9 +257,5 @@ public class SystemContextDiagramModelBuilderTests {
         assertEquals(0, model.findRelations("SoftwareSystem_A", "SoftwareSystem_B").size());
         assertEquals(3, model.countElements());
         assertEquals(1, model.countRelations());
-    }
-
-    static SystemContextDiagramModelBuilder builder(Workspace ws, Diagram diagram) {
-        return new SystemContextDiagramModelBuilder(ws, (SystemContextDiagram) diagram);
     }
 }

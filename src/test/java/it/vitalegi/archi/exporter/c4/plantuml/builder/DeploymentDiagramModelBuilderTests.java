@@ -18,6 +18,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @ExtendWith(MockitoExtension.class)
 public class DeploymentDiagramModelBuilderTests {
 
+    static DeploymentDiagramModelBuilder builder(Workspace ws, Diagram diagram) {
+        return new DeploymentDiagramModelBuilder(ws, (DeploymentDiagram) diagram);
+    }
+
     @Test
     void given_emptyEnvironment_then_modelShouldBeEmpty() {
         var ws = load(b() //
@@ -195,7 +199,6 @@ public class DeploymentDiagramModelBuilderTests {
         assertEquals(0, model.countRelations());
     }
 
-
     @Test
     void given_multipleEnvironments_then_onlyElementsFromTargetEnvShouldBeInTheModel() {
         var ws = load(b() //
@@ -359,7 +362,6 @@ public class DeploymentDiagramModelBuilderTests {
         assertEquals(0, model.countRelations());
     }
 
-
     @Test
     void given_deploymentNodes_then_onlyDeploymentNodesWithChildrenInScopeShouldBeInTheModel() {
         var ws = load(b() //
@@ -384,7 +386,6 @@ public class DeploymentDiagramModelBuilderTests {
         assertEquals(4, model.countElements());
         assertEquals(0, model.countRelations());
     }
-
 
     @Test
     void given_infrastructureNodes_then_onlyInfrastructureNodesConnectedToElementsInScopeShouldBeInTheModel() {
@@ -412,9 +413,5 @@ public class DeploymentDiagramModelBuilderTests {
         assertEquals(1, model.findRelations("InfrastructureNode_infra1", "SoftwareSystemInstance_ss1").size());
         assertEquals(4, model.countElements());
         assertEquals(1, model.countRelations());
-    }
-
-    static DeploymentDiagramModelBuilder builder(Workspace ws, Diagram diagram) {
-        return new DeploymentDiagramModelBuilder(ws, (DeploymentDiagram) diagram);
     }
 }

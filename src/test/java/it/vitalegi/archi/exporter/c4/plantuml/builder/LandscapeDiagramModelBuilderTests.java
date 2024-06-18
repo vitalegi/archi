@@ -18,6 +18,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 @ExtendWith(MockitoExtension.class)
 public class LandscapeDiagramModelBuilderTests {
 
+    static LandscapeDiagramModelBuilder builder(Workspace ws, Diagram diagram) {
+        return new LandscapeDiagramModelBuilder(ws, (LandscapeDiagram) diagram);
+    }
+
     @Test
     void given_softwareSystem_then_shouldBeInTheModel() {
         var ws = load(b() //
@@ -151,7 +155,6 @@ public class LandscapeDiagramModelBuilderTests {
         assertEquals(2, model.countRelations());
     }
 
-
     @Test
     void given_defaultConfiguration_then_AllInheritedRelationsAreNotInTheModel() {
         var ws = load(b() //
@@ -195,10 +198,6 @@ public class LandscapeDiagramModelBuilderTests {
         assertNotNull(model.findRelations("SoftwareSystem_A", "SoftwareSystem_B"));
         assertEquals(2, model.countElements());
         assertEquals(1, model.countRelations());
-    }
-
-    static LandscapeDiagramModelBuilder builder(Workspace ws, Diagram diagram) {
-        return new LandscapeDiagramModelBuilder(ws, (LandscapeDiagram) diagram);
     }
 
 }
