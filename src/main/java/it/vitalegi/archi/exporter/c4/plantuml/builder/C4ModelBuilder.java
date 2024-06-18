@@ -64,7 +64,7 @@ public abstract class C4ModelBuilder<E extends Diagram> {
     }
 
     protected boolean useImplicitRelations() {
-        return diagram.getOptions().isInheritRelations();
+        return diagram.getOptionsAggregated().isInheritRelations();
     }
 
     protected void buildRelations(Stream<Relation> relations) {

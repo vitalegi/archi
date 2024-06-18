@@ -61,7 +61,7 @@ public abstract class AbstractDiagramPlantumlExporter<E extends Diagram> {
     }
 
     protected void writeDirection(E diagram, C4PlantumlWriter writer) {
-        var direction = diagram.getOptions().getDirection();
+        var direction = diagram.getOptionsAggregated().getDirection();
         writer.direction(Objects.requireNonNullElse(direction, LayoutDirection.TOP_TO_BOTTOM));
     }
 

@@ -7,6 +7,7 @@ import it.vitalegi.archi.model.relation.RelationManager;
 import it.vitalegi.archi.visitor.ElementVisitor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
@@ -20,6 +21,8 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class Model extends Element {
+    @Setter
+    Workspace workspace;
     Map<String, Element> elementMap;
     RelationManager relationManager;
     List<Flow> flows;

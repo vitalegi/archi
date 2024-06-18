@@ -18,4 +18,12 @@ public abstract class Diagram {
     }
 
     public abstract <E> E visit(DiagramVisitor<E> visitor);
+
+    public DiagramOptions getOptionsAggregated() {
+        var globalOptions = model.getWorkspace().getOptions();
+        if (globalOptions != null) {
+            return globalOptions.merge(options);
+        }
+        return options;
+    }
 }
