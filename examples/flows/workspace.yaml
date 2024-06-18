@@ -1,0 +1,108 @@
+elements:
+  - type: PERSON
+    id: user
+    name: User
+  - type: PERSON
+    id: sysadmin
+    name: Sysadmin
+
+  - type: SOFTWARE_SYSTEM
+    id: reader_ss
+    name: Reader
+    description: Allows users to access the reader
+    tags:
+      - HighlightedElement
+    elements:
+      - type: CONTAINER
+        id: reader_frontend
+        name: Single Page Application
+        description: Allows users to use reader functionalities
+        technologies:
+        - "Vue 3"
+        tags:
+          - HighlightedElement
+      - type: CONTAINER
+        id: reader_backend
+        name: Backend
+        description: Business Logic of the reader
+        technologies:
+        - Spring Boot 3
+        - Java 21
+      - type: CONTAINER
+        id: reader_database
+        name: RDBMS
+        description: Stores books info
+        technologies:
+        - Postgres
+  - type: SOFTWARE_SYSTEM
+    id: aws_ss
+    name: Amazon Web Services
+    description: Stores books
+    properties:
+      vendor: AWS
+    elements:
+      - type: CONTAINER
+        id: aws_s3_bucket_reader
+        name: AWS S3 Bucket
+        description: Stores books
+
+flows:
+  - id: user_access
+    name: User access to the service
+    steps:
+    - from: user
+      to: reader_frontend
+      description: User accesses to the system via frontend app
+      label: Uses
+      link: https://google.com
+      technologies:
+      - TCP
+    - from: reader_frontend
+      to: reader_backend
+      description: Uses
+    - from: reader_backend
+      to: reader_database
+      description: Reads from and writes to
+      technologies:
+        - Postgres Protocol/SSL
+    - from: reader_backend
+      to: aws_s3_bucket_reader
+      description: Upload books
+    - from: reader_frontend
+      to: aws_s3_bucket_reader
+      description: Download books
+
+  - id: sysadmin_access
+    name: Sysadmin access to the system
+    steps:
+    - from: sysadmin
+      to: reader_database
+      description: Access
+      tags:
+        - HighlightedRelation
+
+diagrams:
+  - type: LANDSCAPE
+    name: landscape
+    title: Application Landscape
+    options:
+      inheritRelations: true
+  - type: SYSTEM_CONTEXT
+    target: reader_ss
+    name: reader_system_context
+    title: "Reader: System Context"
+    style:
+      skinParams:
+        - key: linetype
+          value: polyline
+    options:
+      inheritRelations: true
+
+style:
+  skinParams:
+    - key: linetype
+      value: ortho
+    - key: nodesep
+      value: 150
+    - key: ranksep
+      value: 150

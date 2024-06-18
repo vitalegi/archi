@@ -21,4 +21,11 @@ public class ExampleTests {
         App.execute(root, root.resolve("output"));
 
     }
+
+    @Test
+    void flows() {
+        var root = Path.of("examples", "flows");
+        App.execute(root, root.resolve("output"));
+
+    }
 }

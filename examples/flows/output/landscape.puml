@@ -1,0 +1,22 @@
+@startuml
+set separator none
+!ENABLE_ALL_PLANT_ELEMENTS = 1
+skinparam linetype ortho
+skinparam nodesep 150
+skinparam ranksep 150
+top to bottom direction
+title Application Landscape
+!include <C4/C4>
+!include <C4/C4_Context>
+!include <C4/C4_Container>
+Container($alias="Person_user", $label="User", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="actor")
+Container($alias="Person_sysadmin", $label="Sysadmin", $techn="", $descr="", $sprite="", $tags="", $link="", $baseShape="actor")
+Container($alias="SoftwareSystem_reader_ss", $label="Reader", $techn="", $descr="Allows users to access the reader", $sprite="", $tags="HighlightedElement", $link="", $baseShape="rectangle")
+WithoutPropertyHeader()
+AddProperty("vendor","AWS")
+Container($alias="SoftwareSystem_aws_ss", $label="Amazon Web Services", $techn="", $descr="Stores books", $sprite="", $tags="", $link="", $baseShape="rectangle")
+Rel($from="Person_sysadmin", $to="SoftwareSystem_reader_ss", $label="", $techn="", $descr="Access", $sprite="", $tags="HighlightedRelation", $link="")
+Rel($from="Person_user", $to="SoftwareSystem_reader_ss", $label="Uses", $techn="TCP", $descr="User accesses to the system via frontend app", $sprite="", $tags="", $link="https://google.com")
+Rel($from="SoftwareSystem_reader_ss", $to="SoftwareSystem_aws_ss", $label="", $techn="", $descr="Upload books", $sprite="", $tags="", $link="")
+hide stereotypes
+@enduml
