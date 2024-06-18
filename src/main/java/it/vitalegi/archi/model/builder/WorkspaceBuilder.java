@@ -38,7 +38,11 @@ public class WorkspaceBuilder {
 
     public void buildWorkspace() {
         workspace = new Workspace();
-        workspace.setModel(new Model());
+
+        var model = new Model();
+        model.setWorkspace(workspace);
+        workspace.setModel(model);
+
         workspace.setStyle(new Style());
         workspace.setDiagrams(new Diagrams());
     }

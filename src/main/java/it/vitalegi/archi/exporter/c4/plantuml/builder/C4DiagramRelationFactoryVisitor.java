@@ -34,7 +34,7 @@ public class C4DiagramRelationFactoryVisitor implements RelationVisitor<C4Diagra
     }
 
     protected void applyProperties(C4DiagramRelation target, DirectRelation relation) {
-        if (!diagram.getOptions().isHideRelationsText()) {
+        if (!diagram.getOptionsAggregated().isHideRelationsText()) {
             target.setLabel(relation.getLabel());
             target.setDescription(relation.getDescription());
         }
