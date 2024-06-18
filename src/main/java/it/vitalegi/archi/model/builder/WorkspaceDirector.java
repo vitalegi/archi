@@ -16,6 +16,7 @@ public class WorkspaceDirector {
         workspaceBuilder.buildWorkspace();
         workspaceBuilder.buildElements(in.getElements());
         workspaceBuilder.buildRelations(in.getRelations());
+        workspaceBuilder.buildFlows(in.getFlows());
         workspaceBuilder.buildGlobalStyle(in.getStyle());
         workspaceBuilder.buildDiagrams(in.getDiagrams());
 

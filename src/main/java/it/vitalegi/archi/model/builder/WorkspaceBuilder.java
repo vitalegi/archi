@@ -1,10 +1,13 @@
 package it.vitalegi.archi.model.builder;
 
 import it.vitalegi.archi.exception.CycleNotAllowedException;
+import it.vitalegi.archi.exception.RelationNotAllowedException;
 import it.vitalegi.archi.model.Model;
 import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.model.diagram.Diagrams;
 import it.vitalegi.archi.model.element.Element;
+import it.vitalegi.archi.model.flow.Flow;
+import it.vitalegi.archi.model.flow.FlowStep;
 import it.vitalegi.archi.model.relation.DirectRelation;
 import it.vitalegi.archi.model.style.Style;
 import it.vitalegi.archi.util.StringUtil;
@@ -12,6 +15,8 @@ import it.vitalegi.archi.util.WorkspaceUtil;
 import it.vitalegi.archi.workspaceloader.DiagramRawMapperVisitor;
 import it.vitalegi.archi.workspaceloader.model.DiagramRaw;
 import it.vitalegi.archi.workspaceloader.model.ElementRaw;
+import it.vitalegi.archi.workspaceloader.model.FlowRaw;
+import it.vitalegi.archi.workspaceloader.model.FlowStepRaw;
 import it.vitalegi.archi.workspaceloader.model.RelationRaw;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -128,6 +133,69 @@ public class WorkspaceBuilder {
     protected DirectRelation toRelation(RelationRaw in, Model model) {
         var out = new DirectRelation(model);
         out.setId(in.getId());
+        var from = model.getElementById(in.getFrom());
+        if (from == null) {
+            throw new NoSuchElementException("Element " + in.getFrom() + " doesn't exist. " + in);
+        }
+        out.setFrom(from);
+        var to = model.getElementById(in.getTo());
+        if (to == null) {
+            throw new NoSuchElementException("Element " + in.getTo() + " doesn't exist. " + in);
+        }
+        out.setTo(to);
+        out.setDescription(in.getDescription());
+        out.setTags(in.getTags());
+        out.setProperties(in.getProperties());
+        out.setLabel(in.getLabel());
+        out.setSprite(in.getSprite());
+        out.setLink(in.getLink());
+        out.setTechnologies(in.getTechnologies());
+        out.setUniqueId(WorkspaceUtil.createUniqueId(out));
+        return out;
+    }
+
+
+    public void buildFlows(List<FlowRaw> flows) {
+        log.debug("Load flows");
+        var model = workspace.getModel();
+        flows.stream().map(f -> toFlow(f, model)).forEach(f -> model.getFlows().add(f));
+    }
+
+    protected Flow toFlow(FlowRaw in, Model model) {
+        var out = new Flow(model);
+        if (StringUtil.isNullOrEmpty(in.getId())) {
+            throw new IllegalArgumentException("Field required on flow [id]");
+        }
+        out.setId(in.getId());
+        out.setName(in.getName());
+        out.setSteps(new ArrayList<>());
+        if (in.getSteps() != null) {
+            for (int i = 0; i < in.getSteps().size(); i++) {
+                try {
+                    var flowStep = toFlowStep(in.getSteps().get(i), model);
+                    out.getSteps().add(flowStep);
+
+                    relationValidator.checkAllowed(flowStep);
+                    model.getRelationManager().addRelation(flowStep);
+                } catch (RelationNotAllowedException e) {
+                    throw new RelationNotAllowedException("Error on flow " + out.getId() + ", step " + i, e.getRelation(), e);
+                } catch (RuntimeException e) {
+                    throw new RuntimeException("Error on flow " + out.getId() + ", step " + i + ": " + e.getMessage(), e);
+                }
+            }
+        }
+        return out;
+    }
+
+    protected FlowStep toFlowStep(FlowStepRaw in, Model model) {
+        var out = new FlowStep(model);
+        out.setId(in.getId());
+        if (StringUtil.isNullOrEmpty(in.getFrom())) {
+            throw new IllegalArgumentException("Field required [from]");
+        }
+        if (StringUtil.isNullOrEmpty(in.getTo())) {
+            throw new IllegalArgumentException("Field required [to]");
+        }
         var from = model.getElementById(in.getFrom());
         if (from == null) {
             throw new NoSuchElementException("Element " + in.getFrom() + " doesn't exist. " + in);

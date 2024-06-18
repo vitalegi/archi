@@ -10,6 +10,8 @@ import it.vitalegi.archi.util.WorkspaceModelBuilder;
 import it.vitalegi.archi.util.WorkspaceUtil;
 import it.vitalegi.archi.workspaceloader.model.DeploymentDiagramRaw;
 import it.vitalegi.archi.workspaceloader.model.ElementRaw;
+import it.vitalegi.archi.workspaceloader.model.FlowRaw;
+import it.vitalegi.archi.workspaceloader.model.FlowStepRaw;
 import it.vitalegi.archi.workspaceloader.model.LandscapeDiagramRaw;
 import it.vitalegi.archi.workspaceloader.model.RelationRaw;
 import it.vitalegi.archi.workspaceloader.model.SystemContextDiagramRaw;
@@ -25,6 +27,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.util.stream.Stream;
 
@@ -42,7 +45,7 @@ public class WorkspaceDirectorTests {
 
     @Test
     void when_load_given_cycle_thenFail() {
-        var loader = loader();
+
         var config = builder() //
                 .group("A", "B") //
                 .group("B", "A") //
@@ -59,7 +62,7 @@ public class WorkspaceDirectorTests {
 
     @Test
     void when_load_given_duplicateIds_thenFail() {
-        var loader = loader();
+
         var config = builder() //
                 .softwareSystem("a") //
                 .softwareSystem("b") //
@@ -72,15 +75,15 @@ public class WorkspaceDirectorTests {
 
     @Test
     void when_load_given_nullIds_thenSucceed() {
-        var loader = loader();
+
         var config = builder().softwareSystem(null).softwareSystem(null).build();
-        var ws = loader.makeWorkspace(config).build();
+        var ws = load(config);
         assertEquals(2, ws.getModel().getSoftwareSystems().size());
     }
 
     @Test
     void when_load_given_globalStyle_thenGlobalStyleIsAvailable() {
-        var loader = loader();
+
         var config = builder() //
                 .group("A", "B") //
                 .group("B", "A") //
@@ -130,14 +133,14 @@ public class WorkspaceDirectorTests {
     class Person {
         @Test
         void when_load_given_personOnRoot_thenSucceed() {
-            var loader = loader();
+
             var ws = load(builder().person("A").build());
             assertEquals("A", ws.getModel().findPersonById("A").getId());
         }
 
         @Test
         void when_load_given_childOnPerson_thenFail() {
-            var loader = loader();
+
             var config = builder().person("A").person("A", "B").build();
             var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> load(config));
             assertEquals("Can't add Person (B) to Person (A)", e.getMessage());
@@ -150,14 +153,14 @@ public class WorkspaceDirectorTests {
 
         @Test
         void when_load_given_softwareSystemOnRoot_thenSucceed() {
-            var loader = loader();
+
             var ws = load(builder().softwareSystem("A").build());
             assertEquals("A", ws.getModel().findSoftwareSystemById("A").getId());
         }
 
         @Test
         void when_load_given_softwareSystemChildOfGroup_thenSucceed() {
-            var loader = loader();
+
             var ws = load(builder() //
                     .group("A") //
                     .softwareSystem("A", "B") //
@@ -170,7 +173,7 @@ public class WorkspaceDirectorTests {
 
         @Test
         void when_load_given_softwareSystemChildOfGroupOfSoftwareSystem_thenFail() {
-            var loader = loader();
+
             var config = builder() //
                     .group("A", "B") //
                     .softwareSystem("A") //
@@ -186,7 +189,7 @@ public class WorkspaceDirectorTests {
     class Container {
         @Test
         void when_load_given_containerOnRoot_thenFail() {
-            var loader = loader();
+
             var config = builder().container("A").build();
             var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> load(config));
             assertEquals("Can't add Container (A) to Model", e.getMessage());
@@ -194,7 +197,7 @@ public class WorkspaceDirectorTests {
 
         @Test
         void when_load_given_containerChildOfGroupChildOfSoftwareSystem_thenSucceed() {
-            var loader = loader();
+
             var ws = load(builder() //
                     .group("A", "B") //
                     .container("B", "C") //
@@ -216,7 +219,7 @@ public class WorkspaceDirectorTests {
     class Component {
         @Test
         void when_load_given_componentOnRoot_thenFail() {
-            var loader = loader();
+
             var config = builder().component(ElementRaw.builder().id("A")).build();
             var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> load(config));
             assertEquals("Can't add Component (A) to Model", e.getMessage());
@@ -250,14 +253,14 @@ public class WorkspaceDirectorTests {
     class Group {
         @Test
         void when_load_given_groupOnRoot_thenSucceed() {
-            var loader = loader();
+
             var ws = load(builder().group("A").build());
             assertEquals("A", ws.getModel().findGroupById("A").getId());
         }
 
         @Test
         void when_load_given_groupChildOfGroup_thenSucceed() {
-            var loader = loader();
+
             var ws = load(builder() //
                     .group("A") //
                     .group("A", "B") //
@@ -270,7 +273,7 @@ public class WorkspaceDirectorTests {
 
         @Test
         void when_load_given_chainOfGroups_thenSucceed() {
-            var loader = loader();
+
             var config = builder() //
                     .group("A") //
                     .group("A", "B") //
@@ -291,7 +294,7 @@ public class WorkspaceDirectorTests {
     class DeploymentEnvironment {
         @Test
         void when_load_given_deploymentEnvironment_thenSucceed() {
-            var loader = loader();
+
             var config = builder().deploymentEnvironment("A").build();
             var ws = load(config);
             var a = ws.getModel().findDeploymentEnvironmentById("A");
@@ -304,7 +307,7 @@ public class WorkspaceDirectorTests {
     class DeploymentNode {
         @Test
         void when_load_given_deploymentNodeOnDeploymentEnvironment_thenSucceed() {
-            var loader = loader();
+
             var config = builder().deploymentEnvironment("A").deploymentNode("A", "B").build();
             var ws = load(config);
             var a = ws.getModel().findDeploymentEnvironmentById("A");
@@ -315,7 +318,7 @@ public class WorkspaceDirectorTests {
 
         @Test
         void when_load_given_deploymentNodeOnRoot_thenFail() {
-            var loader = loader();
+
             var config = builder().deploymentNode("A").build();
             var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> load(config));
             assertEquals("Can't add DeploymentNode (A) to Model", e.getMessage());
@@ -326,7 +329,7 @@ public class WorkspaceDirectorTests {
     class InfrastructureNode {
         @Test
         void when_load_given_infrastructureNode_thenSucceed() {
-            var loader = loader();
+
             var config = builder() //
                     .deploymentEnvironment("A") //
                     .deploymentNode("A", "B") //
@@ -350,7 +353,7 @@ public class WorkspaceDirectorTests {
 
         @Test
         void when_load_given_infrastructureNodeOnWrongParent_thenFail() {
-            var loader = loader();
+
             var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> load( //
                     builder() //
                             .softwareSystem("A") //
@@ -378,7 +381,7 @@ public class WorkspaceDirectorTests {
 
         @Test
         void when_load_given_softwareSystemInstanceOnRoot_thenFail() {
-            var loader = loader();
+
             var config = builder().softwareSystemInstance("A", "c").build();
             var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> load(config));
             assertEquals("Can't add SoftwareSystemInstance (A) to Model", e.getMessage());
@@ -386,7 +389,7 @@ public class WorkspaceDirectorTests {
 
         @Test
         void when_load_given_softwareSystemInstanceOnDeploymentEnvironment_thenFail() {
-            var loader = loader();
+
             var config = builder() //
                     .deploymentEnvironment("A") //
                     .softwareSystemInstance("A", "B", "c") //
@@ -398,7 +401,7 @@ public class WorkspaceDirectorTests {
 
         @Test
         void when_load_given_softwareSystemOnSoftwareSystemInstance_thenSucceed() {
-            var loader = loader();
+
             var config = builder() //
                     .deploymentEnvironment("A") //
                     .deploymentNode("A", "B") //
@@ -419,7 +422,7 @@ public class WorkspaceDirectorTests {
 
         @Test
         void when_load_given_softwareSystemInstanceWithNoSoftwareSystem_thenFail() {
-            var loader = loader();
+
             var config = builder() //
                     .deploymentEnvironment("A") //
                     .deploymentNode("A", "B") //
@@ -432,7 +435,7 @@ public class WorkspaceDirectorTests {
 
         @Test
         void when_load_given_softwareSystemInstanceWithMissingSoftwareSystem_thenFail() {
-            var loader = loader();
+
             var config = builder() //
                     .deploymentEnvironment("A") //
                     .deploymentNode("A", "B") //
@@ -445,7 +448,7 @@ public class WorkspaceDirectorTests {
 
         @Test
         void when_load_given_softwareSystemInstanceWithSomethingNotASoftwareSystem_thenFail() {
-            var loader = loader();
+
             var config = builder() //
                     .deploymentEnvironment("A") //
                     .deploymentNode("A", "B") //
@@ -463,7 +466,7 @@ public class WorkspaceDirectorTests {
     class ContainerInstance {
         @Test
         void when_load_given_containerInstanceOnRoot_thenFail() {
-            var loader = loader();
+
             var config = builder().containerInstance("A", "c").build();
             var e = Assertions.assertThrows(ElementNotAllowedException.class, () -> load(config));
             assertEquals("Can't add ContainerInstance (A) to Model", e.getMessage());
@@ -471,7 +474,7 @@ public class WorkspaceDirectorTests {
 
         @Test
         void when_load_given_containerInstanceOnDeploymentEnvironment_thenFail() {
-            var loader = loader();
+
             var config = builder() //
                     .deploymentEnvironment("A") //
                     .containerInstance("A", "B", "c") //
@@ -483,7 +486,7 @@ public class WorkspaceDirectorTests {
 
         @Test
         void when_load_given_containerOnContainerInstance_thenSucceed() {
-            var loader = loader();
+
             var config = builder() //
                     .deploymentEnvironment("A") //
                     .deploymentNode("A", "B") //
@@ -504,7 +507,7 @@ public class WorkspaceDirectorTests {
 
         @Test
         void when_load_given_containerInstanceWithNoContainer_thenFail() {
-            var loader = loader();
+
             var config = builder() //
                     .deploymentEnvironment("A") //
                     .deploymentNode("A", "B") //
@@ -517,7 +520,7 @@ public class WorkspaceDirectorTests {
 
         @Test
         void when_load_given_containerInstanceWithMissingContainer_thenFail() {
-            var loader = loader();
+
             var config = builder() //
                     .deploymentEnvironment("A") //
                     .deploymentNode("A", "B") //
@@ -530,7 +533,7 @@ public class WorkspaceDirectorTests {
 
         @Test
         void when_load_given_containerInstanceWithSomethingNotAContainer_thenFail() {
-            var loader = loader();
+
             var config = builder() //
                     .deploymentEnvironment("A") //
                     .deploymentNode("A", "B") //
@@ -746,7 +749,6 @@ public class WorkspaceDirectorTests {
     class DiagramTests {
         @Test
         void given_noDiagram_thenEmptyList() {
-            var loader = loader();
             var config = builder().build();
             var ws = load(config);
             assertEquals(0, ws.getDiagrams().getAll().size());
@@ -754,7 +756,6 @@ public class WorkspaceDirectorTests {
 
         @Test
         void given_diagramStyleIsDefined_when_landscapeDiagram_thenStyleIsLoaded() {
-            var loader = loader();
             var style = StyleTestUtil.randomStyle();
             var config = builder().landscapeDiagram(LandscapeDiagramRaw.builder().name("diagram").style(style)).build();
             var ws = load(config);
@@ -764,7 +765,6 @@ public class WorkspaceDirectorTests {
 
         @Test
         void given_diagramStyleIsDefined_when_systemContextDiagram_thenStyleIsLoaded() {
-            var loader = loader();
             var style = StyleTestUtil.randomStyle();
             var config = builder() //
                     .softwareSystem("A") //
@@ -777,7 +777,6 @@ public class WorkspaceDirectorTests {
 
         @Test
         void given_diagramStyleIsDefined_when_deploymentDiagram_thenStyleIsLoaded() {
-            var loader = loader();
             var style = StyleTestUtil.randomStyle();
             var config = builder() //
                     .deploymentEnvironment("env") //
@@ -786,6 +785,134 @@ public class WorkspaceDirectorTests {
             var ws = load(config);
             var diagram = ws.getDiagrams().getByName("diagram");
             assertEquals(style, diagram.getStyle());
+        }
+    }
+
+    @Nested
+    class Flow {
+
+        @Test
+        void given_noFlow_then_contextIsLoaded() {
+            var config = builder().build();
+            load(config);
+        }
+
+        @Test
+        void given_flow_then_flowIsLoaded() {
+            var config = builder() //
+                    .softwareSystem("A") //
+                    .softwareSystem("B") //
+                    .flow(FlowRaw.builder().id("flow1").name("flow 1") //
+                            .steps(Arrays.asList( //
+                                    FlowStepRaw.builder().from("A").to("B").description("link 1").build(), //
+                                    FlowStepRaw.builder().from("B").to("A").description("link 2").build() //
+                            )) //
+                    ).build();
+
+            var ws = load(config);
+            var flows = ws.getModel().getFlows();
+            assertEquals(1, flows.size());
+            var flow = flows.get(0);
+            assertEquals("flow1", flow.getId());
+            assertEquals("flow 1", flow.getName());
+            assertEquals(2, flow.getSteps().size());
+            var step1 = flow.getSteps().get(0);
+            assertEquals("A", step1.getFrom().getId());
+            assertEquals("B", step1.getTo().getId());
+            assertEquals("link 1", step1.getDescription());
+            var step2 = flow.getSteps().get(1);
+            assertEquals("B", step2.getFrom().getId());
+            assertEquals("A", step2.getTo().getId());
+            assertEquals("link 2", step2.getDescription());
+        }
+
+        @Test
+        void given_flowWithoutId_then_fail() {
+            var config = builder() //
+                    .flow(FlowRaw.builder().name("flow 1")).build();
+
+            var e = Assertions.assertThrows(IllegalArgumentException.class, () -> load(config));
+            assertEquals("Field required on flow [id]", e.getMessage());
+        }
+
+        @Test
+        void given_flowStepWithoutFrom_then_fail() {
+            var config = builder() //
+                    .softwareSystem("A") //
+                    .softwareSystem("B") //
+                    .flow(FlowRaw.builder().id("flow1").name("flow 1") //
+                            .steps(Collections.singletonList( //
+                                    FlowStepRaw.builder().to("B").description("link 1").build())) //
+                    ).build();
+
+            var e = Assertions.assertThrows(RuntimeException.class, () -> load(config));
+            assertEquals("Error on flow flow1, step 0: Field required [from]", e.getMessage());
+        }
+
+        @Test
+        void given_flowStepWithoutTo_then_fail() {
+            var config = builder() //
+                    .softwareSystem("A") //
+                    .softwareSystem("B") //
+                    .flow(FlowRaw.builder().id("flow1").name("flow 1") //
+                            .steps(Collections.singletonList( //
+                                    FlowStepRaw.builder().from("A").description("link 1").build())) //
+                    ).build();
+
+            var e = Assertions.assertThrows(RuntimeException.class, () -> load(config));
+            assertEquals("Error on flow flow1, step 0: Field required [to]", e.getMessage());
+        }
+
+        @Test
+        void given_flowStepWithInvalidRelation_then_fail() {
+            var config = builder() //
+                    .softwareSystem("A") //
+                    .deploymentEnvironment("env") //
+                    .flow(FlowRaw.builder().id("flow1").name("flow 1") //
+                            .steps(Collections.singletonList( //
+                                    FlowStepRaw.builder().from("A").to("env").description("link 1").build())) //
+                    ).build();
+
+            var e = Assertions.assertThrows(RelationNotAllowedException.class, () -> load(config));
+            assertEquals("Relation from SoftwareSystem (A) to DeploymentEnvironment (env) is not allowed: Error on flow flow1, step 0", e.getMessage());
+        }
+
+        @Test
+        void given_flowStep_then_indirectRelationsAreUpdated() {
+            var config = builder() //
+                    .softwareSystem("A") //
+                    .container("A", "C1") //
+                    .softwareSystem("B") //
+                    .container("B", "C2") //
+                    .flow(FlowRaw.builder().id("flow1").name("flow 1") //
+                            .steps(Collections.singletonList( //
+                                    FlowStepRaw.builder().from("C1").to("C2").description("link 1").build() //
+                            )) //
+                    ).build();
+
+            var ws = load(config);
+            var a_b = ws.getModel().getRelationManager().getImplicit().getRelationsBetween(ws.getModel().getElementById("A"), ws.getModel().getElementById("B"));
+            assertEquals(1, a_b.size());
+            assertEquals("link 1", a_b.get(0).getSource().getDescription());
+        }
+
+        @Test
+        void given_flowStep_then_directRelationsAreUpdated() {
+            var config = builder() //
+                    .softwareSystem("A") //
+                    .container("A", "C1") //
+                    .softwareSystem("B") //
+                    .container("B", "C2") //
+                    .flow(FlowRaw.builder().id("flow1").name("flow 1") //
+                            .steps(Collections.singletonList( //
+                                    FlowStepRaw.builder().from("C1").to("C2").description("link 1").build() //
+                            )) //
+                    ).build();
+
+            var ws = load(config);
+            var relations = ws.getModel().getRelationManager().getDirect().getRelationsBetween(ws.getModel().getElementById("C1"), ws.getModel().getElementById("C2"));
+            assertEquals(1, relations.size());
+            assertEquals("link 1", relations.get(0).getDescription());
         }
     }
 }

@@ -1,7 +1,9 @@
 package it.vitalegi.archi.exception;
 
 import it.vitalegi.archi.model.relation.DirectRelation;
+import lombok.Getter;
 
+@Getter
 public class RelationNotAllowedException extends Error {
     DirectRelation relation;
 
@@ -12,6 +14,11 @@ public class RelationNotAllowedException extends Error {
 
     public RelationNotAllowedException(String message, DirectRelation relation) {
         super(format(relation) + ": " + message + ", " + relation);
+        this.relation = relation;
+    }
+
+    public RelationNotAllowedException(String message, DirectRelation relation, Throwable cause) {
+        super(format(relation) + ": " + message, cause);
         this.relation = relation;
     }
 

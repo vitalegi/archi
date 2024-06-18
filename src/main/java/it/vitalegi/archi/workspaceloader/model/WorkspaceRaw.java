@@ -11,11 +11,13 @@ public class WorkspaceRaw {
     List<ElementRaw> elements;
     List<RelationRaw> relations;
     List<DiagramRaw> diagrams;
+    List<FlowRaw> flows;
     Style style;
 
     public WorkspaceRaw() {
         elements = new ArrayList<>();
         relations = new ArrayList<>();
         diagrams = new ArrayList<>();
+        flows = new ArrayList<>();
     }
 }

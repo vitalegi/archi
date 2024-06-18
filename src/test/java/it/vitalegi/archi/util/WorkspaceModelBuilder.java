@@ -5,6 +5,7 @@ import it.vitalegi.archi.model.element.PropertyEntries;
 import it.vitalegi.archi.model.style.Style;
 import it.vitalegi.archi.workspaceloader.model.DeploymentDiagramRaw;
 import it.vitalegi.archi.workspaceloader.model.ElementRaw;
+import it.vitalegi.archi.workspaceloader.model.FlowRaw;
 import it.vitalegi.archi.workspaceloader.model.LandscapeDiagramRaw;
 import it.vitalegi.archi.workspaceloader.model.RelationRaw;
 import it.vitalegi.archi.workspaceloader.model.SystemContextDiagramRaw;
@@ -231,6 +232,11 @@ public class WorkspaceModelBuilder {
 
     public WorkspaceModelBuilder globalStyle(Style style) {
         workspace.setStyle(style);
+        return this;
+    }
+
+    public WorkspaceModelBuilder flow(FlowRaw.FlowRawBuilder builder) {
+        workspace.getFlows().add(builder.build());
         return this;
     }
 

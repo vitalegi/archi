@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -23,30 +24,27 @@ public class FileSystemWorkspaceLoader {
     protected WorkspaceRaw merge(WorkspaceRaw w1, WorkspaceRaw w2) {
         var out = new WorkspaceRaw();
 
-        if (w1.getElements() != null) {
-            out.getElements().addAll(w1.getElements());
-        }
-        if (w2.getElements() != null) {
-            out.getElements().addAll(w2.getElements());
-        }
+        addAll(out.getElements(), w1.getElements());
+        addAll(out.getElements(), w2.getElements());
 
-        if (w1.getDiagrams() != null) {
-            out.getDiagrams().addAll(w1.getDiagrams());
-        }
-        if (w2.getDiagrams() != null) {
-            out.getDiagrams().addAll(w2.getDiagrams());
-        }
+        addAll(out.getDiagrams(), w1.getDiagrams());
+        addAll(out.getDiagrams(), w2.getDiagrams());
 
-        if (w1.getRelations() != null) {
-            out.getRelations().addAll(w1.getRelations());
-        }
-        if (w2.getRelations() != null) {
-            out.getRelations().addAll(w2.getRelations());
-        }
+        addAll(out.getRelations(), w1.getRelations());
+        addAll(out.getRelations(), w2.getRelations());
+
+        addAll(out.getFlows(), w1.getFlows());
+        addAll(out.getFlows(), w2.getFlows());
 
         out.setStyle(Style.merge(w1.getStyle(), w2.getStyle()));
 
         return out;
+    }
+
+    protected <E> void addAll(List<E> target, List<E> source) {
+        if (source != null) {
+            target.addAll(source);
+        }
     }
 
     protected WorkspaceRaw readFile(Path path) {
