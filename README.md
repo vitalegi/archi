@@ -1,6 +1,6 @@
 # README
 
-Aim of the project is to build a tool that simplifies the generation/maintenance of [C4 Model](https://c4model.com/) diagrams.
+Aim of the project is to simplify the generation/maintenance of [C4 Model](https://c4model.com/) diagrams.
 
 With this in mind, [Structurizr](https://structurizr.com/)'s approach of diagrams and models as code is a good tool for the diagram generation.
 
