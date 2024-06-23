@@ -1,3 +1,6 @@
+options:
+  direction: LEFT_TO_RIGHT
+  hideRelationsText: false
 elements:
   - type: SOFTWARE_SYSTEM
     id: A
@@ -28,6 +31,8 @@ diagrams:
   - type: LANDSCAPE
     name: landscape
     title: Application Landscape
+    options:
+      direction: TOP_TO_BOTTOM
   - type: LANDSCAPE
     name: landscape-no-text
     title: Application Landscape

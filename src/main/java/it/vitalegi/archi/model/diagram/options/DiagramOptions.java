@@ -13,8 +13,8 @@ import java.util.List;
 @Data
 public class DiagramOptions implements MergeableCloneable<DiagramOptions> {
     LayoutDirection direction;
-    boolean inheritRelations;
-    boolean hideRelationsText;
+    Boolean inheritRelations;
+    Boolean hideRelationsText;
     List<HiddenRelations> hiddenRelations;
 
     public static DiagramOptions merge(DiagramOptions option1, DiagramOptions option2) {
@@ -35,7 +35,7 @@ public class DiagramOptions implements MergeableCloneable<DiagramOptions> {
     }
 
     @Builder
-    public DiagramOptions(boolean inheritRelations, boolean hideRelationsText) {
+    public DiagramOptions(Boolean inheritRelations, Boolean hideRelationsText) {
         this();
         this.inheritRelations = inheritRelations;
         this.hideRelationsText = hideRelationsText;
@@ -64,8 +64,12 @@ public class DiagramOptions implements MergeableCloneable<DiagramOptions> {
         if (other.direction != null) {
             out.direction = other.direction;
         }
-        out.inheritRelations = other.inheritRelations;
-        out.hideRelationsText = other.hideRelationsText;
+        if (other.inheritRelations != null) {
+            out.inheritRelations = other.inheritRelations;
+        }
+        if (other.hideRelationsText != null) {
+            out.hideRelationsText = other.hideRelationsText;
+        }
         out.hiddenRelations = ListUtil.merge(this.hiddenRelations, other.hiddenRelations, Comparator.comparing(HiddenRelations::getId));
         return out;
     }
