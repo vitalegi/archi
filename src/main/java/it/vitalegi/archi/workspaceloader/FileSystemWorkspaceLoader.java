@@ -68,7 +68,8 @@ public class FileSystemWorkspaceLoader {
     }
 
     protected boolean isYaml(Path path) {
-        return path.getFileName().toString().toLowerCase().endsWith(".yaml");
+        var filename = path.getFileName().toString().toLowerCase();
+        return filename.endsWith(".yaml") || filename.endsWith(".yml");
     }
 
     protected YAMLMapper yamlMapper() {
