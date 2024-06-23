@@ -17,7 +17,8 @@ import lombok.ToString;
 @JsonSubTypes({
         @JsonSubTypes.Type(value = DeploymentDiagramRaw.class, name = "DEPLOYMENT"),
         @JsonSubTypes.Type(value = LandscapeDiagramRaw.class, name = "LANDSCAPE"),
-        @JsonSubTypes.Type(value = SystemContextDiagramRaw.class, name = "SYSTEM_CONTEXT")
+        @JsonSubTypes.Type(value = SystemContextDiagramRaw.class, name = "SYSTEM_CONTEXT"),
+        @JsonSubTypes.Type(value = FlowDiagramRaw.class, name = "FLOW")
 })
 @Getter
 @Setter

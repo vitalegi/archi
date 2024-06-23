@@ -3,12 +3,14 @@ package it.vitalegi.archi.workspaceloader;
 import it.vitalegi.archi.model.Model;
 import it.vitalegi.archi.model.diagram.DeploymentDiagram;
 import it.vitalegi.archi.model.diagram.Diagram;
-import it.vitalegi.archi.model.diagram.options.DiagramOptions;
+import it.vitalegi.archi.model.diagram.FlowDiagram;
 import it.vitalegi.archi.model.diagram.LandscapeDiagram;
 import it.vitalegi.archi.model.diagram.SystemContextDiagram;
+import it.vitalegi.archi.model.diagram.options.DiagramOptions;
 import it.vitalegi.archi.visitor.DiagramRawVisitor;
 import it.vitalegi.archi.workspaceloader.model.DeploymentDiagramRaw;
 import it.vitalegi.archi.workspaceloader.model.DiagramRaw;
+import it.vitalegi.archi.workspaceloader.model.FlowDiagramRaw;
 import it.vitalegi.archi.workspaceloader.model.LandscapeDiagramRaw;
 import it.vitalegi.archi.workspaceloader.model.SystemContextDiagramRaw;
 import lombok.AllArgsConstructor;
@@ -38,6 +40,14 @@ public class DiagramRawMapperVisitor implements DiagramRawVisitor<Diagram> {
         mapDiagram(diagram, out);
         out.setEnvironment(diagram.getEnvironment());
         out.setScope(diagram.getScope());
+        return out;
+    }
+
+    @Override
+    public Diagram visitFlowDiagramRaw(FlowDiagramRaw diagram) {
+        var out = new FlowDiagram(model);
+        mapDiagram(diagram, out);
+        out.setFlow(diagram.getFlow());
         return out;
     }
 

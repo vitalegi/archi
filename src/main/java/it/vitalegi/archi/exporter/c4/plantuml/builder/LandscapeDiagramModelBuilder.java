@@ -93,4 +93,10 @@ public class LandscapeDiagramModelBuilder extends C4ModelBuilder<LandscapeDiagra
             buildElement(parent, child);
         }
     }
+
+    protected void buildRelations(Stream<Relation> relations) {
+        removeDuplicatedInheritedRelations(relations).flatMap(this::relation) //
+                .sorted(relationComparator()) //
+                .forEach(model::addRelation);
+    }
 }

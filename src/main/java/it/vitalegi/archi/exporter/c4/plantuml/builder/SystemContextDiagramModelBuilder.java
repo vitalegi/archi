@@ -109,4 +109,10 @@ public class SystemContextDiagramModelBuilder extends C4ModelBuilder<SystemConte
             buildElement(parent, child);
         }
     }
+
+    protected void buildRelations(Stream<Relation> relations) {
+        removeDuplicatedInheritedRelations(relations).flatMap(this::relation) //
+                .sorted(relationComparator()) //
+                .forEach(model::addRelation);
+    }
 }

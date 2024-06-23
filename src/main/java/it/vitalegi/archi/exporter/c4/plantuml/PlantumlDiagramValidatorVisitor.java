@@ -1,6 +1,7 @@
 package it.vitalegi.archi.exporter.c4.plantuml;
 
 import it.vitalegi.archi.model.diagram.DeploymentDiagram;
+import it.vitalegi.archi.model.diagram.FlowDiagram;
 import it.vitalegi.archi.model.diagram.LandscapeDiagram;
 import it.vitalegi.archi.model.diagram.SystemContextDiagram;
 import it.vitalegi.archi.visitor.DiagramVisitor;
@@ -25,6 +26,13 @@ public class PlantumlDiagramValidatorVisitor implements DiagramVisitor<Void> {
     @Override
     public Void visitDeploymentDiagram(DeploymentDiagram diagram) {
         var processor = new DeploymentDiagramPlantumlExporter();
+        processor.validate(diagram);
+        return null;
+    }
+
+    @Override
+    public Void visitFlowDiagram(FlowDiagram diagram) {
+        var processor = new FlowDiagramPlantumlExporter();
         processor.validate(diagram);
         return null;
     }
