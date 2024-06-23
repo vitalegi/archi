@@ -1,0 +1,19 @@
+@startuml
+set separator none
+!ENABLE_ALL_PLANT_ELEMENTS = 1
+top to bottom direction
+title Application Landscape
+!include <C4/C4>
+!include <C4/C4_Context>
+!include <C4/C4_Container>
+WithoutPropertyHeader()
+AddProperty("property1","This should appear first")
+AddProperty("Property 2","This should appear last")
+Container($alias="SoftwareSystem_A", $label="First software system", $techn="", $descr="Lorem ipsum", $sprite="", $tags="", $link="", $baseShape="rectangle")
+WithoutPropertyHeader()
+AddProperty("property4","This should appear first")
+AddProperty("property3","This should appear last")
+Container($alias="SoftwareSystem_B", $label="Second software system", $techn="", $descr="Lorem ipsum", $sprite="", $tags="", $link="", $baseShape="rectangle")
+Rel($from="SoftwareSystem_A", $to="SoftwareSystem_B", $label="", $techn="", $descr="", $sprite="", $tags="", $link="")
+hide stereotypes
+@enduml
