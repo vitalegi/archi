@@ -165,6 +165,30 @@ flows:
   ...
 ```
 
+## Release
+
+### Create release files
+
+```
+.\release.ps1
+```
+
+### Create release
+
+- <https://github.com/vitalegi/structurizr-md/releases>
+- Draft a new release
+- Choose a tag 'v0.0.x'
+- Title 'v0.0.x'
+- Generate release notes
+
+Files to attach:
+
+- `archi.jar`
+- `dependencies-tree.txt`
+- `dependencies-list.txt`
+
+Set as the latest relea
+
 ## Contributions
 
 Thanks, but no.
