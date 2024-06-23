@@ -51,7 +51,6 @@ public class C4PlantumlWriter extends PlantumlWriter {
     }
 
     public void boundaryStart(C4DiagramElement element) {
-        addProperties(element);
         boundaryStart(getAlias(element), element.getName(), formatTags(element));
     }
 
