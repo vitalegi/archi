@@ -1,7 +1,7 @@
 @startuml
 set separator none
 !ENABLE_ALL_PLANT_ELEMENTS = 1
-top to bottom direction
+left to right direction
 title Application Landscape
 !include <C4/C4>
 !include <C4/C4_Context>

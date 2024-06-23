@@ -36,6 +36,6 @@ public class DiagramRawMapperVisitorTests {
         var raw = LandscapeDiagramRaw.builder().name("name").options(options).build();
         var mapper = new DiagramRawMapperVisitor(model);
         var diagram = raw.visit(mapper);
-        assertTrue(diagram.getOptionsAggregated().isInheritRelations());
+        assertTrue(diagram.getOptionsAggregated().getInheritRelations());
     }
 }

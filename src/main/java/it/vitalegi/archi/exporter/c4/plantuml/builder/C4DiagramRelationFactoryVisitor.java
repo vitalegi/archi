@@ -5,6 +5,7 @@ import it.vitalegi.archi.model.diagramelement.C4DiagramRelation;
 import it.vitalegi.archi.model.diagramelement.RelationType;
 import it.vitalegi.archi.model.relation.DirectRelation;
 import it.vitalegi.archi.model.relation.ImplicitRelation;
+import it.vitalegi.archi.util.BooleanUtil;
 import it.vitalegi.archi.util.ModelPropertyUtil;
 import it.vitalegi.archi.visitor.RelationVisitor;
 import lombok.AllArgsConstructor;
@@ -48,6 +49,6 @@ public class C4DiagramRelationFactoryVisitor implements RelationVisitor<C4Diagra
     }
 
     protected boolean isRelationTextEnabled() {
-        return !diagram.getOptionsAggregated().isHideRelationsText();
+        return BooleanUtil.isFalse(diagram.getOptionsAggregated().getHideRelationsText());
     }
 }

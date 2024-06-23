@@ -12,6 +12,7 @@ import it.vitalegi.archi.model.relation.DirectRelation;
 import it.vitalegi.archi.model.relation.ImplicitRelation;
 import it.vitalegi.archi.model.relation.Relation;
 import it.vitalegi.archi.model.relation.Relations;
+import it.vitalegi.archi.util.BooleanUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -69,7 +70,7 @@ public abstract class C4ModelBuilder<E extends Diagram> {
     }
 
     protected boolean useImplicitRelations() {
-        return diagram.getOptionsAggregated().isInheritRelations();
+        return BooleanUtil.isTrue(diagram.getOptionsAggregated().getInheritRelations());
     }
 
     protected void buildRelations(Stream<Relation> relations) {
