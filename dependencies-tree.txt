@@ -1,4 +1,4 @@
-it.vitalegi:archi:jar:0.0.3
+it.vitalegi:archi:jar:0.0.4
 +- net.sourceforge.plantuml:plantuml:jar:1.2024.5:compile
 +- ch.qos.logback:logback-core:jar:1.5.6:compile
 +- org.slf4j:slf4j-api:jar:2.0.13:compile
