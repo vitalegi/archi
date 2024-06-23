@@ -51,6 +51,77 @@ Will scan directory `path/to/workspace/directory/` and load the configuration fr
 
 Both values can be replaced with absolute/relative paths.
 
+## File structure
+
+```
+elements:
+- type: PERSON | SOFTWARE_SYSTEM | CONTAINER | COMPONENT | GROUP | DEPLOYMENT_ENVIRONMENT | DEPLOYMENT_NODE | CONTAINER_INSTANCE | SOFTWARE_SYSTEM_INSTANCE | INFRASTRUCTURE_NODE
+  id: id of the element, can be skipped
+  parentId: used only on elements on top level
+  name: free text
+  description: free text
+  tags:
+  - tag 1
+  - tag 2
+  - ...
+  technologies:
+  - tech 1
+  - tech 2
+  - ...
+  properties:
+    free text 1: free text
+    free text 2: free text
+    free text 3: free text
+  containerId: if type=CONTAINER_INSTANCE, id of the container
+  softwareSystemId: if type=SOFTWARE_SYSTEM_INSTANCE, id of the software system
+  elements:
+  - list of children elements, can be nested
+relations:
+- id: id of the relation, can be skipped
+  from: id of the element from whom the relation starts
+  to: id of the element to whom the relation ends
+  description: free text
+  label: free text
+  sprite: 
+  link: link to be used on the relation
+  tags:
+  - tag 1
+  - tag 2
+  - ...
+  technologies:
+  - tech 1
+  - tech 2
+  - ...
+  properties:
+    free text 1: free text
+    free text 2: free text
+    free text 3: free text
+options:
+  direction: LEFT_TO_RIGHT | TOP_TO_BOTTOM
+  inheritRelations: true | false
+  hideRelationsText: true | false
+  hiddenRelations:
+  - id: hidden relation id
+    elements:
+    - element id 1
+    - element id 2
+    - ...
+style:
+  skinParams:
+  - key: skin param key
+    value: skin param value
+  - ...
+diagrams:
+- name: unique name of the diagram, used as filename during export
+  title: title of the diagram
+  options: same structure as top-level <options>
+  style: same structure as top-level <style>
+flows:
+- id: unique id of the flow, used as filename during export
+  name: title of the flow
+  steps: same structure as top-level <relations>
+```
+
 ## Contributions
 
 Thanks, but no.
