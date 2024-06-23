@@ -28,3 +28,8 @@ diagrams:
   - type: LANDSCAPE
     name: landscape
     title: Application Landscape
+  - type: LANDSCAPE
+    name: landscape-no-text
+    title: Application Landscape
+    options:
+      hideRelationsText: true

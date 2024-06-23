@@ -226,7 +226,7 @@ public class AllDiagramsModelBuilderTests {
 
         @BeforeEach
         void init() {
-            var options = DiagramOptions.builder().hideRelationsText(true).build();
+            var options = DiagramOptions.builder().hideRelationsText(false).build();
             var props = new PropertyEntries();
             props.getProperties().add(new PropertyEntry("key1", "value1"));
             props.getProperties().add(new PropertyEntry("key2", "value2"));

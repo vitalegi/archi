@@ -35,16 +35,19 @@ public class C4DiagramRelationFactoryVisitor implements RelationVisitor<C4Diagra
     }
 
     protected void applyProperties(C4DiagramRelation target, DirectRelation relation) {
-        if (!diagram.getOptionsAggregated().isHideRelationsText()) {
+        if (isRelationTextEnabled()) {
             target.setLabel(relation.getLabel());
             target.setDescription(relation.getDescription());
+            target.setTechnologies(relation.getTechnologies());
+            target.setProperties(ModelPropertyUtil.properties(relation.getProperties()));
+            target.setLink(relation.getLink());
         }
         target.setRelationType(RelationType.NORMAL);
         target.setTags(relation.getTags());
-        target.setLink(relation.getLink());
         target.setSprite(relation.getSprite());
-        target.setTechnologies(relation.getTechnologies());
-        target.setProperties(ModelPropertyUtil.properties(relation.getProperties()));
     }
 
+    protected boolean isRelationTextEnabled() {
+        return !diagram.getOptionsAggregated().isHideRelationsText();
+    }
 }
