@@ -2,6 +2,7 @@ package it.vitalegi.archi.exporter.c4.plantuml;
 
 import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.model.diagram.DeploymentDiagram;
+import it.vitalegi.archi.model.diagram.FlowDiagram;
 import it.vitalegi.archi.model.diagram.LandscapeDiagram;
 import it.vitalegi.archi.model.diagram.SystemContextDiagram;
 import it.vitalegi.archi.visitor.DiagramVisitor;
@@ -26,6 +27,12 @@ public class PlantumlExporterVisitor implements DiagramVisitor<String> {
     @Override
     public String visitDeploymentDiagram(DeploymentDiagram diagram) {
         var processor = new DeploymentDiagramPlantumlExporter();
+        return processor.export(workspace, diagram);
+    }
+
+    @Override
+    public String visitFlowDiagram(FlowDiagram diagram) {
+        var processor = new FlowDiagramPlantumlExporter();
         return processor.export(workspace, diagram);
     }
 }

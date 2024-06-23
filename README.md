@@ -112,7 +112,8 @@ style:
     value: skin param value
   - ...
 diagrams:
-- name: unique name of the diagram, used as filename during export
+- type: LANDSCAPE | SYSTEM_CONTEXT | DEPLOYMENT | FLOW
+  name: unique name of the diagram, used as filename during export
   title: title of the diagram
   options: same structure as top-level <options>
   style: same structure as top-level <style>
@@ -120,6 +121,48 @@ flows:
 - id: unique id of the flow, used as filename during export
   name: title of the flow
   steps: same structure as top-level <relations>
+```
+
+### Diagrams
+
+#### Landscape Diagram
+
+<https://c4model.com/#SystemLandscapeDiagram>
+
+```
+- type: LANDSCAPE
+  ...
+```
+
+#### System Context Diagram
+
+<https://c4model.com/#ContainerDiagram>
+
+```
+- type: SYSTEM_CONTEXT
+  target: ID of the target Software System
+  ...
+```
+
+#### Deployment Diagram
+
+<https://c4model.com/#DeploymentDiagram>
+
+```
+- type: DEPLOYMENT
+  scope: * | softwareSystemId
+  environment: ID of the target DeploymentEnvironment
+  ...
+```
+
+#### Flow Diagram
+
+<https://c4model.com/#DynamicDiagram>
+
+```
+- type: FLOW
+  flow: ID of the target flow
+  ...
 ```
 
 ## Contributions

@@ -97,7 +97,10 @@ diagrams:
           value: polyline
     options:
       inheritRelations: true
-
+  - type: FLOW
+    name: user_flow
+    title: Normal user flow
+    flow: user_access
 style:
   skinParams:
     - key: linetype

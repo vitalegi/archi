@@ -142,4 +142,10 @@ public class DeploymentDiagramModelBuilder extends C4ModelBuilder<DeploymentDiag
             }
         }
     }
+
+    protected void buildRelations(Stream<Relation> relations) {
+        removeDuplicatedInheritedRelations(relations).flatMap(this::relation) //
+                .sorted(relationComparator()) //
+                .forEach(model::addRelation);
+    }
 }

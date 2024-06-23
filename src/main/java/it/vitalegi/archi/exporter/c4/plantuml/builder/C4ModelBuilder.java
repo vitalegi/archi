@@ -73,13 +73,11 @@ public abstract class C4ModelBuilder<E extends Diagram> {
         return BooleanUtil.isTrue(diagram.getOptionsAggregated().getInheritRelations());
     }
 
-    protected void buildRelations(Stream<Relation> relations) {
-        removeDuplicatedInheritedRelations(relations).flatMap(this::relation) //
-                .sorted(Comparator.comparing(C4DiagramRelation::getFromAlias).thenComparing(C4DiagramRelation::getToAlias).thenComparing(C4DiagramRelation::getLabel)) //
-                .forEach(model::addRelation);
+    protected Comparator<C4DiagramRelation> relationComparator() {
+        return Comparator.comparing(C4DiagramRelation::getFromAlias).thenComparing(C4DiagramRelation::getToAlias).thenComparing(C4DiagramRelation::getLabel);
     }
 
-    protected Stream<Relation> removeDuplicatedInheritedRelations(Stream<Relation> relations) {
+    protected Stream<Relation> removeDuplicatedInheritedRelations(Stream<? extends Relation> relations) {
         var map = relations.collect(Collectors.toMap(r -> r.getFrom().getUniqueId() + "_" + r.getTo().getUniqueId(), r -> {
             var arr = new ArrayList<Relation>();
             arr.add(r);

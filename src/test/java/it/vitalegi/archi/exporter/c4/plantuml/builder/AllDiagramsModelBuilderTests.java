@@ -2,20 +2,25 @@ package it.vitalegi.archi.exporter.c4.plantuml.builder;
 
 import it.vitalegi.archi.model.Workspace;
 import it.vitalegi.archi.model.diagram.DeploymentDiagram;
-import it.vitalegi.archi.model.diagram.options.DiagramOptions;
+import it.vitalegi.archi.model.diagram.FlowDiagram;
 import it.vitalegi.archi.model.diagram.LandscapeDiagram;
 import it.vitalegi.archi.model.diagram.SystemContextDiagram;
+import it.vitalegi.archi.model.diagram.options.DiagramOptions;
 import it.vitalegi.archi.model.diagramelement.C4DiagramElementProperty;
+import it.vitalegi.archi.model.diagramelement.C4DiagramRelation;
 import it.vitalegi.archi.model.element.PropertyEntries;
 import it.vitalegi.archi.model.element.PropertyEntry;
 import it.vitalegi.archi.util.C4DiagramModelUtil;
-import it.vitalegi.archi.visitor.DiagramVisitor;
+import it.vitalegi.archi.util.DiagramVisitorTest;
+import it.vitalegi.archi.util.WorkspaceModelBuilder;
 import it.vitalegi.archi.workspaceloader.model.DeploymentDiagramRaw;
 import it.vitalegi.archi.workspaceloader.model.ElementRaw;
+import it.vitalegi.archi.workspaceloader.model.FlowDiagramRaw;
+import it.vitalegi.archi.workspaceloader.model.FlowRaw;
+import it.vitalegi.archi.workspaceloader.model.FlowStepRaw;
 import it.vitalegi.archi.workspaceloader.model.LandscapeDiagramRaw;
 import it.vitalegi.archi.workspaceloader.model.RelationRaw;
 import it.vitalegi.archi.workspaceloader.model.SystemContextDiagramRaw;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -23,6 +28,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static it.vitalegi.archi.util.WorkspaceTestUtil.b;
 import static it.vitalegi.archi.util.WorkspaceTestUtil.load;
@@ -52,16 +59,22 @@ public class AllDiagramsModelBuilderTests {
         return new C4DiagramModelUtil(actual);
     }
 
+    static C4DiagramModelUtil flowDiagram(Workspace ws, FlowDiagram diagram) {
+        var builder = new FlowDiagramModelBuilder(ws, diagram);
+        var actual = builder.build();
+        return new C4DiagramModelUtil(actual);
+    }
+
     @DisplayName("GIVEN inherited relations and direct relation between same elements THEN only direct relation is in the model")
     @Nested
-    class InheritedRelationsWithDirectRelation implements DiagramVisitor<Void> {
+    class InheritedRelationsWithDirectRelation implements DiagramVisitorTest {
 
-        Workspace ws;
+        static DiagramOptions options() {
+            return DiagramOptions.builder().inheritRelations(true).build();
+        }
 
-        @BeforeEach
-        void init() {
-            var options = DiagramOptions.builder().inheritRelations(true).build();
-            ws = load(b() //
+        WorkspaceModelBuilder defaultBuilder() {
+            return b() //
                     .softwareSystem("A") //
                     .container("A", "C1") //
                     .component(ElementRaw.builder().parentId("C1").id("comp1")) //
@@ -79,40 +92,29 @@ public class AllDiagramsModelBuilderTests {
                     .softwareSystemInstance("node", "si1", "A") //
                     .softwareSystemInstance("node", "si2", "B") //
 
-                    .landscapeDiagram(LandscapeDiagramRaw.builder().name("landscape").options(options)) //
-                    .systemContextDiagram(SystemContextDiagramRaw.builder().name("systemContext").target("A").options(options)) //
-                    .deploymentDiagram(DeploymentDiagramRaw.all("deployment", "env").options(options)) //
-            );
+                    .landscapeDiagram(LandscapeDiagramRaw.builder().name("landscape").options(options())) //
+                    .systemContextDiagram(SystemContextDiagramRaw.builder().name("systemContext").target("A").options(options())) //
+                    .deploymentDiagram(DeploymentDiagramRaw.all("deployment", "env").options(options()));
         }
 
         @Test
-        void landscapeDiagram() {
-            ws.getDiagrams().getByName("landscape").visit(this);
-        }
-
-        @Test
-        void systemContextDiagram() {
-            ws.getDiagrams().getByName("systemContext").visit(this);
-        }
-
-        @Test
-        void deploymentDiagram() {
-            ws.getDiagrams().getByName("deployment").visit(this);
-        }
-
         @Override
-        public Void visitLandscapeDiagram(LandscapeDiagram diagram) {
+        public void testLandscapeDiagram() {
+            var ws = load(defaultBuilder());
+            var diagram = (LandscapeDiagram) ws.getDiagrams().getByName("landscape");
             var model = AllDiagramsModelBuilderTests.landscapeDiagram(ws, diagram);
             assertNotNull(model.findByAliasesPath("SoftwareSystem_A"));
             assertNotNull(model.findByAliasesPath("SoftwareSystem_B"));
             assertEquals(1, model.findRelations("SoftwareSystem_A", "SoftwareSystem_B").size());
             assertEquals(2, model.countElements());
             assertEquals(1, model.countRelations());
-            return null;
         }
 
+        @Test
         @Override
-        public Void visitSystemContextDiagram(SystemContextDiagram diagram) {
+        public void testSystemContextDiagram() {
+            var ws = load(defaultBuilder());
+            var diagram = (SystemContextDiagram) ws.getDiagrams().getByName("systemContext");
             var model = AllDiagramsModelBuilderTests.systemContextDiagram(ws, diagram);
             assertNotNull(model.findByAliasesPath("SoftwareSystem_A"));
             assertNotNull(model.findByAliasesPath("SoftwareSystem_A", "Container_C1"));
@@ -120,11 +122,14 @@ public class AllDiagramsModelBuilderTests {
             assertEquals(1, model.findRelations("Container_C1", "SoftwareSystem_B").size());
             assertEquals(3, model.countElements());
             assertEquals(1, model.countRelations());
-            return null;
         }
 
+        @Test
         @Override
-        public Void visitDeploymentDiagram(DeploymentDiagram diagram) {
+        public void testDeploymentDiagram() {
+            var ws = load(defaultBuilder());
+            var diagram = (DeploymentDiagram) ws.getDiagrams().getByName("deployment");
+
             var model = AllDiagramsModelBuilderTests.deploymentDiagram(ws, diagram);
             assertNotNull(model.findByAliasesPath("DeploymentNode_node"));
             assertNotNull(model.findByAliasesPath("DeploymentNode_node", "SoftwareSystemInstance_si1"));
@@ -134,20 +139,45 @@ public class AllDiagramsModelBuilderTests {
             assertEquals(1, model.findRelations("SoftwareSystem_A", "SoftwareSystem_B").size());
             assertEquals(5, model.countElements());
             assertEquals(1, model.countRelations());
-            return null;
+        }
+
+        @Test
+        @Override
+        public void testFlowDiagram() {
+            var builder = defaultBuilder();
+            builder.flow(FlowRaw.builder().id("flow1").name("Flow 1").steps(Arrays.asList( //
+                            FlowStepRaw.builder().from("C1").to("C2").label("step 1").build(), //
+                            FlowStepRaw.builder().from("C2").to("C1").label("step 2").build(), //
+                            FlowStepRaw.builder().from("A").to("B").label("step 3").build() //
+                    ))) //
+                    .flowDiagram(FlowDiagramRaw.builder().name("flow").title("Flow Diagram").flow("flow1").options(options()));
+
+            var ws = load(builder);
+            var diagram = (FlowDiagram) ws.getDiagrams().getByName("flow");
+            var model = AllDiagramsModelBuilderTests.flowDiagram(ws, diagram);
+
+            assertNotNull(model.findByAliasesPath("SoftwareSystem_A"));
+            assertNotNull(model.findByAliasesPath("SoftwareSystem_A", "Container_C1"));
+            assertNotNull(model.findByAliasesPath("SoftwareSystem_B"));
+            assertNotNull(model.findByAliasesPath("SoftwareSystem_B", "Container_C2"));
+            assertEquals(4, model.countElements());
+
+            assertEquals(1, model.findRelations("Container_C1", "Container_C2").size());
+            assertEquals(1, model.findRelations("Container_C2", "Container_C1").size());
+            assertEquals(1, model.findRelations("SoftwareSystem_A", "SoftwareSystem_B").size());
+            assertEquals(3, model.countRelations());
         }
     }
 
     @DisplayName("GIVEN hideRelationsText=true THEN labels and descriptions on relations are hidden")
     @Nested
-    class HideRelationsText implements DiagramVisitor<Void> {
+    class HideRelationsText implements DiagramVisitorTest {
+        static DiagramOptions options() {
+            return DiagramOptions.builder().hideRelationsText(true).build();
+        }
 
-        Workspace ws;
-
-        @BeforeEach
-        void init() {
-            var options = DiagramOptions.builder().hideRelationsText(true).build();
-            ws = load(b() //
+        WorkspaceModelBuilder defaultBuilder() {
+            return b() //
                     .softwareSystem("A") //
                     .container("A", "C1") //
                     .component(ElementRaw.builder().parentId("C1").id("comp1")) //
@@ -166,46 +196,55 @@ public class AllDiagramsModelBuilderTests {
                     .softwareSystemInstance("node", "si1", "A") //
                     .softwareSystemInstance("node", "si2", "B") //
 
-                    .landscapeDiagram(LandscapeDiagramRaw.builder().name("landscape").options(options)) //
-                    .systemContextDiagram(SystemContextDiagramRaw.builder().name("systemContext").target("A").options(options)) //
-                    .deploymentDiagram(DeploymentDiagramRaw.all("deployment", "env").options(options)) //
-            );
+                    .landscapeDiagram(LandscapeDiagramRaw.builder().name("landscape").options(options())) //
+                    .systemContextDiagram(SystemContextDiagramRaw.builder().name("systemContext").target("A").options(options())) //
+                    .deploymentDiagram(DeploymentDiagramRaw.all("deployment", "env").options(options()));
         }
+
 
         @Test
-        void landscapeDiagram() {
-            ws.getDiagrams().getByName("landscape").visit(this);
-        }
-
-        @Test
-        void systemContextDiagram() {
-            ws.getDiagrams().getByName("systemContext").visit(this);
-        }
-
-        @Test
-        void deploymentDiagram() {
-            ws.getDiagrams().getByName("deployment").visit(this);
-        }
-
         @Override
-        public Void visitLandscapeDiagram(LandscapeDiagram diagram) {
+        public void testLandscapeDiagram() {
+            var ws = load(defaultBuilder());
+            var diagram = (LandscapeDiagram) ws.getDiagrams().getByName("landscape");
             var model = AllDiagramsModelBuilderTests.landscapeDiagram(ws, diagram);
             check(model);
-            return null;
         }
 
+        @Test
         @Override
-        public Void visitSystemContextDiagram(SystemContextDiagram diagram) {
+        public void testSystemContextDiagram() {
+            var ws = load(defaultBuilder());
+            var diagram = (SystemContextDiagram) ws.getDiagrams().getByName("systemContext");
             var model = AllDiagramsModelBuilderTests.systemContextDiagram(ws, diagram);
             check(model);
-            return null;
         }
 
+        @Test
         @Override
-        public Void visitDeploymentDiagram(DeploymentDiagram diagram) {
+        public void testDeploymentDiagram() {
+            var ws = load(defaultBuilder());
+            var diagram = (DeploymentDiagram) ws.getDiagrams().getByName("deployment");
             var model = AllDiagramsModelBuilderTests.deploymentDiagram(ws, diagram);
             check(model);
-            return null;
+        }
+
+        @Test
+        @Override
+        public void testFlowDiagram() {
+            var builder = defaultBuilder();
+            builder.flow(FlowRaw.builder().id("flow1").name("Flow 1").steps(Arrays.asList( //
+                            FlowStepRaw.builder().from("C1").to("C2").label("step 1").build(), //
+                            FlowStepRaw.builder().from("C2").to("C1").label("step 2").build(), //
+                            FlowStepRaw.builder().from("A").to("B").label("step 3").build() //
+                    ))) //
+                    .flowDiagram(FlowDiagramRaw.builder().name("flow").title("Flow Diagram").flow("flow1").options(options()));
+
+            var ws = load(builder);
+            var diagram = (FlowDiagram) ws.getDiagrams().getByName("flow");
+            var model = AllDiagramsModelBuilderTests.flowDiagram(ws, diagram);
+
+            check(model);
         }
 
         protected void check(C4DiagramModelUtil model) {
@@ -220,87 +259,120 @@ public class AllDiagramsModelBuilderTests {
 
     @DisplayName("GIVEN elements and relations with properties THEN properties are in the model")
     @Nested
-    class ElementsAndRelationsWithProperties implements DiagramVisitor<Void> {
+    class ElementsAndRelationsWithProperties implements DiagramVisitorTest {
 
-        Workspace ws;
+        static DiagramOptions options() {
+            return DiagramOptions.builder().hideRelationsText(false).build();
+        }
 
-        @BeforeEach
-        void init() {
-            var options = DiagramOptions.builder().hideRelationsText(false).build();
-            var props = new PropertyEntries();
-            props.getProperties().add(new PropertyEntry("key1", "value1"));
-            props.getProperties().add(new PropertyEntry("key2", "value2"));
-            ws = load(b() //
-                    .element(ElementRaw.softwareSystem().id("A").properties(props)) //
-                    .element(ElementRaw.container().parentId("A").id("C1").properties(props)) //
+        static PropertyEntries properties() {
+            var properties = new PropertyEntries();
+            properties.getProperties().add(new PropertyEntry("key1", "value1"));
+            properties.getProperties().add(new PropertyEntry("key2", "value2"));
+            return properties;
+        }
 
-                    .element(ElementRaw.softwareSystem().id("B").properties(props)) //
-                    .element(ElementRaw.container().parentId("B").id("C2").properties(props)) //
+        static List<C4DiagramElementProperty> expectedProperties() {
+            var expected = new ArrayList<C4DiagramElementProperty>();
+            expected.add(new C4DiagramElementProperty("key1", "value1"));
+            expected.add(new C4DiagramElementProperty("key2", "value2"));
+            return expected;
+        }
 
-                    .relation(RelationRaw.builder().from("A").to("B").properties(props)) //
-                    .relation(RelationRaw.builder().from("C1").to("C2").properties(props)) //
-                    .relation(RelationRaw.builder().from("C1").to("B").properties(props)) //
+        WorkspaceModelBuilder defaultBuilder() {
+            return b() //
+                    .element(ElementRaw.softwareSystem().id("A").properties(properties())) //
+                    .element(ElementRaw.container().parentId("A").id("C1").properties(properties())) //
+
+                    .element(ElementRaw.softwareSystem().id("B").properties(properties())) //
+                    .element(ElementRaw.container().parentId("B").id("C2").properties(properties())) //
+
+                    .relation(RelationRaw.builder().from("A").to("B").properties(properties())) //
+                    .relation(RelationRaw.builder().from("C1").to("C2").properties(properties())) //
+                    .relation(RelationRaw.builder().from("C1").to("B").properties(properties())) //
 
                     .deploymentEnvironment("env") //
                     .deploymentNode("env", "node") //
                     .softwareSystemInstance("node", "si1", "A") //
                     .softwareSystemInstance("node", "si2", "B") //
 
-                    .landscapeDiagram(LandscapeDiagramRaw.builder().name("landscape").options(options)) //
-                    .systemContextDiagram(SystemContextDiagramRaw.builder().name("systemContext").target("A").options(options)) //
-                    .deploymentDiagram(DeploymentDiagramRaw.all("deployment", "env").options(options)) //
-            );
+                    .landscapeDiagram(LandscapeDiagramRaw.builder().name("landscape").options(options())) //
+                    .systemContextDiagram(SystemContextDiagramRaw.builder().name("systemContext").target("A").options(options())) //
+                    .deploymentDiagram(DeploymentDiagramRaw.all("deployment", "env").options(options())) //
+                    ;
         }
+
 
         @Test
-        void landscapeDiagram() {
-            ws.getDiagrams().getByName("landscape").visit(this);
-        }
-
-        @Test
-        void systemContextDiagram() {
-            ws.getDiagrams().getByName("systemContext").visit(this);
-        }
-
-        @Test
-        void deploymentDiagram() {
-            ws.getDiagrams().getByName("deployment").visit(this);
-        }
-
         @Override
-        public Void visitLandscapeDiagram(LandscapeDiagram diagram) {
+        public void testLandscapeDiagram() {
+            var ws = load(defaultBuilder());
+            var diagram = (LandscapeDiagram) ws.getDiagrams().getByName("landscape");
             var model = AllDiagramsModelBuilderTests.landscapeDiagram(ws, diagram);
             check(model);
-            return null;
         }
 
+        @Test
         @Override
-        public Void visitSystemContextDiagram(SystemContextDiagram diagram) {
+        public void testSystemContextDiagram() {
+            var ws = load(defaultBuilder());
+            var diagram = (SystemContextDiagram) ws.getDiagrams().getByName("systemContext");
             var model = AllDiagramsModelBuilderTests.systemContextDiagram(ws, diagram);
             check(model);
-            return null;
         }
 
+        @Test
         @Override
-        public Void visitDeploymentDiagram(DeploymentDiagram diagram) {
+        public void testDeploymentDiagram() {
+            var ws = load(defaultBuilder());
+            var diagram = (DeploymentDiagram) ws.getDiagrams().getByName("deployment");
             var model = AllDiagramsModelBuilderTests.deploymentDiagram(ws, diagram);
             check(model);
-            return null;
+        }
+
+        @Test
+        @Override
+        public void testFlowDiagram() {
+            var builder = defaultBuilder();
+            builder.flow(FlowRaw.builder().id("flow1").name("Flow 1").steps(Arrays.asList( //
+                            FlowStepRaw.builder().from("C1").to("C2").label("step 1").properties(properties()).build(), //
+                            FlowStepRaw.builder().from("C2").to("C1").label("step 2").properties(properties()).build(), //
+                            FlowStepRaw.builder().from("A").to("B").label("step 3").properties(properties()).build() //
+                    ))) //
+                    .flowDiagram(FlowDiagramRaw.builder().name("flow").title("Flow Diagram").flow("flow1").options(options()));
+
+            var ws = load(builder);
+            var diagram = (FlowDiagram) ws.getDiagrams().getByName("flow");
+            var model = AllDiagramsModelBuilderTests.flowDiagram(ws, diagram);
+
+            var r1 = model.findRelations("Container_C1", "Container_C2");
+            assertEquals(1, r1.size());
+            check(r1.get(0));
+
+            var r2 = model.findRelations("Container_C2", "Container_C1");
+            assertEquals(1, r2.size());
+            check(r2.get(0));
+
+            var r3 = model.findRelations("SoftwareSystem_A", "SoftwareSystem_B");
+            assertEquals(1, r3.size());
+            check(r3.get(0));
         }
 
         protected void check(C4DiagramModelUtil model) {
-            var expected = new ArrayList<C4DiagramElementProperty>();
-            expected.add(new C4DiagramElementProperty("key1", "value1"));
-            expected.add(new C4DiagramElementProperty("key2", "value2"));
+
 
             var b = model.findByAlias("SoftwareSystem_B");
-            assertEquals(expected, b.getProperties());
+            assertEquals(expectedProperties(), b.getProperties());
 
             var relations = model.findAllRelations();
             assertNotEquals(0, relations.size());
             for (var relation : relations) {
-                assertEquals(expected, relation.getProperties(), "Relation " + relation + " doesn't have correct properties");
+                check(relation);
             }
+        }
+
+        protected void check(C4DiagramRelation relation) {
+            assertEquals(expectedProperties(), relation.getProperties(), "Relation " + relation + " doesn't have correct properties");
         }
     }
 }

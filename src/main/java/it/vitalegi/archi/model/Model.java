@@ -18,7 +18,6 @@ import java.util.Map;
 
 @Getter
 @Slf4j
-@EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class Model extends Element {
     @Setter
@@ -54,6 +53,10 @@ public class Model extends Element {
 
     public ElementType getElementType() {
         return null;
+    }
+
+    public Flow findFlowById(String id) {
+        return flows.stream().filter(f -> f.getId().equals(id)).findFirst().orElse(null);
     }
 
     @Override
